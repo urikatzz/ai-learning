@@ -1,0 +1,2043 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Uri Katz's glossary of AI, machine learning, and deep learning terms with explanations and examples.">
+<meta name="theme-color" content="#f5f3ed">
+<title>AI Learning — Uri Katz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{color-scheme:light;--bg:#f5f3ed;--paper:#fffefa;--ink:#202821;--muted:#71786f;--line:#dcded4;--accent:#cf592f;--soft:#eaece2;--night:#202c25}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px}body.dark{color-scheme:dark;--bg:#151c18;--paper:#1c261f;--ink:#edf0e7;--muted:#a1ad9e;--line:#354239;--accent:#f29368;--soft:#28362c;--night:#0e1712}a{color:inherit;text-decoration:none}button,input{font:inherit}button,a,input{outline-offset:5px}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent)}.wrap{max-width:1240px;margin:auto;padding:0 48px}header{height:96px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.brand{font-family:Manrope,sans-serif;font-weight:800;letter-spacing:-.7px;font-size:20px;display:flex;align-items:center;gap:12px}.mark{background:var(--ink);color:var(--bg);width:33px;height:33px;border-radius:9px;display:grid;place-items:center;font-size:19px}.brand span:last-child{font-weight:500;color:var(--muted)}nav{display:flex;gap:28px;align-items:center;font-size:13px}nav a:hover{color:var(--accent)}.theme{width:35px;height:35px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);display:grid;place-items:center}.theme svg{width:17px;height:17px}.eyebrow{font:600 11px 'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:9px}.dot{width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block}.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:46px;padding:76px 0 66px;align-items:center}.hero h1{font:500 clamp(48px,5.6vw,72px)/1.06 Manrope,sans-serif;letter-spacing:-4px;margin:27px 0 24px}.hero h1 em{font-family:Georgia,serif;color:var(--accent);font-weight:400}.hero p{color:var(--muted);max-width:370px;line-height:1.8;margin:0 0 30px;font-size:15px}.hero-link{display:inline-flex;gap:30px;align-items:center;border-bottom:1px solid var(--ink);padding-bottom:9px;font-size:13px;font-weight:600}.art{height:330px;position:relative;overflow:hidden;background:var(--soft);border-radius:3px;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:16px 16px}.art svg{width:100%;height:100%}.art-label{position:absolute;left:22px;top:20px;font-family:monospace;font-size:10px;letter-spacing:1px;color:var(--muted)}.art-caption{position:absolute;right:20px;bottom:19px;font:10px monospace;color:var(--muted)}.art .wire{fill:none;stroke:var(--muted);stroke-width:1;opacity:.3}.art .node{fill:var(--bg);stroke:var(--muted);stroke-width:1.3}.art .hot{fill:var(--accent);stroke:var(--accent)}.art .orbit{fill:none;stroke:var(--muted);opacity:.14;stroke-dasharray:3 6}.strip{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:19px 0;color:var(--muted);font:11px monospace;gap:15px}.strip strong{color:var(--ink);font-weight:400}.library{padding:55px 0 75px}.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:27px}.section-head h2{font:500 30px Manrope,sans-serif;letter-spacing:-1px;margin:8px 0}.section-head p{color:var(--muted);font-size:13px;margin:0}.count{font:11px monospace;color:var(--muted)}.controls{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:30px 0}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tab{border:1px solid transparent;background:none;border-radius:6px;color:var(--muted);padding:10px 14px;font-size:12px}.tab[aria-pressed=true]{background:var(--ink);color:var(--bg)}.tab:hover{border-color:var(--line)}.search{flex-shrink:0;display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:6px;padding:0 12px;width:220px;color:var(--muted)}.search svg{width:15px;height:15px;flex-shrink:0}.search input{min-width:0;width:100%;border:0;background:transparent;color:var(--ink);padding:10px 0;font-size:12px}.empty{min-height:235px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px dashed var(--line);border-radius:8px;text-align:center;padding:36px;background:var(--paper)}.empty-icon{width:42px;height:42px;display:grid;place-items:center;background:var(--soft);border-radius:12px;margin-bottom:17px;color:var(--accent)}.empty-icon svg{width:21px;height:21px}.empty h3{font:600 17px Manrope,sans-serif;letter-spacing:-.4px;margin:0 0 9px}.empty p{color:var(--muted);font-size:13px;line-height:1.8;margin:0;max-width:340px}.empty small{margin-top:20px;color:var(--muted);font:10px monospace;letter-spacing:.7px}.entries{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.entry{min-height:120px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px}.entry small{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:1px}.entry h3{margin-bottom:4px;font:600 18px Manrope,sans-serif}.entry p{color:var(--muted);line-height:1.7;white-space:pre-line;font-size:13px}.entry a{font-size:12px;text-decoration:underline}.about{background:var(--night);color:#f1f1e8;padding:37px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;border-radius:8px;margin-bottom:45px}.about .eyebrow{color:#b6c0b4;font-size:10px}.about h2{font:400 24px/1.4 Manrope,sans-serif;letter-spacing:-.6px;margin:14px 0 0}.about a{border:1px solid #68736a;border-radius:5px;padding:12px 18px;white-space:nowrap;font-size:12px}.about a:hover{background:#34443a}footer{border-top:1px solid var(--line);padding:25px 0 30px;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}footer .signature{color:var(--ink)}[hidden]{display:none!important}@media(max-width:800px){.wrap{padding:0 25px}.hero{gap:25px;padding:48px 0}.hero h1{font-size:54px;letter-spacing:-3px}.art{height:290px}nav{gap:17px}.entries{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){header{height:76px}.brand{font-size:17px;gap:8px}nav>a{display:none}.hero{grid-template-columns:1fr;gap:32px}.hero h1{font-size:53px}.hero p{max-width:100%}.art{height:240px}.strip{font-size:9px;flex-wrap:wrap}.strip span:last-child{display:none}.library{padding:40px 0}.section-head{gap:20px}.count{white-space:nowrap}.controls{flex-direction:column;gap:14px}.tab{padding:9px 11px}.search{width:100%}.search input{padding:12px 0}.about{padding:28px;flex-direction:column;align-items:flex-start;gap:24px}.about h2{font-size:22px}.entries{grid-template-columns:1fr}footer{gap:15px;font-size:10px}.empty{padding:30px 20px}.hero-link{font-size:12px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Glossary table and dedicated term view */
+.skip{position:absolute;top:-100px;left:20px;z-index:10;background:var(--ink);color:var(--bg);padding:12px}.skip:focus{top:8px}
+.table-shell{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
+table{border-collapse:collapse;width:100%;text-align:left}caption{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+th{font:500 10px 'DM Sans',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);background:var(--soft);padding:17px 22px;border-bottom:1px solid var(--line)}
+td{padding:20px 22px;border-bottom:1px solid var(--line);vertical-align:middle}tbody tr:last-child td{border-bottom:0}tbody tr{cursor:pointer;transition:background .15s}tbody tr:hover,tbody tr:focus-within{background:var(--soft)}
+.term-name{font:600 15px/1.5 Manrope,sans-serif;letter-spacing:-.2px;display:block}.term-name:hover{color:var(--accent)}.term-summary{color:var(--muted);font-size:12px;line-height:1.7}.term-category{font:10px/1.6 'DM Sans',sans-serif;color:var(--accent);white-space:nowrap}.row-arrow{color:var(--accent);font-size:19px}.status-label{display:inline-block;font:9px 'DM Sans',sans-serif;padding:3px 6px;border:1px solid var(--line);border-radius:3px;color:var(--muted);margin-top:6px}.table-caption{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px;margin-top:17px}.sort{background:none;border:none;color:var(--muted);padding:0;display:inline-flex;gap:8px;cursor:pointer}.sort:hover{color:var(--accent)}
+.detail{padding:43px 0 65px}.crumb{font-size:12px;line-height:1.6;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:40px}.crumb a:hover{color:var(--accent)}.detail-top{border-bottom:1px solid var(--line);padding-bottom:35px;margin-bottom:38px}.detail h1{font:500 clamp(34px,4.5vw,56px)/1.15 Manrope,sans-serif;letter-spacing:-2px;margin:22px 0}.detail h1:focus{outline:none}.detail-lede{font-size:18px;line-height:1.75;max-width:780px;color:var(--muted);margin:0}.detail-layout{display:grid;grid-template-columns:180px minmax(0,720px);gap:65px;justify-content:space-between}.contents{display:block;font-size:12px;color:var(--muted);align-self:start;position:sticky;top:25px}.contents p{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);margin:0 0 18px}.contents a{display:block;margin:0 0 17px;line-height:1.5}.contents a:hover{color:var(--accent)}.article-section{margin:0 0 37px;scroll-margin-top:25px}.article-section h2{font:600 22px Manrope,sans-serif;letter-spacing:-.6px;margin:0 0 15px}.article-section h2 span{font:10px monospace;color:var(--accent);display:inline-block;min-width:32px;vertical-align:middle}.article-section p{line-height:1.9;font-size:16px;margin:0;color:var(--muted)}.example-box{padding:26px 28px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 6px 6px 0}.example-box p{color:var(--ink)}.related{display:flex;flex-wrap:wrap;gap:9px}.related a{font-size:12px;border:1px solid var(--line);padding:10px 13px;border-radius:5px;line-height:1.5}.related a:hover{border-color:var(--accent);color:var(--accent)}.sources{padding:0;list-style:none;margin:0}.sources li{margin-bottom:12px}.sources a{font-size:13px;color:var(--accent);line-height:1.6;text-decoration:underline;text-underline-offset:3px}.sources small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.note-status{font:10px monospace;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:7px 9px;display:inline-block;margin-top:18px}.article-nav{display:grid;grid-template-columns:1fr 1fr;gap:22px;border-top:1px solid var(--line);padding-top:25px;margin-top:40px}.article-nav a{display:flex;flex-direction:column;gap:10px;font:600 13px/1.5 Manrope,sans-serif}.article-nav a:last-child{text-align:right}.article-nav span{font:10px 'DM Sans',sans-serif;letter-spacing:1px;color:var(--muted);text-transform:uppercase}.article-nav a:hover{color:var(--accent)}
+@media(max-width:800px){.detail-layout{grid-template-columns:140px minmax(0,1fr);gap:30px}td,th{padding:16px}.term-category{white-space:normal}.term-name{font-size:14px}.detail h1{letter-spacing:-1.5px}}
+@media(max-width:600px){.table-shell{border-left:0;border-right:0;border-radius:0;margin:0 -4px}td,th{padding:15px 10px}.summary-col{display:none}.term-category{font-size:9px;max-width:95px;display:block}th:last-child,td:last-child{width:20px;padding-left:0;padding-right:5px}.term-name{font-size:14px}.table-caption{font-size:10px}.detail{padding-top:27px}.crumb{margin-bottom:25px}.detail-layout{display:block}.contents{position:static;display:flex;gap:15px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:30px}.contents p{width:100%;margin:0}.contents a{margin:0 0 10px;font-size:11px}.detail h1{font-size:36px}.detail-lede{font-size:16px}.detail-top{padding-bottom:25px;margin-bottom:25px}.article-section p{font-size:15px}.article-section h2{font-size:20px}.example-box{padding:22px}.detail main{min-width:0}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#notebook">Skip to glossary</a>
+<div class="wrap">
+<header><a class="brand" href="#" aria-label="AI Learning home"><span class="mark" aria-hidden="true">✳</span>AI Learning<span>/ UK</span></a><nav aria-label="Main navigation"><a href="#notebook">Glossary</a><a href="https://urikatzz.github.io/uri-katz-portfolio/">Portfolio ↗</a><button class="theme" id="theme" aria-label="Switch to dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg></button></nav></header>
+<noscript><p>This interactive glossary needs JavaScript enabled to display its terms and descriptions.</p></noscript>
+<main id="index-view">
+<section class="hero" aria-labelledby="hero-title"><div><div class="eyebrow"><span class="dot"></span>Uri Katz / personal notebook</div><h1 id="hero-title">A place for<br>learning <em>AI.</em></h1><p>An evolving glossary of AI, agents, and machine learning. Find a term, follow the connections, and understand how it works.</p><a class="hero-link" href="#notebook">Explore the glossary <span aria-hidden="true">↓</span></a></div><div class="art" aria-hidden="true"><span class="art-label">FIG. 01 — CONNECTING IDEAS</span><svg viewBox="0 0 460 330"><circle class="orbit" cx="230" cy="166" r="135"/><circle class="orbit" cx="230" cy="166" r="101"/><g class="wire"><path d="M78 110 177 77 281 110 383 165M78 110 177 165 281 110M78 110 177 253 281 220 383 165M78 220 177 77 281 220M78 220 177 165 281 220 383 165M78 220 177 253 281 110 383 165M177 77 281 110M177 165 281 110M177 165 281 220M177 253 281 220"/></g><g fill="none" stroke="var(--accent)" stroke-width="1.7"><path d="M78 110 177 165 281 110 383 165"/></g><g class="node"><circle cx="78" cy="110" r="8"/><circle cx="78" cy="220" r="8"/><circle cx="177" cy="77" r="8"/><circle cx="177" cy="165" r="11" class="hot"/><circle cx="177" cy="253" r="8"/><circle cx="281" cy="110" r="9" class="hot"/><circle cx="281" cy="220" r="8"/><circle cx="383" cy="165" r="11"/></g></svg><span class="art-caption">INPUT → CONNECTION → UNDERSTANDING</span></div></section>
+<div class="strip"><span><strong>01</strong> ARTIFICIAL INTELLIGENCE</span><span><strong>02</strong> MACHINE LEARNING</span><span><strong>03</strong> DEEP LEARNING</span><span>AN OPEN NOTEBOOK ↙</span></div>
+<section class="library" id="notebook" aria-labelledby="notebook-title"><div class="section-head"><div><div class="eyebrow" style="color:var(--muted)">The index</div><h2 id="notebook-title">A glossary of ideas.</h2><p>Choose a term to explore its definition, mechanics, and examples.</p></div><span class="count" id="count">98 TERMS</span></div>
+<div class="controls"><div class="tabs" role="group" aria-label="Filter terms by subject"><button class="tab" data-filter="all" aria-pressed="true">All terms</button><button class="tab" data-filter="agents" aria-pressed="false">Agents</button><button class="tab" data-filter="rag" aria-pressed="false">RAG</button><button class="tab" data-filter="models" aria-pressed="false">Models</button><button class="tab" data-filter="ml" aria-pressed="false">ML / DL</button><button class="tab" data-filter="platforms" aria-pressed="false">Tools</button><button class="tab" data-filter="systems" aria-pressed="false">Systems</button></div><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="search" type="search" aria-label="Search terms" placeholder="Find a term…"></label></div>
+<p class="count" id="results-status" role="status" aria-live="polite"></p><div id="results"><div class="table-shell" id="table-shell"><table><caption>AI glossary. Select a term to open its detailed explanation.</caption><thead><tr><th scope="col" style="width:29%">Term</th><th scope="col" style="width:19%">Category</th><th scope="col" class="summary-col">In one sentence</th><th scope="col"><span class="sr-only">Open</span></th></tr></thead><tbody id="entries"></tbody></table></div><div class="empty" id="empty" hidden><h3>No matching terms.</h3><p>Try another search or choose a different category.</p><button class="tab" id="reset-search" style="margin-top:15px;border-color:var(--line)">Clear filters</button></div></div><div class="table-caption"><span>Every term is a doorway. Follow a connection.</span><button class="sort" id="sort" aria-label="Sort terms Z to A">A–Z <span aria-hidden="true">↓</span></button></div></section>
+<aside class="about"><div><div class="eyebrow"><span class="dot"></span>Beyond the notebook</div><h2>Curious about what I build?</h2></div><a href="https://urikatzz.github.io/uri-katz-portfolio/">Visit my portfolio <span aria-hidden="true">↗</span></a></aside>
+</main>
+<main id="detail-view" class="detail" hidden></main>
+<footer><span class="signature">Uri Katz © <span id="year"></span></span><span>Always a work in progress. <span style="color:var(--accent)">✳</span></span></footer>
+</div>
+<script>
+
+'use strict';
+// Term descriptions and source links. Add new entries using the same structure.
+const notes = [
+  {
+    "title": "Agent teams",
+    "category": "agents",
+    "what": "Multiple agents coordinated around a shared objective.",
+    "how": "Divide responsibilities, define communication and artifact ownership, then combine and verify the results.",
+    "example": "A reviewer, implementer, and test investigator collaborate on one feature.",
+    "watch": "Extra agents introduce communication overhead and conflicting edits; independent tasks benefit most.",
+    "sources": [
+      "multi"
+    ],
+    "related": [
+      "Subagents",
+      "Software factory",
+      "Evals"
+    ],
+    "slug": "agent-teams"
+  },
+  {
+    "title": "Agents",
+    "category": "agents",
+    "what": "Systems in which a model selects actions to pursue a goal.",
+    "how": "An agent observes its environment, chooses a tool or response, receives feedback, and decides what to do next.",
+    "example": "A coding agent investigates a bug, edits code, and runs the relevant checks.",
+    "watch": "Use explicit limits and verification when the agent can affect external systems.",
+    "sources": [
+      "agent"
+    ],
+    "related": [
+      "Harness",
+      "Tools",
+      "Loop engineering"
+    ],
+    "slug": "agents"
+  },
+  {
+    "title": "Chain of thought",
+    "category": "agents",
+    "what": "Intermediate reasoning steps associated with solving a multi-step problem.",
+    "how": "A model can generate intermediate steps before an answer; prompting examples can encourage this behavior.",
+    "example": "Break a calculation into quantities, relationships, and a checked result.",
+    "watch": "A generated explanation can be wrong or unfaithful; verify outcomes rather than trusting the narrative.",
+    "sources": [
+      "cot"
+    ],
+    "related": [
+      "Reasoning",
+      "Model effort",
+      "Evals"
+    ],
+    "slug": "chain-of-thought"
+  },
+  {
+    "title": "Chunking",
+    "category": "rag",
+    "what": "Splitting a document into smaller units for processing or retrieval.",
+    "how": "Choose boundaries by tokens, paragraphs, sections, or structure; optionally retain overlap and source metadata.",
+    "example": "Split a long manual into sections that fit a retrieval prompt.",
+    "watch": "Tiny chunks lose context; huge chunks dilute relevance and consume the input budget.",
+    "sources": [
+      "rag"
+    ],
+    "related": [
+      "RAG",
+      "Tokenization",
+      "Context"
+    ],
+    "slug": "chunking"
+  },
+  {
+    "title": "ComfyUI",
+    "category": "platforms",
+    "what": "A visual, node-based environment for generative AI workflows.",
+    "how": "Connect model loading, conditioning, sampling, and output nodes into a graph, then execute the workflow.",
+    "example": "Create an image-to-image pipeline and swap its model or sampling settings.",
+    "watch": "A workflow depends on compatible models, node packages, and available hardware.",
+    "sources": [
+      "comfy"
+    ],
+    "related": [
+      "Graph engineering",
+      "Models",
+      "Inference"
+    ],
+    "slug": "comfyui"
+  },
+  {
+    "title": "Commands",
+    "category": "agents",
+    "what": "Named actions a user invokes in a shell or agent interface.",
+    "how": "The interface maps a command and its arguments to a program, prompt, skill, or workflow.",
+    "example": "A custom /review command loads a code-review procedure.",
+    "watch": "Slash-command behavior depends on the host; shell commands execute programs directly.",
+    "sources": [
+      "custom"
+    ],
+    "related": [
+      "Skills",
+      "Hooks",
+      "stdin / stdout"
+    ],
+    "slug": "commands"
+  },
+  {
+    "title": "Context",
+    "category": "agents",
+    "what": "The information available to a model for its current response.",
+    "how": "The application assembles instructions, messages, retrieved material, and tool results into a bounded input window.",
+    "example": "A code question includes the relevant file and compiler error in the prompt.",
+    "watch": "More context can add distraction; relevance matters as well as size.",
+    "sources": [
+      "context"
+    ],
+    "related": [
+      "Memory",
+      "Context compaction",
+      "Tokenization"
+    ],
+    "slug": "context"
+  },
+  {
+    "title": "Context compaction",
+    "category": "rag",
+    "what": "Reducing accumulated conversation or task context while retaining useful information.",
+    "how": "Summarize older material or replace it with a structured state record, keeping critical facts and references.",
+    "example": "Keep the current plan, unresolved failures, and edited files instead of every command result.",
+    "watch": "Compaction is lossy; preserve original artifacts when exact details may matter later.",
+    "sources": [
+      "context"
+    ],
+    "related": [
+      "Context",
+      "Memory",
+      "Harness"
+    ],
+    "slug": "context-compaction"
+  },
+  {
+    "title": "CUDA",
+    "category": "platforms",
+    "what": "NVIDIA's platform and programming environment for GPU-accelerated computing.",
+    "how": "Execute parallel kernels and accelerated library operations on supported NVIDIA GPUs.",
+    "example": "A PyTorch training job uses CUDA-enabled operations for matrix computations.",
+    "watch": "CUDA targets NVIDIA hardware; an Apple-silicon Mac uses other acceleration backends.",
+    "sources": [
+      "cuda"
+    ],
+    "related": [
+      "PyTorch",
+      "Training",
+      "MLX vs. PyTorch"
+    ],
+    "slug": "cuda"
+  },
+  {
+    "title": "Deep learning",
+    "category": "ml",
+    "what": "Machine learning based on neural networks with multiple learned layers.",
+    "how": "Successive layers transform inputs into representations; gradient-based training adjusts their parameters.",
+    "example": "A network maps an image to an object label or text context to a token prediction.",
+    "watch": "Depth alone does not make a model useful; data, architecture, compute, and evaluation all matter.",
+    "sources": [
+      "neural"
+    ],
+    "related": [
+      "Machine learning",
+      "Transformers",
+      "Weights"
+    ],
+    "slug": "deep-learning"
+  },
+  {
+    "title": "Durable agents",
+    "category": "agents",
+    "what": "Agents whose work can persist and resume across interruptions.",
+    "how": "Save execution state at checkpoints and restore it after a pause, restart, or failure.",
+    "example": "A research job waits for approval, then continues from its saved state.",
+    "watch": "Retries must handle side effects carefully; replay must not duplicate a payment or message.",
+    "sources": [
+      "durable"
+    ],
+    "related": [
+      "Memory",
+      "Graph engineering",
+      "Harness"
+    ],
+    "slug": "durable-agents"
+  },
+  {
+    "title": "Embedding models",
+    "category": "rag",
+    "what": "Models that map content into numerical vectors useful for comparison.",
+    "how": "Encode documents and queries into compatible vector representations, then compare them with a chosen similarity metric.",
+    "example": "A query about account access retrieves a passage titled password recovery.",
+    "watch": "Use compatible query and document encoders; changing models can require re-indexing.",
+    "sources": [
+      "embed"
+    ],
+    "related": [
+      "Vector databases",
+      "Hybrid retrieval",
+      "RAG"
+    ],
+    "slug": "embedding-models"
+  },
+  {
+    "title": "Evals",
+    "category": "agents",
+    "what": "Repeatable assessments of a model or application's behavior.",
+    "how": "Run representative cases, collect outputs or traces, and grade them against criteria using code, people, or models.",
+    "example": "Check whether a retrieval assistant answers correctly and cites the right document.",
+    "watch": "A benchmark is useful only to the extent that its cases and grading reflect the real task.",
+    "sources": [
+      "eval"
+    ],
+    "related": [
+      "LLM as a judge",
+      "Opik",
+      "Langfuse"
+    ],
+    "slug": "evals"
+  },
+  {
+    "title": "Fine-tuning",
+    "category": "models",
+    "what": "Continuing training from a pretrained model for a narrower objective.",
+    "how": "Use a task-specific dataset to update all weights or a smaller set of trainable parameters.",
+    "example": "Adapt an instruction model to produce a consistent domain-specific output format.",
+    "watch": "Poor data can reduce quality; evaluate on held-out cases rather than training examples.",
+    "sources": [
+      "finetune"
+    ],
+    "related": [
+      "LoRA",
+      "Supervised fine-tuning (SFT)",
+      "Fine-tuning types"
+    ],
+    "slug": "fine-tuning"
+  },
+  {
+    "title": "Fine-tuning types",
+    "category": "models",
+    "what": "Different objectives and parameter-update strategies for adapting pretrained models.",
+    "how": "SFT learns target outputs; preference methods learn preferred behavior; reinforcement methods optimize rewards. Full tuning and LoRA describe which parameters change.",
+    "example": "First teach a format with SFT, then compare a preference-training approach on quality.",
+    "watch": "Training objective and parameter-efficient technique are separate dimensions.",
+    "sources": [
+      "finetypes"
+    ],
+    "related": [
+      "Supervised fine-tuning (SFT)",
+      "Preference optimization",
+      "LoRA"
+    ],
+    "slug": "fine-tuning-types"
+  },
+  {
+    "title": "Gool",
+    "category": "platforms",
+    "what": "The spelling alone does not identify a specific AI term or product. The original name or a link will resolve it.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "gool"
+  },
+  {
+    "title": "GPT — Generative Pre-trained Transformer",
+    "category": "ml",
+    "what": "A family of generative models based on pretrained transformer decoders.",
+    "how": "Pretraining learns next-token prediction from sequences; later adaptation can make the model more useful for instructions or other tasks.",
+    "example": "Continue a text sequence or generate a response to a conversation.",
+    "watch": "GPT expands to Generative Pre-trained Transformer; the term is not a synonym for all deep learning.",
+    "sources": [
+      "llm",
+      "attention"
+    ],
+    "related": [
+      "Transformers",
+      "Self-supervised learning",
+      "LLMs"
+    ],
+    "slug": "gpt-generative-pre-trained-transformer"
+  },
+  {
+    "title": "Graph engineering",
+    "category": "agents",
+    "what": "Representing a workflow as explicit nodes, transitions, and shared state.",
+    "how": "Nodes perform work; edges select the next step through fixed paths or conditional routing.",
+    "example": "A support workflow branches into retrieval, clarification, or escalation.",
+    "watch": "Here this means workflow graphs; knowledge graphs and GraphRAG solve a different problem.",
+    "sources": [
+      "graph"
+    ],
+    "related": [
+      "Loop engineering",
+      "Durable agents",
+      "RAG vs. GraphRAG"
+    ],
+    "slug": "graph-engineering"
+  },
+  {
+    "title": "Guardrails",
+    "category": "agents",
+    "what": "Checks and controls that constrain an AI application's inputs, actions, or outputs.",
+    "how": "Combine validation, policy checks, permission gates, and monitoring at the appropriate boundaries.",
+    "example": "Validate generated JSON before using it to update a record.",
+    "watch": "A content filter is not a substitute for authorization or isolation.",
+    "sources": [
+      "guardrails",
+      "perm"
+    ],
+    "related": [
+      "Guardrails AI",
+      "Prompt injection",
+      "Evals"
+    ],
+    "slug": "guardrails"
+  },
+  {
+    "title": "Guardrails AI",
+    "category": "agents",
+    "what": "A software framework for validating LLM application inputs and outputs.",
+    "how": "Build guards from validators and choose how the application handles validation failures.",
+    "example": "Reject a response that fails a required format or policy check.",
+    "watch": "The framework is one implementation of guardrails; its validators do not eliminate every failure mode.",
+    "sources": [
+      "guardrails"
+    ],
+    "related": [
+      "Guardrails",
+      "Prompt injection",
+      "Evals"
+    ],
+    "slug": "guardrails-ai"
+  },
+  {
+    "title": "Harness",
+    "category": "agents",
+    "what": "The runtime around a model that turns its responses into a working agent.",
+    "how": "It supplies instructions, tools, state, execution rules, and a loop that feeds results back to the model.",
+    "example": "A coding harness gives an LLM repository access, runs its requested commands, and records progress.",
+    "watch": "A stronger model cannot compensate for every weakness in its execution environment.",
+    "sources": [
+      "harness"
+    ],
+    "related": [
+      "Agents",
+      "Tools",
+      "Context"
+    ],
+    "slug": "harness"
+  },
+  {
+    "title": "Herder",
+    "category": "platforms",
+    "what": "A repository or product link is needed to identify the intended tool.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "herder"
+  },
+  {
+    "title": "Hermes",
+    "category": "agents",
+    "what": "Several AI projects use this name. A repository link will identify which project belongs in this notebook.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "hermes"
+  },
+  {
+    "title": "Hooks",
+    "category": "agents",
+    "what": "Handlers triggered at defined events in an agent runtime.",
+    "how": "The harness runs a configured action before or after an event, such as a tool call or session start.",
+    "example": "A pre-execution hook rejects a shell command that violates a project rule.",
+    "watch": "A reliable trigger does not make every handler deterministic; handlers can themselves use models.",
+    "sources": [
+      "custom"
+    ],
+    "related": [
+      "Commands",
+      "Permissions / controls",
+      "Harness"
+    ],
+    "slug": "hooks"
+  },
+  {
+    "title": "HTTP",
+    "category": "systems",
+    "what": "An application-layer protocol for exchanging requests and responses.",
+    "how": "A client sends a method, target, headers, and optional body; a server returns a status, headers, and content.",
+    "example": "A backend posts JSON to a model inference endpoint.",
+    "watch": "HTTP is not the underlying transport itself; different versions use different transport arrangements.",
+    "sources": [
+      "http"
+    ],
+    "related": [
+      "HTTPS",
+      "TCP",
+      "JSON-RPC 2.0 (MCP)"
+    ],
+    "slug": "http"
+  },
+  {
+    "title": "HTTPS",
+    "category": "systems",
+    "what": "HTTP carried over a TLS-secured connection.",
+    "how": "TLS authenticates the server and protects data in transit before application requests are exchanged.",
+    "example": "Call a hosted model endpoint without exposing the request contents to passive network observers.",
+    "watch": "Transport encryption does not prove that the endpoint's data-handling policies suit your application.",
+    "sources": [
+      "https"
+    ],
+    "related": [
+      "HTTP",
+      "TCP",
+      "Permissions / controls"
+    ],
+    "slug": "https"
+  },
+  {
+    "title": "Hugging Face",
+    "category": "platforms",
+    "what": "An ecosystem for sharing and working with models, datasets, and ML tooling.",
+    "how": "Use the Hub to discover versioned repositories and libraries to load models or process datasets.",
+    "example": "Download a checkpoint and tokenizer, then run a local experiment.",
+    "watch": "Review each artifact's model card, license, dependencies, and provenance.",
+    "sources": [
+      "hub"
+    ],
+    "related": [
+      "Models",
+      "PyTorch",
+      "Fine-tuning"
+    ],
+    "slug": "hugging-face"
+  },
+  {
+    "title": "Hybrid retrieval",
+    "category": "rag",
+    "what": "Combining different retrieval signals, commonly lexical and vector search.",
+    "how": "Run keyword and semantic retrieval, then merge or fuse their ranked results before selecting context.",
+    "example": "An exact API error code matches lexically while a paraphrased question matches semantically.",
+    "watch": "Score scales differ; merging results requires a deliberate ranking strategy.",
+    "sources": [
+      "retrieval"
+    ],
+    "related": [
+      "RAG",
+      "Embedding models",
+      "Reranking"
+    ],
+    "slug": "hybrid-retrieval"
+  },
+  {
+    "title": "Inference",
+    "category": "models",
+    "what": "Using a trained model to compute an output from new input.",
+    "how": "Run a forward computation with learned parameters, then apply the task's output or generation procedure.",
+    "example": "An embedding model encodes a new document; a language model generates an answer.",
+    "watch": "Ordinary inference does not update the model's learned weights.",
+    "sources": [
+      "pytorch"
+    ],
+    "related": [
+      "Training",
+      "Models",
+      "Prefill and decode"
+    ],
+    "slug": "inference"
+  },
+  {
+    "title": "Inter-token Latency (ITL)",
+    "category": "models",
+    "what": "The time between successive generated output tokens.",
+    "how": "Record token arrival intervals after the first token and summarize them using averages or percentiles.",
+    "example": "A reply starts promptly but feels slow because later tokens arrive far apart.",
+    "watch": "Streaming chunks may contain several tokens; chunk timing and token timing are not always identical.",
+    "sources": [
+      "metrics"
+    ],
+    "related": [
+      "Time to First Token (TTFT)",
+      "Prefill and decode",
+      "Routing and batching"
+    ],
+    "slug": "inter-token-latency-itl"
+  },
+  {
+    "title": "JEV",
+    "category": "agents",
+    "what": "The name may refer to a decision model, a tool, or a personal framework. A link or expanded name will identify the intended meaning.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "jev"
+  },
+  {
+    "title": "JSON-RPC 2.0 (MCP)",
+    "category": "systems",
+    "what": "A JSON-based remote-procedure-call message format used by MCP.",
+    "how": "Requests name a method and parameters; IDs match responses to requests. Notifications omit an ID and do not receive a reply.",
+    "example": "Send a tools/call request and match its result using the same request ID.",
+    "watch": "JSON-RPC defines messages, not transport encryption, permissions, or application semantics.",
+    "sources": [
+      "json"
+    ],
+    "related": [
+      "MCP",
+      "HTTP",
+      "stdin / stdout"
+    ],
+    "slug": "json-rpc-2-0-mcp"
+  },
+  {
+    "title": "Karpathy wiki / second brain",
+    "category": "agents",
+    "what": "A personal knowledge system for turning collected material into connected notes.",
+    "how": "In the general pattern, ingest sources, write summaries, link concepts, and update the collection as understanding changes.",
+    "example": "A paper note links attention, KV caching, and inference performance.",
+    "watch": "This describes the second-brain idea; the exact Karpathy project or workflow in your list still needs a link.",
+    "sources": [],
+    "related": [
+      "Memory",
+      "RAG",
+      "Progressive disclosure"
+    ],
+    "slug": "karpathy-wiki-second-brain"
+  },
+  {
+    "title": "KV cache",
+    "category": "models",
+    "what": "Stored attention keys and values reused during autoregressive generation.",
+    "how": "Keep intermediate attention data for processed tokens so decoding does not recompute their keys and values every step.",
+    "example": "A chat model reuses its prompt's attention state while producing a reply.",
+    "watch": "The cache consumes memory as context grows and is distinct from the model's weights.",
+    "sources": [
+      "cache"
+    ],
+    "related": [
+      "Prefill and decode",
+      "Context",
+      "RAG vs. CAG"
+    ],
+    "slug": "kv-cache"
+  },
+  {
+    "title": "LangChain",
+    "category": "platforms",
+    "what": "A framework with abstractions and integrations for model-based applications and agents.",
+    "how": "Compose models, tools, prompts, and middleware; use an agent loop or integrate with an orchestration runtime.",
+    "example": "Build an assistant that calls a search tool before answering.",
+    "watch": "Understand the underlying model and tool calls; abstractions do not remove execution costs.",
+    "sources": [
+      "langchain"
+    ],
+    "related": [
+      "Agents",
+      "Graph engineering",
+      "RAG"
+    ],
+    "slug": "langchain"
+  },
+  {
+    "title": "Langfuse",
+    "category": "platforms",
+    "what": "An AI engineering platform for tracing, prompt management, and evaluation.",
+    "how": "Capture model and application events, organize them into traces, and attach metrics or evaluation scores.",
+    "example": "Compare prompt versions by answer quality, latency, and cost.",
+    "watch": "Choose what to log deliberately; traces may include application or user data.",
+    "sources": [
+      "langfuse"
+    ],
+    "related": [
+      "Opik",
+      "MLflow",
+      "Evals"
+    ],
+    "slug": "langfuse"
+  },
+  {
+    "title": "LLM as a judge",
+    "category": "agents",
+    "what": "Using a language model to evaluate another output against a rubric.",
+    "how": "Provide the task, candidate answer, criteria, and sometimes a reference answer; collect structured scores and reasons.",
+    "example": "Grade whether an answer is supported by its retrieved documents.",
+    "watch": "Judges can be biased or inconsistent; calibrate with human labels and deterministic checks.",
+    "sources": [
+      "eval"
+    ],
+    "related": [
+      "Evals",
+      "Guardrails",
+      "Opik"
+    ],
+    "slug": "llm-as-a-judge"
+  },
+  {
+    "title": "LLMs",
+    "category": "models",
+    "what": "Large language models: learned systems that model and generate language.",
+    "how": "An autoregressive LLM predicts successive tokens from context using parameters learned during training.",
+    "example": "Generate a draft explanation or propose a code patch from a natural-language request.",
+    "watch": "Plausible text can be unsupported; use external evidence and verification when needed.",
+    "sources": [
+      "llm"
+    ],
+    "related": [
+      "Transformers",
+      "Tokenization",
+      "Inference"
+    ],
+    "slug": "llms"
+  },
+  {
+    "title": "LM Studio",
+    "category": "platforms",
+    "what": "An application and developer environment for running compatible language models locally.",
+    "how": "Load a model, chat with it, or expose a local API for another application.",
+    "example": "Point a local prototype at an on-device inference server.",
+    "watch": "Model support, speed, and memory use depend on the runtime and hardware.",
+    "sources": [
+      "lmstudio"
+    ],
+    "related": [
+      "Ollama",
+      "Inference",
+      "MLX vs. PyTorch"
+    ],
+    "slug": "lm-studio"
+  },
+  {
+    "title": "Loop engineering",
+    "category": "agents",
+    "what": "Designing the repeated decision-and-action cycle of an agent.",
+    "how": "Define the observations, available actions, feedback, budgets, and stopping conditions for each iteration.",
+    "example": "A coding agent edits a file, runs tests, reads failures, and iterates until checks pass or its budget ends.",
+    "watch": "Without clear stop conditions, an agent can repeat unproductive work.",
+    "sources": [
+      "agent"
+    ],
+    "related": [
+      "Harness",
+      "Agents",
+      "Evals"
+    ],
+    "slug": "loop-engineering"
+  },
+  {
+    "title": "LoRA",
+    "category": "models",
+    "what": "Low-Rank Adaptation: training small parameter updates instead of all base-model weights.",
+    "how": "Freeze the base model and learn low-rank matrices whose product supplies an update to selected weight matrices.",
+    "example": "Fine-tune a model's output style using an adapter while retaining the original checkpoint.",
+    "watch": "Adapters reduce training requirements but do not remove the need to load and evaluate a base model.",
+    "sources": [
+      "lora"
+    ],
+    "related": [
+      "Fine-tuning",
+      "Weights",
+      "Quantization"
+    ],
+    "slug": "lora"
+  },
+  {
+    "title": "Machine learning",
+    "category": "ml",
+    "what": "Building systems that learn predictive or generative behavior from data.",
+    "how": "Choose a model and objective, fit it on training data, and evaluate it on examples it has not learned from.",
+    "example": "Predict whether a game session is likely to end early from gameplay features.",
+    "watch": "Evaluation data must represent the task and avoid leaking training information.",
+    "sources": [
+      "ml"
+    ],
+    "related": [
+      "Deep learning",
+      "Training",
+      "Evals"
+    ],
+    "slug": "machine-learning"
+  },
+  {
+    "title": "MCP",
+    "category": "agents",
+    "what": "Model Context Protocol: a shared interface between AI applications and capability servers.",
+    "how": "A host uses clients to communicate with servers that expose capabilities such as tools, resources, and prompts.",
+    "example": "A coding assistant connects to a server that offers repository search.",
+    "watch": "MCP standardizes communication; authorization and safe execution still need implementation.",
+    "sources": [
+      "mcp"
+    ],
+    "related": [
+      "MCP Apps",
+      "JSON-RPC 2.0 (MCP)",
+      "Tools"
+    ],
+    "slug": "mcp"
+  },
+  {
+    "title": "MCP Apps",
+    "category": "agents",
+    "what": "An MCP extension for interactive interfaces inside compatible AI hosts.",
+    "how": "A tool declares a UI resource; the host loads its interface in a sandboxed iframe and exchanges messages with it.",
+    "example": "A data tool opens a dashboard with filters inside a conversation.",
+    "watch": "A server and host must support the UI extension; a basic MCP tool is not automatically an app.",
+    "sources": [
+      "mcpapp"
+    ],
+    "related": [
+      "MCP",
+      "Sandbox",
+      "JSON-RPC 2.0 (MCP)"
+    ],
+    "slug": "mcp-apps"
+  },
+  {
+    "title": "Memory",
+    "category": "agents",
+    "what": "Stored information that an agent can use beyond its immediate input.",
+    "how": "The application saves facts or task state and retrieves selected parts into later context.",
+    "example": "An assistant remembers a preferred code style across separate conversations.",
+    "watch": "Stored memory is not automatically visible to the model; it must be loaded or retrieved.",
+    "sources": [
+      "durable"
+    ],
+    "related": [
+      "Context",
+      "Vector databases",
+      "Durable agents"
+    ],
+    "slug": "memory"
+  },
+  {
+    "title": "Mixture of experts",
+    "category": "models",
+    "what": "A model design that routes computation through selected expert networks.",
+    "how": "A router selects a subset of experts for each token or input, allowing only part of the total parameters to be active.",
+    "example": "A sparse language model uses two chosen experts rather than every expert for a token.",
+    "watch": "Fewer active parameters does not mean all expert weights disappear from memory.",
+    "sources": [
+      "moe"
+    ],
+    "related": [
+      "Models",
+      "Weights",
+      "Inference"
+    ],
+    "slug": "mixture-of-experts"
+  },
+  {
+    "title": "MLflow",
+    "category": "platforms",
+    "what": "A platform for tracking experiments and managing ML or LLM application workflows.",
+    "how": "Record runs, parameters, metrics, and artifacts; use supported components for model lifecycle work, tracing, or evaluation.",
+    "example": "Compare several training runs or inspect an agent application's evaluation results.",
+    "watch": "Experiment tracking is useful only when datasets, configuration, and versions are captured consistently.",
+    "sources": [
+      "mlflow"
+    ],
+    "related": [
+      "Evals",
+      "Opik",
+      "Langfuse"
+    ],
+    "slug": "mlflow"
+  },
+  {
+    "title": "MLX vs. PyTorch",
+    "category": "platforms",
+    "what": "A comparison between an Apple-silicon-focused array framework and a broad ML framework.",
+    "how": "MLX provides array operations and automatic differentiation with an emphasis on Apple hardware. PyTorch offers tensor computation and a wide training ecosystem.",
+    "example": "Compare a local model's memory use and throughput on an M1 Mac.",
+    "watch": "Benchmark the specific model and workload; one framework is not universally faster.",
+    "sources": [
+      "mlx",
+      "pytorch"
+    ],
+    "related": [
+      "CUDA",
+      "LM Studio",
+      "Inference"
+    ],
+    "slug": "mlx-vs-pytorch"
+  },
+  {
+    "title": "Model effort",
+    "category": "agents",
+    "what": "A setting or policy that allocates more or less inference-time reasoning work.",
+    "how": "A provider or harness changes reasoning budgets or related behavior; exact controls vary by model.",
+    "example": "Use a lower budget for simple classification and a higher one for a difficult debugging task.",
+    "watch": "Effort, model size, and temperature are separate choices; more effort does not guarantee a better answer.",
+    "sources": [
+      "router"
+    ],
+    "related": [
+      "Reasoning",
+      "Temperature",
+      "Models"
+    ],
+    "slug": "model-effort"
+  },
+  {
+    "title": "Models",
+    "category": "models",
+    "what": "Parameterized computational systems that turn inputs into predictions or generated outputs.",
+    "how": "An architecture defines computations; learned weights determine how those computations behave.",
+    "example": "Choose a language model for text generation or an embedding model for retrieval.",
+    "watch": "An architecture name alone does not specify a checkpoint's capabilities, license, or resource requirements.",
+    "sources": [
+      "ml"
+    ],
+    "related": [
+      "Weights",
+      "LLMs",
+      "Embedding models"
+    ],
+    "slug": "models"
+  },
+  {
+    "title": "Multimodal models",
+    "category": "models",
+    "what": "Models that process or generate more than one type of content.",
+    "how": "Encode modalities such as text, images, or audio into representations the model can combine or decode.",
+    "example": "Ask a model to interpret a screenshot together with a written question.",
+    "watch": "Supported input and output modalities vary by model; multiple models are a different concept.",
+    "sources": [
+      "multimodal"
+    ],
+    "related": [
+      "Models",
+      "LLMs",
+      "Embedding models"
+    ],
+    "slug": "multimodal-models"
+  },
+  {
+    "title": "n8n workflows",
+    "category": "platforms",
+    "what": "Connected automation steps built in the n8n platform.",
+    "how": "A trigger starts execution; nodes fetch data, transform it, branch, or call services.",
+    "example": "Receive a document, extract text, call a model, and save the result.",
+    "watch": "Handle failures, duplicate triggers, and credentials as part of the workflow design.",
+    "sources": [
+      "n8n"
+    ],
+    "related": [
+      "Graph engineering",
+      "HTTP",
+      "Tools"
+    ],
+    "slug": "n8n-workflows"
+  },
+  {
+    "title": "Natural language processing (NLP)",
+    "category": "ml",
+    "what": "Computational methods for working with human language.",
+    "how": "Represent text or speech and apply models or rules for tasks such as classification, extraction, translation, or generation.",
+    "example": "Extract product names and issue categories from support tickets.",
+    "watch": "NLP includes many methods beyond large language models.",
+    "sources": [
+      "nlp"
+    ],
+    "related": [
+      "LLMs",
+      "Tokenization",
+      "Embedding models"
+    ],
+    "slug": "natural-language-processing-nlp"
+  },
+  {
+    "title": "Ollama",
+    "category": "platforms",
+    "what": "A tool for managing and serving supported language models.",
+    "how": "Select a model and call it through its command-line or API interface; supported deployments can run locally or use cloud models.",
+    "example": "Run a local assistant model and connect a backend to its API.",
+    "watch": "Verify where a chosen model runs; do not assume every configured request stays on-device.",
+    "sources": [
+      "ollama"
+    ],
+    "related": [
+      "LM Studio",
+      "Models",
+      "HTTP"
+    ],
+    "slug": "ollama"
+  },
+  {
+    "title": "Omp",
+    "category": "platforms",
+    "what": "Please expand this abbreviation or provide the repository link so the description matches your intended tool.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "omp"
+  },
+  {
+    "title": "OpenRouter",
+    "category": "platforms",
+    "what": "A service providing an API interface to models from multiple providers.",
+    "how": "Choose a model and provider-routing settings; send requests through a common gateway.",
+    "example": "Compare several models in an application without building a separate client for each provider.",
+    "watch": "Availability, data handling, model behavior, and pricing depend on routing and provider choices.",
+    "sources": [
+      "router"
+    ],
+    "related": [
+      "Models",
+      "Model effort",
+      "HTTP"
+    ],
+    "slug": "openrouter"
+  },
+  {
+    "title": "Opik",
+    "category": "platforms",
+    "what": "A platform for observing, evaluating, and improving LLM applications.",
+    "how": "Instrument model and tool calls as traces, run evaluation datasets, and compare experiments.",
+    "example": "Find which retrieval step caused an answer-quality regression.",
+    "watch": "A trace explains what executed; scoring still needs a valid rubric or reference.",
+    "sources": [
+      "opik"
+    ],
+    "related": [
+      "Evals",
+      "Langfuse",
+      "LLM as a judge"
+    ],
+    "slug": "opik"
+  },
+  {
+    "title": "Orca",
+    "category": "platforms",
+    "what": "This name is used by multiple model and software projects. Please identify the intended paper, product, or repository.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "orca"
+  },
+  {
+    "title": "Permissions / controls",
+    "category": "agents",
+    "what": "Rules that determine which operations an agent may perform.",
+    "how": "Check each requested action against allowed capabilities, scopes, and any required approval before execution.",
+    "example": "Allow repository reads but require approval before a production deployment.",
+    "watch": "Enforce permissions outside the model; an instruction to behave safely is not access control.",
+    "sources": [
+      "perm"
+    ],
+    "related": [
+      "Tools",
+      "Sandbox",
+      "Guardrails"
+    ],
+    "slug": "permissions-controls"
+  },
+  {
+    "title": "Pi",
+    "category": "platforms",
+    "what": "This could refer to a coding agent, a model or assistant product, or hardware. Please identify which one you mean.",
+    "how": "A description will be added after the exact reference is identified.",
+    "example": "Add a link or a short note naming the project.",
+    "watch": "The original name is preserved rather than assigning a guessed definition.",
+    "sources": [],
+    "related": [],
+    "pending": true,
+    "slug": "pi"
+  },
+  {
+    "title": "Preference optimization",
+    "category": "models",
+    "what": "Training that uses preferences between alternative model outputs.",
+    "how": "Compare preferred and rejected responses; methods such as DPO adjust the policy directly from preference pairs.",
+    "example": "Teach a model to prefer concise, complete answers over vague or rambling alternatives.",
+    "watch": "Not every preference method uses an explicit reward model or an online RL loop.",
+    "sources": [
+      "dpo"
+    ],
+    "related": [
+      "Supervised fine-tuning (SFT)",
+      "Reinforcement learning",
+      "Evals"
+    ],
+    "slug": "preference-optimization"
+  },
+  {
+    "title": "Prefill and decode",
+    "category": "models",
+    "what": "Two stages in autoregressive model inference.",
+    "how": "Prefill processes input tokens and builds attention state. Decode generates output tokens one at a time while reusing cached state.",
+    "example": "A long input can delay the first output even when the following tokens stream quickly.",
+    "watch": "Prefill time is only one contributor to end-to-end time to first token.",
+    "sources": [
+      "prefill"
+    ],
+    "related": [
+      "KV cache",
+      "Time to First Token (TTFT)",
+      "Inter-token Latency (ITL)"
+    ],
+    "slug": "prefill-and-decode"
+  },
+  {
+    "title": "Progressive disclosure",
+    "category": "agents",
+    "what": "Revealing detailed information only when it becomes relevant.",
+    "how": "Start with a compact index or description, then load deeper instructions or resources on demand.",
+    "example": "An agent sees skill names first and loads a skill's full procedure only when needed.",
+    "watch": "The index must provide enough information to discover the right resource.",
+    "sources": [
+      "skills"
+    ],
+    "related": [
+      "Skills",
+      "Context",
+      "Tools"
+    ],
+    "slug": "progressive-disclosure"
+  },
+  {
+    "title": "Prompt engineering",
+    "category": "agents",
+    "what": "Designing the instructions and examples that guide a model's output.",
+    "how": "Specify the task, useful context, constraints, and expected response; iterate against representative cases.",
+    "example": "Ask for a bug report with reproduction steps and evidence in a fixed structure.",
+    "watch": "A prompt change should be evaluated; a convincing sample is not enough.",
+    "sources": [
+      "context"
+    ],
+    "related": [
+      "Context",
+      "Evals",
+      "Spec-driven development"
+    ],
+    "slug": "prompt-engineering"
+  },
+  {
+    "title": "Prompt injection",
+    "category": "agents",
+    "what": "An attempt to make a model treat untrusted content as controlling instructions.",
+    "how": "An attacker puts instructions into documents, tool results, or messages that the model encounters during a task.",
+    "example": "A retrieved web page tells an assistant to ignore its task and disclose private data.",
+    "watch": "Prompt wording alone is not a complete defense; restrict capabilities and enforce access in code.",
+    "sources": [
+      "injection"
+    ],
+    "related": [
+      "Guardrails",
+      "Sandbox",
+      "Permissions / controls"
+    ],
+    "slug": "prompt-injection"
+  },
+  {
+    "title": "PyTorch",
+    "category": "platforms",
+    "what": "A tensor and automatic-differentiation framework for machine learning.",
+    "how": "Define computations with tensors and modules; autograd computes gradients for training.",
+    "example": "Train a neural classifier and later run it in inference mode.",
+    "watch": "Device placement, precision, and gradient tracking affect correctness and resource use.",
+    "sources": [
+      "pytorch"
+    ],
+    "related": [
+      "Training",
+      "TensorFlow",
+      "CUDA"
+    ],
+    "slug": "pytorch"
+  },
+  {
+    "title": "Quantization",
+    "category": "models",
+    "what": "Representing model values with fewer bits to reduce resource use.",
+    "how": "Convert selected weights or activations to lower-precision formats, with scaling or calibration as needed.",
+    "example": "Run a quantized language model when a higher-precision checkpoint does not fit in memory.",
+    "watch": "Memory savings can trade off against quality or speed, depending on hardware and kernels.",
+    "sources": [
+      "quant"
+    ],
+    "related": [
+      "Weights",
+      "Inference",
+      "Small language models (SLMs)"
+    ],
+    "slug": "quantization"
+  },
+  {
+    "title": "Query rewriting",
+    "category": "rag",
+    "what": "Transforming a user question into a more useful retrieval query.",
+    "how": "Resolve references, add relevant conversational context, or produce clearer search wording before retrieval.",
+    "example": "Rewrite 'Does it work offline?' into 'Does the desktop inference server work offline?'",
+    "watch": "A rewrite can accidentally change intent; compare retrieval results against the original question.",
+    "sources": [
+      "rag"
+    ],
+    "related": [
+      "RAG",
+      "Hybrid retrieval",
+      "Context"
+    ],
+    "slug": "query-rewriting"
+  },
+  {
+    "title": "RAG",
+    "category": "rag",
+    "what": "Retrieval-Augmented Generation: answering with information fetched from an external collection.",
+    "how": "Retrieve relevant passages for a question, place them in the model's context, and generate a grounded response.",
+    "example": "A support assistant answers a policy question using the current internal handbook.",
+    "watch": "Retrieval failures and unsupported answers remain possible; inspect both retrieval quality and grounding.",
+    "sources": [
+      "rag"
+    ],
+    "related": [
+      "Vector databases",
+      "Chunking",
+      "Reranking"
+    ],
+    "slug": "rag"
+  },
+  {
+    "title": "RAG vs. CAG",
+    "category": "rag",
+    "what": "A comparison between query-time retrieval and caching a model's prepared knowledge context.",
+    "how": "RAG fetches selected material per query. Cache-Augmented Generation can preload a bounded knowledge set and reuse its computed context.",
+    "example": "Use retrieval for a changing corpus; evaluate cached context for a small, stable reference set.",
+    "watch": "CAG is not ordinary response caching; context limits, updates, and cache costs still matter.",
+    "sources": [
+      "cag"
+    ],
+    "related": [
+      "RAG",
+      "KV cache",
+      "Context"
+    ],
+    "slug": "rag-vs-cag"
+  },
+  {
+    "title": "RAG vs. GraphRAG",
+    "category": "rag",
+    "what": "A comparison between passage-based retrieval and retrieval that uses graph structure.",
+    "how": "A GraphRAG pipeline can extract entities and relationships, build communities, and use graph-derived context or summaries.",
+    "example": "Answer a question about how people, projects, and organizations connect across many reports.",
+    "watch": "Graph construction adds cost and extraction errors; GraphRAG is a family of approaches, not one universal pipeline.",
+    "sources": [
+      "graphrag"
+    ],
+    "related": [
+      "RAG",
+      "Graph engineering",
+      "Embedding models"
+    ],
+    "slug": "rag-vs-graphrag"
+  },
+  {
+    "title": "Reasoning",
+    "category": "agents",
+    "what": "The process of working through relationships, constraints, or intermediate conclusions.",
+    "how": "An AI system can combine model computation, generated intermediate work, tool use, and verification.",
+    "example": "A debugging assistant narrows possible causes and checks them against runtime evidence.",
+    "watch": "Fluent reasoning text does not establish correctness.",
+    "sources": [
+      "cot",
+      "agent"
+    ],
+    "related": [
+      "Chain of thought",
+      "Model effort",
+      "Tools"
+    ],
+    "slug": "reasoning"
+  },
+  {
+    "title": "Reinforcement learning",
+    "category": "ml",
+    "what": "Learning a decision policy from rewards associated with actions or outcomes.",
+    "how": "An agent interacts with an environment, receives feedback, and updates a policy to improve expected return.",
+    "example": "Train a game-playing policy or optimize language-model behavior against a reward signal.",
+    "watch": "A badly chosen reward can encourage shortcuts that fail the intended goal.",
+    "sources": [
+      "rl"
+    ],
+    "related": [
+      "Machine learning",
+      "Preference optimization",
+      "Agents"
+    ],
+    "slug": "reinforcement-learning"
+  },
+  {
+    "title": "Reranking",
+    "category": "rag",
+    "what": "Reordering retrieved candidates with an additional relevance scorer.",
+    "how": "Retrieve a broad set cheaply, then apply a more expensive query-document model to a smaller shortlist.",
+    "example": "Retrieve 30 passages, rerank them, and send the best 5 to the answer model.",
+    "watch": "Reranking increases latency and cannot recover a document absent from the candidate set.",
+    "sources": [
+      "rerank"
+    ],
+    "related": [
+      "Hybrid retrieval",
+      "RAG",
+      "Evals"
+    ],
+    "slug": "reranking"
+  },
+  {
+    "title": "Routing and batching",
+    "category": "systems",
+    "what": "Assigning inference requests to workers and grouping work for efficient execution.",
+    "how": "A router selects a suitable backend; a scheduler combines requests. Continuous batching can admit or remove sequences between iterations.",
+    "example": "Serve several simultaneous chats while replacing completed sequences with new work.",
+    "watch": "Maximizing throughput can worsen individual-request latency; tune against the actual service goal.",
+    "sources": [
+      "batch"
+    ],
+    "related": [
+      "Time to First Token (TTFT)",
+      "Inter-token Latency (ITL)",
+      "Inference"
+    ],
+    "slug": "routing-and-batching"
+  },
+  {
+    "title": "Sandbox",
+    "category": "agents",
+    "what": "An execution environment with enforced boundaries around an agent or program.",
+    "how": "Operating-system or runtime controls limit accessible files, processes, network destinations, or other resources.",
+    "example": "Run generated code in an isolated environment with access only to the task folder.",
+    "watch": "A container is not automatically a complete security boundary; configuration matters.",
+    "sources": [
+      "sandbox"
+    ],
+    "related": [
+      "Permissions / controls",
+      "Prompt injection",
+      "Upstash boxes"
+    ],
+    "slug": "sandbox"
+  },
+  {
+    "title": "Self-supervised learning",
+    "category": "ml",
+    "what": "Training in which the learning targets are derived from the input data itself.",
+    "how": "Hide, predict, or transform parts of the data to create a training objective without manually labeling every example.",
+    "example": "Train a causal language model to predict the next token in a document.",
+    "watch": "The data still carries bias and quality issues even when labels are generated automatically.",
+    "sources": [
+      "pretrain"
+    ],
+    "related": [
+      "Training",
+      "GPT — Generative Pre-trained Transformer",
+      "Deep learning"
+    ],
+    "slug": "self-supervised-learning"
+  },
+  {
+    "title": "Skills",
+    "category": "agents",
+    "what": "Reusable packages of instructions and supporting resources for an agent.",
+    "how": "The agent discovers a skill description and loads its detailed procedure when the task needs it.",
+    "example": "A release skill includes the steps and scripts for preparing a build.",
+    "watch": "A skill guides behavior; it is not the same thing as training new model weights.",
+    "sources": [
+      "skills"
+    ],
+    "related": [
+      "Progressive disclosure",
+      "Commands",
+      "Harness"
+    ],
+    "slug": "skills"
+  },
+  {
+    "title": "Small language models (SLMs)",
+    "category": "models",
+    "what": "Language models with comparatively modest parameter counts and resource requirements.",
+    "how": "Use a smaller architecture or distillation and training choices suited to a bounded task.",
+    "example": "Run a lightweight local classifier or assistant on constrained hardware.",
+    "watch": "There is no universal parameter cutoff; measure quality and actual deployment resources.",
+    "sources": [
+      "llm"
+    ],
+    "related": [
+      "LLMs",
+      "Quantization",
+      "Inference"
+    ],
+    "slug": "small-language-models-slms"
+  },
+  {
+    "title": "Socket connections",
+    "category": "systems",
+    "what": "Communication through operating-system endpoints called sockets.",
+    "how": "Create endpoints and exchange bytes or datagrams using a selected address family and protocol.",
+    "example": "A local client connects to a TCP server and reads streamed results.",
+    "watch": "A socket is not synonymous with a WebSocket; UDP sockets are not reliable TCP connections.",
+    "sources": [
+      "socket"
+    ],
+    "related": [
+      "TCP",
+      "UDP",
+      "HTTP"
+    ],
+    "slug": "socket-connections"
+  },
+  {
+    "title": "Software factory",
+    "category": "agents",
+    "what": "A workflow for producing software through repeatable implementation and verification stages.",
+    "how": "In an agent-based version, a system turns a specification into tasks, edits, tests, and reviewed changes.",
+    "example": "A pipeline takes a feature brief, creates a patch, runs checks, and prepares a pull request.",
+    "watch": "This is a broad architectural label, not one standardized AI product or protocol.",
+    "sources": [
+      "harness",
+      "spec"
+    ],
+    "related": [
+      "Spec-driven development",
+      "Agent teams",
+      "Evals"
+    ],
+    "slug": "software-factory"
+  },
+  {
+    "title": "Spec-driven development",
+    "category": "agents",
+    "what": "Building against an explicit specification that guides implementation and verification.",
+    "how": "Write requirements and acceptance criteria, derive a plan and tasks, then check the result against the specification.",
+    "example": "Define a search feature's input, output, error cases, and acceptance checks before asking an agent to implement it.",
+    "watch": "An incomplete specification can produce a precisely implemented wrong result.",
+    "sources": [
+      "spec"
+    ],
+    "related": [
+      "Software factory",
+      "Evals",
+      "Prompt engineering"
+    ],
+    "slug": "spec-driven-development"
+  },
+  {
+    "title": "stdin / stdout",
+    "category": "systems",
+    "what": "The standard input and output streams attached to a process.",
+    "how": "Programs read input from stdin and write output to stdout; shells or parent processes can connect them with pipes.",
+    "example": "An MCP client starts a local server and exchanges protocol messages through process streams.",
+    "watch": "Keep diagnostic logs on stderr when stdout is used for protocol messages.",
+    "sources": [
+      "stdio",
+      "mcp"
+    ],
+    "related": [
+      "JSON-RPC 2.0 (MCP)",
+      "Commands",
+      "MCP"
+    ],
+    "slug": "stdin-stdout"
+  },
+  {
+    "title": "Subagents",
+    "category": "agents",
+    "what": "Separate agent runs delegated a focused piece of a larger task.",
+    "how": "A parent supplies a bounded assignment; a child works in its own context and returns findings or artifacts.",
+    "example": "One agent investigates a backend error while another reviews the client code.",
+    "watch": "Delegation adds coordination cost and can lose context during handoffs.",
+    "sources": [
+      "custom",
+      "multi"
+    ],
+    "related": [
+      "Agent teams",
+      "Context",
+      "Harness"
+    ],
+    "slug": "subagents"
+  },
+  {
+    "title": "Supervised fine-tuning (SFT)",
+    "category": "models",
+    "what": "Fine-tuning on examples containing inputs and desired outputs.",
+    "how": "Train the model to assign higher likelihood to target responses under the provided inputs.",
+    "example": "Use carefully reviewed question-answer pairs to teach a support response format.",
+    "watch": "SFT can reproduce errors or biases present in its example answers.",
+    "sources": [
+      "finetune"
+    ],
+    "related": [
+      "Fine-tuning",
+      "Preference optimization",
+      "Training"
+    ],
+    "slug": "supervised-fine-tuning-sft"
+  },
+  {
+    "title": "TCP",
+    "category": "systems",
+    "what": "A transport protocol providing an ordered, reliable byte stream.",
+    "how": "Establish a connection, sequence data, acknowledge receipt, and retransmit lost segments while managing flow and congestion.",
+    "example": "Transfer a model file without treating missing network packets as missing file bytes.",
+    "watch": "TCP preserves byte order, not application message boundaries.",
+    "sources": [
+      "tcp"
+    ],
+    "related": [
+      "UDP",
+      "Socket connections",
+      "HTTP"
+    ],
+    "slug": "tcp"
+  },
+  {
+    "title": "Temperature",
+    "category": "models",
+    "what": "A sampling control that changes how concentrated token probabilities are.",
+    "how": "Scale logits before sampling: lower values sharpen the distribution; higher values flatten it.",
+    "example": "Use a lower sampling temperature when output variation is undesirable.",
+    "watch": "Temperature is not a reasoning budget, and lower values do not guarantee truth or determinism.",
+    "sources": [
+      "generate"
+    ],
+    "related": [
+      "Model effort",
+      "Inference",
+      "LLMs"
+    ],
+    "slug": "temperature"
+  },
+  {
+    "title": "TensorFlow",
+    "category": "platforms",
+    "what": "A platform for building, training, and deploying machine-learning models.",
+    "how": "Express tensor computations and model layers, optimize parameters, and export models for a target runtime.",
+    "example": "Train an image classifier and deploy it in an application.",
+    "watch": "Training support and deployment compatibility vary across runtimes and model operations.",
+    "sources": [
+      "TensorFlow"
+    ],
+    "related": [
+      "PyTorch",
+      "Machine learning",
+      "Training"
+    ],
+    "slug": "tensorflow"
+  },
+  {
+    "title": "Time to First Token (TTFT)",
+    "category": "models",
+    "what": "Elapsed time from submitting a request to receiving its first output token.",
+    "how": "Measure the first-token arrival relative to the request start; observed time can include network, queuing, and prefill work.",
+    "example": "An assistant begins streaming after 0.8 seconds, even though the full answer takes longer.",
+    "watch": "TTFT is not a pure measurement of prefill; define the measurement boundary.",
+    "sources": [
+      "metrics"
+    ],
+    "related": [
+      "Prefill and decode",
+      "Inter-token Latency (ITL)",
+      "Routing and batching"
+    ],
+    "slug": "time-to-first-token-ttft"
+  },
+  {
+    "title": "tmux",
+    "category": "platforms",
+    "what": "A terminal multiplexer that organizes sessions, windows, and panes.",
+    "how": "A server maintains terminal sessions that clients can detach from and reattach to.",
+    "example": "Keep a development server and an agent CLI in separate panes on a remote machine.",
+    "watch": "A terminal session can survive disconnection; it does not automatically survive a machine reboot.",
+    "sources": [
+      "tmux"
+    ],
+    "related": [
+      "stdin / stdout",
+      "Commands",
+      "Durable agents"
+    ],
+    "slug": "tmux"
+  },
+  {
+    "title": "Tokenization",
+    "category": "models",
+    "what": "Converting input into the token IDs a model operates on.",
+    "how": "A tokenizer splits text according to its vocabulary and rules, then maps pieces to integers; decoding maps IDs back to text.",
+    "example": "A word, punctuation mark, or code identifier may become several tokens.",
+    "watch": "Token counts depend on the tokenizer and language; tokens are not equivalent to words.",
+    "sources": [
+      "tokens"
+    ],
+    "related": [
+      "LLMs",
+      "Context",
+      "Chunking"
+    ],
+    "slug": "tokenization"
+  },
+  {
+    "title": "Tools",
+    "category": "agents",
+    "what": "Functions an agent can request to interact with data or external systems.",
+    "how": "A model emits a structured call; the application validates and executes it, then returns the result.",
+    "example": "A repository-search tool returns the files relevant to a bug.",
+    "watch": "The model proposes a call; application code controls whether it executes.",
+    "sources": [
+      "mcptool"
+    ],
+    "related": [
+      "MCP",
+      "Permissions / controls",
+      "Agents"
+    ],
+    "slug": "tools"
+  },
+  {
+    "title": "Training",
+    "category": "models",
+    "what": "Adjusting model parameters using data and an optimization objective.",
+    "how": "Compute predictions and a loss, calculate gradients, then update weights over many examples.",
+    "example": "Train a classifier to distinguish useful bug reports from unrelated messages.",
+    "watch": "Good training loss does not guarantee generalization to unseen data.",
+    "sources": [
+      "pytorch"
+    ],
+    "related": [
+      "Weights",
+      "Fine-tuning",
+      "Self-supervised learning"
+    ],
+    "slug": "training"
+  },
+  {
+    "title": "Transformers",
+    "category": "models",
+    "what": "Neural architectures built around attention and feed-forward computation.",
+    "how": "Attention mixes information between token positions; stacked layers create context-dependent representations.",
+    "example": "A decoder transformer predicts the next token from the preceding sequence.",
+    "watch": "The original transformer includes encoder and decoder components; GPT-style models use a decoder architecture.",
+    "sources": [
+      "attention"
+    ],
+    "related": [
+      "LLMs",
+      "KV cache",
+      "GPT — Generative Pre-trained Transformer"
+    ],
+    "slug": "transformers"
+  },
+  {
+    "title": "UDP",
+    "category": "systems",
+    "what": "A transport protocol that sends datagrams with minimal built-in coordination.",
+    "how": "Send independent datagrams without TCP-style delivery acknowledgment, retransmission, or ordering guarantees.",
+    "example": "A real-time game may send replaceable position updates over UDP.",
+    "watch": "Applications needing reliability must provide it themselves or use a protocol built on UDP.",
+    "sources": [
+      "udp"
+    ],
+    "related": [
+      "TCP",
+      "Socket connections",
+      "HTTP"
+    ],
+    "slug": "udp"
+  },
+  {
+    "title": "Upstash boxes",
+    "category": "platforms",
+    "what": "Cloud execution environments from Upstash for agents and development workloads.",
+    "how": "Create an isolated box and interact with its shell, filesystem, or exposed services through supported interfaces.",
+    "example": "Run a coding task remotely instead of executing it on your laptop.",
+    "watch": "Review resource limits, persistence, credentials, and network exposure for the selected configuration.",
+    "sources": [
+      "box"
+    ],
+    "related": [
+      "Sandbox",
+      "Tools",
+      "Durable agents"
+    ],
+    "slug": "upstash-boxes"
+  },
+  {
+    "title": "Vector databases",
+    "category": "rag",
+    "what": "Databases designed to store vectors and search by similarity.",
+    "how": "Index embeddings and compare a query vector with stored vectors, often alongside metadata filters.",
+    "example": "Find document passages whose meaning resembles a user's question.",
+    "watch": "Similarity does not establish truth or access permission.",
+    "sources": [
+      "vector"
+    ],
+    "related": [
+      "Embedding models",
+      "RAG",
+      "Hybrid retrieval"
+    ],
+    "slug": "vector-databases"
+  },
+  {
+    "title": "Weights",
+    "category": "models",
+    "what": "The learned numerical parameters of a model.",
+    "how": "Training adjusts these numbers so the model's computations better fit its objective; a checkpoint stores their values.",
+    "example": "Fine-tuning changes parameters that influence the model's answers.",
+    "watch": "Weights do not act like an editable database of exact facts.",
+    "sources": [
+      "neural"
+    ],
+    "related": [
+      "Training",
+      "Models",
+      "LoRA"
+    ],
+    "slug": "weights"
+  }
+];
+const sources = {
+  "agent": [
+    "Building effective agents",
+    "https://www.anthropic.com/research/building-effective-agents"
+  ],
+  "harness": [
+    "Effective harnesses for long-running agents",
+    "https://www.anthropic.com/research/effective-harnesses-for-long-running-agents"
+  ],
+  "context": [
+    "Context engineering",
+    "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents"
+  ],
+  "skills": [
+    "Agent Skills",
+    "https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills"
+  ],
+  "custom": [
+    "Skills, hooks, and subagents",
+    "https://claude.com/resources/articles/steering-claude-code-skills-hooks-rules-subagents-and-more?trk=article-ssr-frontend-pulse_little-text-block"
+  ],
+  "graph": [
+    "LangGraph overview",
+    "https://docs.langchain.com/oss/python/langgraph/overview"
+  ],
+  "durable": [
+    "Persistence and checkpoints",
+    "https://docs.langchain.com/oss/python/langgraph/persistence"
+  ],
+  "multi": [
+    "Multi-agent research system",
+    "https://www.anthropic.com/research/multi-agent-research-system"
+  ],
+  "eval": [
+    "Evals for AI agents",
+    "https://www.anthropic.com/research/demystifying-evals-for-ai-agents"
+  ],
+  "sandbox": [
+    "Sandboxing agents",
+    "https://www.anthropic.com/research/claude-code-sandboxing"
+  ],
+  "perm": [
+    "Permission policies",
+    "https://platform.claude.com/docs/en/managed-agents/permission-policies"
+  ],
+  "injection": [
+    "Security risks and sandbox boundaries",
+    "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks"
+  ],
+  "mcp": [
+    "MCP architecture",
+    "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/docs/2026-07-28/learn/architecture.mdx"
+  ],
+  "mcptool": [
+    "MCP tools",
+    "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2025-06-18/server/tools.mdx"
+  ],
+  "mcpapp": [
+    "MCP Apps overview",
+    "https://apps.extensions.modelcontextprotocol.io/api/documents/overview.html"
+  ],
+  "json": [
+    "JSON-RPC 2.0 specification",
+    "https://www.jsonrpc.org/specification"
+  ],
+  "spec": [
+    "GitHub Spec Kit",
+    "https://github.github.com/spec-kit/"
+  ],
+  "cot": [
+    "Chain-of-thought prompting paper",
+    "https://arxiv.org/abs/2201.11903"
+  ],
+  "rag": [
+    "RAG query-to-answer pipeline",
+    "https://docs.nvidia.com/rag/latest/query-to-answer-pipeline.html"
+  ],
+  "retrieval": [
+    "Retrieval design for RAG",
+    "https://learn.microsoft.com/en-us/Azure/architecture/ai-ml/guide/rag/rag-information-retrieval"
+  ],
+  "vector": [
+    "Vector search",
+    "https://qdrant.tech/documentation/overview/vector-search/"
+  ],
+  "embed": [
+    "Embedding models",
+    "https://qdrant.tech/documentation/embeddings/"
+  ],
+  "rerank": [
+    "Rerank models",
+    "https://docs.cohere.com/docs/rerank"
+  ],
+  "graphrag": [
+    "GraphRAG indexing",
+    "https://microsoft.github.io/graphrag/index/overview/"
+  ],
+  "cag": [
+    "Cache-Augmented Generation paper",
+    "https://arxiv.org/abs/2412.15605"
+  ],
+  "cache": [
+    "KV-cache strategies",
+    "https://huggingface.co/docs/transformers/en/kv_cache"
+  ],
+  "prefill": [
+    "LLM prefill and decode",
+    "https://tvm.apache.org/docs/how_to/tutorials/optimize_llm.html"
+  ],
+  "metrics": [
+    "LLM inference metrics",
+    "https://docs.nvidia.com/nim/benchmarking/llm/metrics?trk=article-ssr-frontend-pulse_little-text-block"
+  ],
+  "batch": [
+    "Continuous batching and scheduling",
+    "https://nvidia.github.io/TensorRT-LLM/1.3.0rc9/features/paged-attention-ifb-scheduler.html"
+  ],
+  "llm": [
+    "Hugging Face LLM course",
+    "https://huggingface.co/learn/llm-course/chapter1/1"
+  ],
+  "tokens": [
+    "Tokenizers",
+    "https://huggingface.co/learn/llm-course/chapter2/4"
+  ],
+  "finetune": [
+    "Fine-tuning",
+    "https://huggingface.co/docs/transformers/en/training"
+  ],
+  "finetypes": [
+    "Fine-tuning course",
+    "https://huggingface.co/learn/smol-course/unit0/1"
+  ],
+  "lora": [
+    "LoRA",
+    "https://huggingface.co/docs/peft/main/en/conceptual_guides/lora"
+  ],
+  "dpo": [
+    "Direct preference optimization",
+    "https://huggingface.co/docs/trl/dpo_trainer"
+  ],
+  "quant": [
+    "Quantization methods",
+    "https://huggingface.co/docs/transformers/quantization/overview"
+  ],
+  "generate": [
+    "Text generation parameters",
+    "https://huggingface.co/docs/transformers/main_classes/text_generation"
+  ],
+  "attention": [
+    "Attention Is All You Need",
+    "https://arxiv.org/abs/1706.03762"
+  ],
+  "ml": [
+    "Introduction to machine learning",
+    "https://developers.google.com/machine-learning/intro-to-ml/what-is-ml"
+  ],
+  "neural": [
+    "Neural networks",
+    "https://developers.google.com/machine-learning/crash-course/neural-networks"
+  ],
+  "pytorch": [
+    "PyTorch fundamentals",
+    "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+  ],
+  "TensorFlow": [
+    "TensorFlow overview",
+    "https://www.tensorflow.org/learn"
+  ],
+  "comfy": [
+    "About ComfyUI",
+    "https://support.comfy.org/articles/9806306061-about-comfy"
+  ],
+  "n8n": [
+    "Understanding n8n workflows",
+    "https://docs.n8n.io/build/understand-workflows.md"
+  ],
+  "hub": [
+    "Hugging Face Hub",
+    "https://huggingface.co/docs/hub/index"
+  ],
+  "langchain": [
+    "LangChain overview",
+    "https://docs.langchain.com/oss/python/langchain/overview"
+  ],
+  "lmstudio": [
+    "LM Studio developer documentation",
+    "https://lmstudio.ai/docs/developer"
+  ],
+  "ollama": [
+    "Ollama documentation",
+    "https://docs.ollama.com/"
+  ],
+  "router": [
+    "OpenRouter quickstart",
+    "https://openrouter.ai/docs/quickstart"
+  ],
+  "tmux": [
+    "tmux documentation",
+    "https://github.com/tmux/tmux/wiki"
+  ],
+  "box": [
+    "Upstash Box basics",
+    "https://upstash.com/docs/box/overall/how-it-works"
+  ],
+  "mlx": [
+    "MLX documentation",
+    "https://ml-explore.github.io/mlx/build/html/index.html"
+  ],
+  "cuda": [
+    "CUDA developer platform",
+    "https://developer.nvidia.com/cuda"
+  ],
+  "mlflow": [
+    "MLflow documentation",
+    "https://mlflow.org/docs/latest/index.html"
+  ],
+  "opik": [
+    "Opik documentation",
+    "https://www.comet.com/docs/opik/"
+  ],
+  "langfuse": [
+    "Langfuse documentation",
+    "https://langfuse.com/docs"
+  ],
+  "guardrails": [
+    "Guardrails AI project",
+    "https://github.com/guardrails-ai/guardrails/blob/main/README.md"
+  ],
+  "http": [
+    "HTTP overview",
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview"
+  ],
+  "tcp": [
+    "TCP specification",
+    "https://www.rfc-editor.org/info/rfc9293/"
+  ],
+  "udp": [
+    "UDP specification",
+    "https://www.rfc-editor.org/info/rfc768/"
+  ],
+  "moe": [
+    "Mixture of experts explained",
+    "https://huggingface.co/blog/moe"
+  ],
+  "rl": [
+    "Reinforcement learning",
+    "https://huggingface.co/learn/deep-rl-course/unit1/what-is-rl"
+  ],
+  "socket": [
+    "Socket programming interface",
+    "https://docs.python.org/3/library/socket.html"
+  ],
+  "stdio": [
+    "Standard process streams",
+    "https://docs.python.org/3/library/sys.html#sys.stdin"
+  ],
+  "https": [
+    "HTTPS",
+    "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
+  ],
+  "nlp": [
+    "NLP and language models",
+    "https://huggingface.co/learn/llm-course/chapter1/2"
+  ],
+  "pretrain": [
+    "Pretraining language models",
+    "https://huggingface.co/learn/llm-course/chapter1/4"
+  ],
+  "multimodal": [
+    "Multimodal chat templates",
+    "https://huggingface.co/docs/transformers/main/chat_templating_multimodal"
+  ]
+};
+const categories = {agents:'Agents & engineering',rag:'RAG & retrieval',models:'Models & inference',ml:'Machine & deep learning',platforms:'Tools & platforms',systems:'Systems & protocols'};
+const bySlug = new Map(notes.map(n=>[n.slug,n]));
+const byTitle = new Map(notes.map(n=>[n.title,n]));
+const $ = id=>document.getElementById(id);
+const el=(tag,className,text)=>{const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;};
+let filter='all',ascending=true,indexScroll=0,lastTerm=null;
+function render(){
+ const query=$('search').value.trim().toLowerCase();
+ const visible=notes.filter(n=>(filter==='all'||n.category===filter)&&[n.title,n.what,n.how,n.example,categories[n.category]].join(' ').toLowerCase().includes(query));
+ if(!ascending)visible.reverse();
+ $('count').textContent=notes.length+' TERMS';
+ $('results-status').textContent=visible.length===notes.length?'Showing all '+notes.length+' terms':visible.length+' of '+notes.length+' terms';
+ $('entries').replaceChildren();
+ for(const note of visible){
+  const row=el('tr');
+  const nameCell=el('td');const a=el('a','term-name',note.title);a.href='#term/'+note.slug;nameCell.append(a);
+  if(note.pending)nameCell.append(el('span','status-label','Needs a reference'));
+  const categoryCell=el('td');categoryCell.append(el('span','term-category',categories[note.category]));
+  const summaryCell=el('td','summary-col');summaryCell.append(el('span','term-summary',note.pending?'Project name to clarify.':note.what));
+  const arrowCell=el('td','row-arrow','→');arrowCell.setAttribute('aria-hidden','true');
+  row.append(nameCell,categoryCell,summaryCell,arrowCell);
+  row.addEventListener('click',event=>{if(!event.target.closest('a')&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&window.getSelection().toString()==='')location.hash='term/'+note.slug;});
+  $('entries').append(row);
+ }
+ $('table-shell').hidden=visible.length===0;$('empty').hidden=visible.length>0;
+}
+function section(id,number,title,text,className){
+ const s=el('section','article-section'+(className?' '+className:''));s.id=id;
+ const h=el('h2');h.append(el('span',null,number),document.createTextNode(title));s.append(h,el('p',null,text));return s;
+}
+function termPage(note){
+ const view=$('detail-view');view.replaceChildren();
+ const crumb=el('nav','crumb');crumb.setAttribute('aria-label','Breadcrumb');
+ const back=el('a',null,'← All terms');back.href='#notebook';crumb.append(back,el('span',null,'/'),el('span',null,categories[note.category]));view.append(crumb);
+ const top=el('div','detail-top');top.append(el('div','eyebrow',categories[note.category]));
+ const h1=el('h1',null,note.title);h1.id='term-title';h1.tabIndex=-1;
+ top.append(h1,el('p','detail-lede',note.pending?'This name needs a little more context.':note.what));
+ if(note.pending)top.append(el('span','note-status','NEEDS A REFERENCE'));
+ view.append(top);
+ const layout=el('div','detail-layout');const toc=el('nav','contents');toc.setAttribute('aria-label','On this page');toc.append(el('p',null,'On this page'));
+ const sections=note.pending?[['definition','What to clarify']]:[['definition','What it is'],['mechanics','How it works'],['example','Example'],['distinction','Keep in mind'],['connections','Related terms'],['references','Read further']];
+ for(const [id,title] of sections){if(id==='connections'&&!note.related.length||id==='references'&&!note.sources.length)continue;const link=el('a',null,title);link.href='#term/'+note.slug+'/'+id;toc.append(link);}
+ const article=el('article');article.setAttribute('aria-labelledby','term-title');
+ if(note.pending){article.append(section('definition','01','What to clarify',note.what),section('example','02','Next step',note.example));}
+ else{
+  article.append(section('definition','01','What it is',note.what),section('mechanics','02','How it works',note.how),section('example','03','A practical example',note.example,'example-box'),section('distinction','04','Keep in mind',note.watch));
+  if(note.related.length){const s=el('section','article-section');s.id='connections';const heading=el('h2');heading.append(el('span',null,'05'),document.createTextNode('Connect the ideas'));s.append(heading);const links=el('div','related');for(const title of note.related){const related=byTitle.get(title);if(!related)continue;const link=el('a',null,title+' →');link.href='#term/'+related.slug;links.append(link);}s.append(links);article.append(s);}
+  if(note.sources.length){const s=el('section','article-section');s.id='references';const heading=el('h2');heading.append(el('span',null,'06'),document.createTextNode('Read further'));s.append(heading);const list=el('ul','sources');for(const key of note.sources){const [label,url]=sources[key];const li=el('li');const link=el('a',null,label+' ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';li.append(link,el('small',null,new URL(url).hostname));list.append(li);}s.append(list);article.append(s);}
+ }
+ const index=notes.indexOf(note);const nextNav=el('nav','article-nav');nextNav.setAttribute('aria-label','Other terms');
+ for(const [label,item] of [['Previous term',notes[index-1]],['Next term',notes[index+1]]]){if(item){const a=el('a');a.href='#term/'+item.slug;a.append(el('span',null,label),document.createTextNode(item.title));nextNav.append(a);}else nextNav.append(el('div'));}
+ article.append(nextNav);layout.append(toc,article);view.append(layout);
+}
+function route(){
+ const parts=location.hash.slice(1).split('/');const isTerm=parts[0]==='term';const note=isTerm?bySlug.get(parts[1]):null;
+ const opening=!!note&&$('detail-view').hidden;
+ if(opening)indexScroll=window.scrollY;
+ $('index-view').hidden=!!note;$('detail-view').hidden=!note;
+ document.querySelector('.skip').href=note?'#term/'+note.slug+'/definition':'#notebook';
+ if(note){
+  if(lastTerm!==note.slug){termPage(note);lastTerm=note.slug;document.title=note.title+' — AI Learning';window.scrollTo({top:0,behavior:'instant'});$('term-title').focus({preventScroll:true});}
+  if(parts[2]){const target=$('detail-view').querySelector('#'+CSS.escape(parts[2]));if(target)target.scrollIntoView({behavior:'instant',block:'start'});}
+ }else{
+  const returning=lastTerm!==null;lastTerm=null;document.title='AI Learning — Uri Katz';
+  if(returning){window.scrollTo({top:Math.max(indexScroll,$('notebook').offsetTop-24),behavior:'instant'});$('notebook-title').tabIndex=-1;$('notebook-title').focus({preventScroll:true});}
+  else if(location.hash==='#notebook')$('notebook').scrollIntoView({behavior:'instant'});
+  else window.scrollTo({top:0,behavior:'instant'});
+ }
+}
+document.querySelectorAll('.tab[data-filter]').forEach(button=>button.addEventListener('click',()=>{filter=button.dataset.filter;document.querySelectorAll('.tab[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render();}));
+$('search').addEventListener('input',render);
+$('reset-search').addEventListener('click',()=>{$('search').value='';filter='all';document.querySelectorAll('.tab[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter==='all')));render();$('search').focus();});
+$('sort').addEventListener('click',()=>{ascending=!ascending;$('sort').textContent=ascending?'A–Z ↓':'Z–A ↑';$('sort').setAttribute('aria-label',ascending?'Sort terms Z to A':'Sort terms A to Z');render();});
+function setTheme(dark){document.body.classList.toggle('dark',dark);$('theme').setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');document.querySelector('meta[name="theme-color"]').content=dark?'#151c18':'#f5f3ed';}
+let preferred=null;try{preferred=localStorage.getItem('ai-learning-theme');}catch{}
+setTheme(preferred?preferred==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches);
+$('theme').addEventListener('click',()=>{const dark=!document.body.classList.contains('dark');setTheme(dark);try{localStorage.setItem('ai-learning-theme',dark?'dark':'light');}catch{}});
+window.addEventListener('hashchange',route);
+$('year').textContent=new Date().getFullYear();render();route();
+
+</script>
+</body>
+</html>
