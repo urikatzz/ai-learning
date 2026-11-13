@@ -269,6 +269,96 @@
     return figure;
   };
 
+  // Draws an X or check glyph from paths (shape, not colour alone, carries the meaning).
+  function glyph(svgNode, svg, kind, cx, cy, tone, index) {
+    const d = kind === 'x'
+      ? `M${cx - 12} ${cy - 12}L${cx + 12} ${cy + 12}M${cx + 12} ${cy - 12}L${cx - 12} ${cy + 12}`
+      : `M${cx - 12} ${cy}L${cx - 3} ${cy + 11}L${cx + 14} ${cy - 12}`;
+    return svgNode(svg, 'path', { d, pathLength: 1, class: `dg-stroke dg-draw dg-${tone}`, style: `--i:${index};stroke-width:4` });
+  }
+
+  builders.quantization = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Fewer bits per weight',
+      alt: 'Two bars compare storage per weight: a long orange bar for 16 bits per weight and a bar a quarter as long, in teal, for 4 bits per weight.',
+      caption: 'Storing weights in 4 bits instead of 16 needs roughly 4x less memory for those weights, at the cost of some precision loss. Activations and the KV cache are quantized separately, and real savings depend on the format.',
+      height: 190
+    });
+    [['16 bits per weight', 440, 'orange', 28], ['4 bits per weight', 110, 'teal', 92]].forEach(([label, w, tone, y], i) => {
+      svgNode(svg, 'text', { x: 20, y, class: 'dg-pop', style: `--i:${i}` }, label);
+      const g = svgNode(svg, 'g', { class: `dg-${tone}` });
+      svgNode(g, 'rect', { x: 20, y: y + 10, width: w, height: 30, rx: 6, class: 'dg-fill dg-grow', style: `--i:${i * 3 + 1}` });
+    });
+    svgNode(svg, 'text', { x: 140, y: 150, class: 'dg-small dg-pop', style: '--i:6' }, '~4x less memory for weights');
+    svgNode(svg, 'text', { x: 140, y: 172, class: 'dg-small dg-pop', style: '--i:7' }, 'some precision is lost');
+    return figure;
+  };
+
+  builders.lora = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Train a small adapter, keep W frozen',
+      alt: 'A large blue weight matrix W marked frozen and a small orange adapter made of two thin matrices A and B both feed a sum that gives the output: output = W x + adapter. Only the adapter is trained.',
+      caption: 'LoRA freezes the base weights and trains only two small matrices whose product approximates the weight update. The adapter is a small fraction of the parameters, but quality depends on the chosen rank and data.',
+      height: 220
+    });
+    box(svg, { x: 24, y: 36, w: 200, h: 64, label: 'W (frozen)', tone: 'blue', index: 0 });
+    const ad = svgNode(svg, 'g', { class: 'dg-orange dg-pop dg-pulse', style: '--i:2' });
+    svgNode(ad, 'rect', { x: 70, y: 126, width: 16, height: 56, rx: 3, class: 'dg-fill' });
+    svgNode(ad, 'rect', { x: 110, y: 146, width: 64, height: 16, rx: 3, class: 'dg-fill' });
+    svgNode(svg, 'text', { x: 78, y: 120, 'text-anchor': 'middle', class: 'dg-small' }, 'A');
+    svgNode(svg, 'text', { x: 142, y: 140, 'text-anchor': 'middle', class: 'dg-small' }, 'B');
+    svgNode(svg, 'text', { x: 122, y: 204, 'text-anchor': 'middle', class: 'dg-small' }, 'adapter (trained)');
+    arrow(svg, { x1: 224, y1: 68, x2: 298, y2: 68, tone: 'blue', index: 1 });
+    svgNode(svg, 'path', { d: 'M178 154H320V90', pathLength: 1, class: 'dg-stroke dg-draw dg-orange', style: '--i:3' });
+    const plus = svgNode(svg, 'g', { class: 'dg-purple dg-pop', style: '--i:3' });
+    svgNode(plus, 'circle', { cx: 320, cy: 68, r: 18, class: 'dg-dot' });
+    svgNode(plus, 'text', { x: 320, y: 74, 'text-anchor': 'middle', style: 'fill:#fff;font-weight:700' }, '+');
+    arrow(svg, { x1: 338, y1: 68, x2: 376, y2: 68, tone: 'purple', index: 4 });
+    box(svg, { x: 380, y: 46, w: 84, h: 44, label: 'output', tone: 'teal', index: 5, solid: true });
+    svgNode(svg, 'text', { x: 340, y: 190, 'text-anchor': 'middle', class: 'dg-small' }, 'output = W x + adapter');
+    return figure;
+  };
+
+  builders['mixture-of-experts'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A router picks a few experts',
+      alt: 'A token goes to a router, which sends it to two of four experts, experts 1 and 3. The other two experts do not run for this token.',
+      caption: 'In a sparse mixture-of-experts layer only the selected experts process each token, so total parameters can be much larger than those used per token. Other layers are usually shared, and the chosen experts here are illustrative.',
+      height: 232
+    });
+    box(svg, { x: 12, y: 90, w: 80, label: 'Token', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 92, y1: 112, x2: 128, y2: 112, tone: 'blue', index: 1 });
+    box(svg, { x: 132, y: 90, w: 84, label: 'Router', tone: 'purple', index: 2, solid: true });
+    const chosen = [true, false, true, false];
+    chosen.forEach((on, i) => {
+      const cy = 29 + i * 52;
+      svgNode(svg, 'path', { d: `M216 112L340 ${cy}`, pathLength: 1, class: on ? 'dg-stroke dg-draw dg-teal' : 'dg-dash dg-blue dg-pop', style: `--i:${3 + i}` });
+      box(svg, { x: 340, y: cy - 17, w: 120, h: 34, label: `Expert ${i + 1}`, tone: on ? 'teal' : 'blue', index: 3 + i, solid: on });
+      if (on) svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: `offset-path:path('M216 112L340 ${cy}')` });
+    });
+    svgNode(svg, 'text', { x: 174, y: 190, 'text-anchor': 'middle', class: 'dg-small' }, 'top-2 of 4 run');
+    return figure;
+  };
+
+  builders['prompt-injection'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Outside text is data, not orders',
+      alt: 'A trusted system instruction reaches the model. An untrusted web page saying ignore all rules tries to reach it too, but its path is marked blocked with an X. Outside content should be treated as data.',
+      caption: 'Text from pages, files or tool results can contain instructions aimed at the model. Treating it as data, with permission limits, reduces the risk; no wording alone guarantees safety.',
+      height: 232
+    });
+    box(svg, { x: 16, y: 20, w: 200, label: 'System: be helpful', tone: 'teal', index: 0 });
+    const bad = svgNode(svg, 'g', { class: 'dg-orange dg-pop', style: '--i:1' });
+    svgNode(bad, 'rect', { x: 16, y: 150, width: 240, height: 44, rx: 10, class: 'dg-dash', style: 'fill:var(--paper);stroke-width:2' });
+    svgNode(bad, 'text', { x: 136, y: 177, 'text-anchor': 'middle' }, 'Page: ignore all rules');
+    box(svg, { x: 340, y: 86, w: 100, label: 'LLM', tone: 'purple', index: 2, solid: true });
+    arrow(svg, { x1: 216, y1: 42, x2: 338, y2: 98, tone: 'teal', index: 2 });
+    arrow(svg, { x1: 256, y1: 172, x2: 338, y2: 118, tone: 'orange', index: 3 });
+    glyph(svgNode, svg, 'x', 297, 145, 'orange', 4);
+    svgNode(svg, 'text', { x: 240, y: 222, 'text-anchor': 'middle', class: 'dg-small' }, 'treat outside content as data');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
