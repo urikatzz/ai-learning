@@ -3344,7 +3344,9 @@ function revealOnView(elements){
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){reveal(entry.target);observer.unobserve(entry.target);}}),{threshold:.15});
  elements.forEach(item=>observer.observe(item));
 }
+document.querySelectorAll('.path-card').forEach((card,i)=>card.style.setProperty('--i',i));
 revealOnView(document.querySelectorAll('.topic-card'));
+revealOnView(document.querySelectorAll('.path-card'));
 render();route();
 
 </script>

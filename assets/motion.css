@@ -23,6 +23,12 @@
 @keyframes line-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @keyframes line-draw-h{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 
+/* Learning path cards: hidden only when JS has opted in, staggered by --i. */
+.path-card{transition:opacity .5s ease,transform .5s ease;transition-delay:calc(var(--i,0)*80ms)}
+html.js-motion .path-card:not(.motion-in){opacity:0;transform:translateY(16px)}
+
 @media (prefers-reduced-motion:reduce){
  .topic-card *{animation:none!important}
+ .path-card{transition:none}
+ html.js-motion .path-card:not(.motion-in){opacity:1;transform:none}
 }
