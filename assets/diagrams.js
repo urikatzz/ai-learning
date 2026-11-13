@@ -136,6 +136,71 @@
     svgNode(svg, 'text', { x: 240, y: 232, 'text-anchor': 'middle', class: 'dg-small' }, 'next-token odds');
     return figure;
   };
+  builders.tokenization = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Text is split into tokens',
+      alt: 'The word unhappiness is split into the tokens un, happi and ness, and each token is then mapped to a number.',
+      caption: 'The split is illustrative; real tokenizers choose pieces from their own learned vocabulary. The model sees the resulting numbers, not letters.',
+      height: 190
+    });
+    box(svg, { x: 16, y: 40, w: 140, label: 'unhappiness', tone: 'teal', index: 0 });
+    arrow(svg, { x1: 156, y1: 62, x2: 192, y2: 62, tone: 'teal', index: 1 });
+    ['un', 'happi', 'ness'].forEach((label, i) => {
+      const x = 196 + i * 92;
+      box(svg, { x, y: 40, w: 80, label, tone: 'teal', index: 2 + i, solid: i === 1 });
+      arrow(svg, { x1: x + 40, y1: 86, x2: x + 40, y2: 116, tone: 'blue', index: 5 + i });
+      box(svg, { x: x + 10, y: 120, w: 60, h: 34, label: 'ID', tone: 'blue', index: 6 + i });
+    });
+    svgNode(svg, 'text', { x: 240, y: 178, 'text-anchor': 'middle', class: 'dg-small' }, 'then token IDs');
+    return figure;
+  };
+
+  builders.transformers = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Attention: each token weighs the others',
+      alt: 'In the sentence dog chased its tail, the token its attends most strongly to dog, less to chased, and least to tail.',
+      caption: 'Arc thickness shows attention weight. Here "its" leans most on "dog" to resolve what it refers to. The weights are illustrative.',
+      height: 180
+    });
+    const tokens = [['dog', 60], ['chased', 170], ['its', 290], ['tail', 400]];
+    const links = [[60, 3.6, 78, 'blue'], [170, 2, 48, 'purple'], [400, 1.2, 40, 'orange']];
+    links.forEach(([x, width, lift, tone], i) => {
+      svgNode(svg, 'path', {
+        d: arcPath(290, x, 120, lift), pathLength: 1, class: `dg-stroke dg-draw dg-${tone}`,
+        style: `--i:${i + 4};stroke-width:${width}`
+      });
+    });
+    tokens.forEach(([label, cx], i) => {
+      box(svg, { x: cx - 38, y: 126, w: 76, h: 36, label, tone: 'teal', index: i, solid: label === 'its' });
+    });
+    return figure;
+  };
+
+  builders['embedding-models'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Similar meanings sit close together',
+      alt: 'A two-dimensional sketch of an embedding space: king and queen are close, car and bus are close, apple and banana are close, and the three groups are far apart.',
+      caption: 'A simplified 2D sketch; real embeddings have hundreds or thousands of dimensions. Closeness approximates similarity of meaning, not truth.',
+      height: 210
+    });
+    const groups = [
+      { tone: 'purple', cx: 100, cy: 70, words: [['king', -26, -8], ['queen', 22, 14]], start: [-70, 40] },
+      { tone: 'blue', cx: 370, cy: 60, words: [['car', -18, -6], ['bus', 24, 16]], start: [60, 60] },
+      { tone: 'orange', cx: 240, cy: 150, words: [['apple', -26, 4], ['banana', 26, -4]], start: [-40, -80] }
+    ];
+    let index = 0;
+    groups.forEach(group => {
+      const ring = svgNode(svg, 'ellipse', { cx: group.cx, cy: group.cy, rx: 62, ry: 36, class: `dg-dash dg-${group.tone} dg-pop`, style: `--i:${index + 6}` });
+      group.words.forEach(([word, dx, dy]) => {
+        const g = svgNode(svg, 'g', { class: `dg-${group.tone} dg-drift`, style: `--i:${index};--dx:${group.start[0]}px;--dy:${group.start[1]}px` });
+        svgNode(g, 'circle', { cx: group.cx + dx, cy: group.cy + dy, r: 7, class: 'dg-dot' });
+        svgNode(g, 'text', { x: group.cx + dx + 12, y: group.cy + dy + 5 }, word);
+        index++;
+      });
+    });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
