@@ -625,44 +625,6 @@ const notes = [
     "detail": "A hook is code or a configured action attached to a lifecycle event. Unlike asking a model to remember a rule, a supported hook is triggered by the runtime at a defined point. What it can observe, block, or modify depends on the host."
   },
   {
-    "title": "HTTP",
-    "category": "systems",
-    "what": "An application-layer protocol for exchanging requests and responses.",
-    "how": "A request includes a method such as GET or POST, a target, headers, and sometimes a body. Responses include a status such as 200 or 429. HTTP/1.1 and HTTP/2 commonly use TCP; HTTP/3 uses QUIC over UDP. Handle timeouts and status codes explicitly.",
-    "example": "A backend sends a POST request containing a prompt to an inference endpoint. A 429 response indicates rate limiting, so the client may retry with bounded backoff. Retrying a request that performs an external action requires more care than retrying a read.",
-    "watch": "HTTP is not the underlying transport itself; different versions use different transport arrangements.",
-    "sources": [
-      "http"
-    ],
-    "related": [
-      "HTTPS",
-      "TCP",
-      "JSON-RPC 2.0 (MCP)",
-      "Retries",
-      "Rate limits"
-    ],
-    "slug": "http",
-    "detail": "Hypertext Transfer Protocol defines how clients request resources and servers respond. A model API can use HTTP to carry JSON requests and streamed responses. HTTP describes application messages; the networking layers underneath move those messages between machines."
-  },
-  {
-    "title": "HTTPS",
-    "category": "systems",
-    "what": "HTTP carried over a TLS-secured connection.",
-    "how": "The client checks the server certificate and negotiates cryptographic keys. Application data is then encrypted and integrity-protected. TLS commonly runs over TCP; HTTP/3 integrates TLS with QUIC. Proxies can terminate TLS, creating separate protected connections along a request path.",
-    "example": "When a client submits a prompt over HTTPS, a passive observer cannot simply read its contents. The receiving service can still process the decrypted prompt. Keep certificate validation enabled; disabling it undermines protection against a server impersonator.",
-    "watch": "Transport encryption does not prove that the endpoint's data-handling policies suit your application.",
-    "sources": [
-      "https"
-    ],
-    "related": [
-      "HTTP",
-      "TCP",
-      "Permissions / controls"
-    ],
-    "slug": "https",
-    "detail": "HTTPS is HTTP protected by Transport Layer Security (TLS). It provides confidentiality and integrity in transit and normally authenticates the server through a certificate. It protects the connection to an endpoint, while application authorization determines what a caller may do."
-  },
-  {
     "title": "Hugging Face",
     "category": "platforms",
     "what": "An ecosystem for sharing and working with models, datasets, and ML tooling.",
@@ -789,7 +751,6 @@ const notes = [
     ],
     "related": [
       "MCP",
-      "HTTP",
       "stdin / stdout"
     ],
     "slug": "json-rpc-2-0-mcp",
@@ -1206,7 +1167,6 @@ const notes = [
     ],
     "related": [
       "Graph engineering",
-      "HTTP",
       "Tools"
     ],
     "slug": "n8n-workflows",
@@ -1264,8 +1224,7 @@ const notes = [
     ],
     "related": [
       "LM Studio",
-      "Models",
-      "HTTP"
+      "Models"
     ],
     "slug": "ollama",
     "detail": "Ollama helps download, configure, and serve supported models through command-line and API interfaces. It can be a convenient local inference backend. The selected model and deployment determine whether computation occurs locally or through a cloud service."
@@ -1302,8 +1261,7 @@ const notes = [
     ],
     "related": [
       "Models",
-      "Model effort",
-      "HTTP"
+      "Model effort"
     ],
     "slug": "openrouter",
     "detail": "OpenRouter provides a common gateway to models served by multiple providers. This can simplify comparisons and fallback configuration. The gateway interface does not make all underlying models identical in features, output quality, or data policies."
@@ -1628,8 +1586,7 @@ const notes = [
     "related": [
       "Retries",
       "Routing and batching",
-      "Tokenization",
-      "HTTP"
+      "Tokenization"
     ],
     "sources": [
       "rateLimitDocs",
@@ -1702,7 +1659,6 @@ const notes = [
     "example": "A report-delivery call times out after the service accepted it. Retrying with a supported stable delivery key lets the service return the existing result. Without deduplication, a second attempt might send the same report twice.\n\nHow to measure it: Track recovery rate among retried operations, attempts per logical request, added p95 latency, retry-generated load, and duplicate effects. Test injected timeouts and outages. Compare successful logical tasks, not just the number of HTTP attempts returning success.",
     "watch": "Idempotency is an application contract, not something a client invents by adding an arbitrary header. Retrying a stream after showing partial output also requires an explicit user-visible recovery strategy.",
     "related": [
-      "HTTP",
       "Rate limits",
       "Durable agents",
       "Tool calling"
@@ -1807,25 +1763,6 @@ const notes = [
     ],
     "slug": "small-language-models-slms",
     "detail": "Small language models have relatively modest parameter counts compared with larger contemporaries. The term has no fixed size boundary. Smaller models can suit constrained devices or narrow tasks, but context length, architecture, and numerical precision also affect actual memory use."
-  },
-  {
-    "title": "Socket connections",
-    "category": "systems",
-    "what": "Communication through operating-system endpoints called sockets.",
-    "how": "A TCP server binds an address, listens, and accepts client connections. Programs send and receive bytes, often through multiple partial reads or writes. Define message framing, such as a length prefix or delimiter, and handle disconnection. WebSocket is a separate application protocol, not a synonym for any socket.",
-    "example": "A local inference client reads a length-prefixed response from a TCP socket. One read might return only part of the length or payload, so it keeps reading until the complete message arrives. Assuming one send always equals one receive is a common protocol bug.",
-    "watch": "A socket is not synonymous with a WebSocket; UDP sockets are not reliable TCP connections.",
-    "sources": [
-      "socket",
-      "socketTutorial"
-    ],
-    "related": [
-      "TCP",
-      "UDP",
-      "HTTP"
-    ],
-    "slug": "socket-connections",
-    "detail": "A socket is a programming interface endpoint for communication. Network sockets use addresses and ports; Unix-domain sockets support local interprocess communication. The selected socket type and protocol determine whether communication behaves as a byte stream or as separate datagrams."
   },
   {
     "title": "Software factory",
@@ -1954,9 +1891,7 @@ const notes = [
       "tcp"
     ],
     "related": [
-      "UDP",
-      "Socket connections",
-      "HTTP"
+      "UDP"
     ],
     "slug": "tcp",
     "detail": "Transmission Control Protocol provides an ordered byte stream between endpoints. It detects loss and retransmits data while managing receiver capacity and network congestion. Reliability means ordered delivery while the connection succeeds, not a promise that the application completed an operation."
@@ -2167,9 +2102,7 @@ const notes = [
       "udp"
     ],
     "related": [
-      "TCP",
-      "Socket connections",
-      "HTTP"
+      "TCP"
     ],
     "slug": "udp",
     "detail": "User Datagram Protocol sends individual datagrams without establishing a TCP-style reliable stream. Datagram boundaries are preserved when delivered, but delivery, ordering, and duplicate suppression are not guaranteed. Its small protocol overhead lets applications choose their own reliability behavior."
@@ -2482,17 +2415,9 @@ const sources = {
     "Reinforcement learning",
     "https://huggingface.co/learn/deep-rl-course/unit1/what-is-rl"
   ],
-  "socket": [
-    "Socket programming interface",
-    "https://docs.python.org/3/library/socket.html"
-  ],
   "stdio": [
     "Standard process streams",
     "https://docs.python.org/3/library/sys.html#sys.stdin"
-  ],
-  "https": [
-    "HTTPS",
-    "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
   ],
   "nlp": [
     "NLP and language models",
@@ -2605,10 +2530,6 @@ const sources = {
   "mlCourse": [
     "Course · Google Machine Learning Crash Course",
     "https://developers.google.com/machine-learning/crash-course"
-  ],
-  "socketTutorial": [
-    "Tutorial · Python socket programming HOWTO",
-    "https://docs.python.org/3/howto/sockets.html"
   ],
   "sslPaper": [
     "Paper · BERT and masked language modeling",
