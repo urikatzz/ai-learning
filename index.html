@@ -1881,22 +1881,6 @@ const notes = [
     "detail": "SFT adapts a pretrained model using examples of inputs paired with desired outputs. For language models, examples often contain conversations or instruction-response pairs. The training objective rewards assigning higher probability to the supplied target tokens."
   },
   {
-    "title": "TCP",
-    "category": "systems",
-    "what": "A transport protocol providing an ordered, reliable byte stream.",
-    "how": "TCP establishes connection state, numbers bytes, acknowledges received data, and retransmits when needed. The application defines message framing because TCP does not preserve write boundaries. A dropped connection can leave the client uncertain whether the server processed its last request.",
-    "example": "A model download uses TCP to reconstruct ordered file bytes despite packet loss. The application can still verify a checksum for end-to-end integrity. For a request that creates a record, retrying after disconnection may duplicate the operation unless the application uses an idempotency mechanism.",
-    "watch": "TCP preserves byte order, not application message boundaries.",
-    "sources": [
-      "tcp"
-    ],
-    "related": [
-      "UDP"
-    ],
-    "slug": "tcp",
-    "detail": "Transmission Control Protocol provides an ordered byte stream between endpoints. It detects loss and retransmits data while managing receiver capacity and network congestion. Reliability means ordered delivery while the connection succeeds, not a promise that the application completed an operation."
-  },
-  {
     "title": "Temperature",
     "category": "models",
     "what": "A sampling control that changes how concentrated token probabilities are.",
@@ -2090,22 +2074,6 @@ const notes = [
     ],
     "slug": "transformers",
     "detail": "Transformers build contextual representations using attention and feed-forward layers. Attention lets one position combine information from other positions according to learned relevance scores. Positional information is needed because attention alone does not encode sequence order."
-  },
-  {
-    "title": "UDP",
-    "category": "systems",
-    "what": "A transport protocol that sends datagrams with minimal built-in coordination.",
-    "how": "The sender addresses datagrams to an IP address and port. Applications handle loss, reordering, size limits, and congestion as needed. Protocols such as QUIC build reliable, encrypted communication on top of UDP, so using UDP underneath does not imply the overall application lacks reliability.",
-    "example": "A real-time game can discard a lost position update when a newer update arrives. A file transfer cannot simply discard missing bytes and needs a reliability layer. HTTP/3 uses QUIC over UDP, illustrating why “HTTP always uses TCP” is inaccurate.",
-    "watch": "Applications needing reliability must provide it themselves or use a protocol built on UDP.",
-    "sources": [
-      "udp"
-    ],
-    "related": [
-      "TCP"
-    ],
-    "slug": "udp",
-    "detail": "User Datagram Protocol sends individual datagrams without establishing a TCP-style reliable stream. Datagram boundaries are preserved when delivered, but delivery, ordering, and duplicate suppression are not guaranteed. Its small protocol overhead lets applications choose their own reliability behavior."
   },
   {
     "title": "Upstash boxes",
@@ -2398,14 +2366,6 @@ const sources = {
   "http": [
     "HTTP overview",
     "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview"
-  ],
-  "tcp": [
-    "TCP specification",
-    "https://www.rfc-editor.org/info/rfc9293/"
-  ],
-  "udp": [
-    "UDP specification",
-    "https://www.rfc-editor.org/info/rfc768/"
   ],
   "moe": [
     "Mixture of experts explained",
