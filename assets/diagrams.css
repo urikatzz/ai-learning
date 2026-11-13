@@ -42,6 +42,14 @@ body.dark{--dg-teal:#4fd1c5;--dg-blue:#6ea8ff;--dg-orange:#ffa15c;--dg-purple:#b
 .dg-in .dg-pulse{animation:dg-pulse 1.8s ease-in-out infinite}
 .dg-in .dg-drift{animation:dg-drift 1.4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*.1s)}
 
+/* Cycling highlight: one ring per step, 4s loop for 4 steps */
+.dg-ring{fill:none;stroke:var(--tone);stroke-width:2.5;opacity:0}
+.dg-in .dg-ring4{animation:dg-ring4 4s linear infinite;animation-delay:calc(var(--s)*1s)}
+.dg-growx{transform-box:fill-box;transform-origin:left;transform:scaleX(0)}
+.dg-in .dg-growx{animation:dg-growx .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i,0)*.12s)}
+
+@keyframes dg-ring4{0%{opacity:0}3%,22%{opacity:1}27%,100%{opacity:0}}
+@keyframes dg-growx{to{transform:scaleX(1)}}
 @keyframes dg-pop{to{opacity:1;transform:none}}
 @keyframes dg-draw{to{stroke-dashoffset:0}}
 @keyframes dg-grow{to{transform:scaleY(1)}}
@@ -54,9 +62,9 @@ body.dark{--dg-teal:#4fd1c5;--dg-blue:#6ea8ff;--dg-orange:#ffa15c;--dg-purple:#b
 @keyframes dg-drift{from{transform:translate(var(--dx),var(--dy))}to{transform:none}}
 
 @media(prefers-reduced-motion:reduce){
-  .dg-pop,.dg-draw,.dg-grow,.dg-flow,.dg-travel,.dg-slide,.dg-drop,.dg-add,.dg-drift,.dg-pulse{animation:none!important}
+  .dg-pop,.dg-draw,.dg-grow,.dg-flow,.dg-travel,.dg-slide,.dg-drop,.dg-add,.dg-drift,.dg-pulse,.dg-ring4,.dg-growx{animation:none!important}
   .dg-pop{opacity:1;transform:none}
   .dg-draw{stroke-dashoffset:0}
-  .dg-grow{transform:none}
+  .dg-grow,.dg-growx{transform:none}
   .dg-drop{opacity:.35}
 }

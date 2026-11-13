@@ -1,12 +1,12 @@
 # AI Learning — Uri Katz
 
-A single-file, responsive AI glossary with 137 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
+A single-file, responsive AI glossary with 172 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
 
 ## Read the glossary
 
-Open `index.html` in a browser. Click any term to open its page. Each explained term has a short index definition, a deeper introduction, mechanics, a worked example, common pitfalls, related terms, and source links. Six guided learning paths cover foundations, retrieval, agents, model adaptation/serving, and production AI engineering. Twenty-one responsive diagrams and fifteen expandable self-checks reinforce the core concepts. Search includes the full explanations and related-term names. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
+Open `index.html` in a browser. Click any term to open its page. Each explained term has a short index definition, a deeper introduction, mechanics, a worked example, common pitfalls, related terms, and source links. Seven guided learning paths cover foundations, retrieval, agents, agent architectures, model adaptation/serving, and production AI engineering. Twenty-one responsive diagrams and fifteen expandable self-checks reinforce the core concepts. Search includes the full explanations and related-term names. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
 
-All 137 entries have explanations. JEV, Hermes, Orca, Herdr, Pi, Omp, and Karpathy’s LLM Wiki are identified using their official references. Gool was removed. Herdr retains the original `#term/herder` route so existing bookmarks continue to work.
+All 172 entries have explanations. JEV, Hermes, Orca, Herdr, Pi, Omp, and Karpathy’s LLM Wiki are identified using their official references. Gool was removed. Herdr retains the original `#term/herder` route so existing bookmarks continue to work.
 
 ## GitHub Pages
 
@@ -43,9 +43,13 @@ Run `python3 scripts/check-glossary.py --links --report /tmp/ai-learning-links.j
 
 For visual checks, serve with `python3 -m http.server 8765 --bind 127.0.0.1`, then open `http://127.0.0.1:8765`. Check learning-path links, search, filters, term sections, self-checks, Back/Forward navigation, both themes, and narrow-screen diagrams.
 
+## Plain-language intros
+
+The `intuitions` dictionary in `index.html` maps a slug to a one-or-two-sentence analogy, shown as an "In plain terms" callout under "What it is". Add entries for terms whose formal definition benefits from an everyday picture.
+
 ## Animated diagrams
 
-Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval, ReAct agent loops, HNSW, reciprocal rank fusion, human-in-the-loop gates, and golden datasets render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
+Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval, ReAct agent loops, HNSW, reciprocal rank fusion, human-in-the-loop gates, golden datasets, LLM as a judge, training, backpropagation, prefill and decode, MCP, precision and recall, grounding, caching, and fine-tuning types render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
 
 #### Scenario: Diagram animates on first view
 

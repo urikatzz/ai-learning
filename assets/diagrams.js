@@ -615,7 +615,206 @@
     return figure;
   };
 
-  const h = { svgNode, makeFigure, box, arrow };
+  // Highlight ring that cycles through steps (total is 3 or 4); step 0 starts first.
+  function ring(svg, { x, y, w, h = 44, step, total, tone }) {
+    return svgNode(svg, 'rect', { x: x - 4, y: y - 4, width: w + 8, height: h + 8, rx: 13, class: `dg-ring dg-ring${total} dg-${tone}`, style: `--s:${step}` });
+  }
+  const note = (svg, x, y, text, i) => svgNode(svg, 'text', { x, y, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: `--i:${i}` }, text);
+
+  builders.training = ({ svgNode, makeFigure, box, arrow, ring }) => {
+    const { figure, svg } = makeFigure({
+      title: 'One step, repeated thousands of times',
+      alt: 'Four steps in a loop: forward pass, loss, backward pass, update. The loop repeats and the loss curve falls over many steps.',
+      caption: 'Each step predicts, scores the miss, finds which weights caused it, and nudges them. Repetition over many batches is what turns a random network into a useful one. The loss curve is illustrative.',
+      height: 220
+    });
+    const steps = [['Forward', 'blue'], ['Loss', 'orange'], ['Backward', 'purple'], ['Update', 'teal']];
+    steps.forEach(([label, tone], i) => {
+      box(svg, { x: 12 + i * 120, y: 24, w: 96, label, tone, index: i });
+      ring(svg, { x: 12 + i * 120, y: 24, w: 96, step: i, total: 4, tone });
+      if (i < 3) arrow(svg, { x1: 108 + i * 120, y1: 46, x2: 130 + i * 120, y2: 46, tone, index: i + 1 });
+    });
+    svgNode(svgNode(svg, 'g', { class: 'dg-teal dg-pop', style: '--i:5' }), 'path', { d: 'M420 72V100H60V76', class: 'dg-dash dg-flow' });
+    note(svg, 240, 94, 'repeat with the next batch', 5);
+    svgNode(svg, 'path', { d: 'M40 128C120 132 160 162 240 172S380 182 450 184', class: 'dg-stroke dg-blue dg-draw', pathLength: 1, style: '--i:6' });
+    svgNode(svg, 'line', { x1: 40, y1: 192, x2: 450, y2: 192, stroke: 'var(--line)', 'stroke-width': 2 });
+    note(svg, 245, 210, 'training steps →', 6);
+    svgNode(svg, 'text', { x: 40, y: 124, class: 'dg-small dg-pop', style: '--i:6' }, 'loss');
+    return figure;
+  };
+
+  builders.backpropagation = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Forward to get the loss, backward to get the blame',
+      alt: 'With x=2 and w=1 the prediction is 2 and the loss is 1 against target 3. Going backward gives dL/dw of minus 4, so the optimizer moves w from 1 to 1.4.',
+      caption: 'The forward pass produces the loss; the backward pass reuses it to find how the loss changes with w. The optimizer, a separate step, then uses that gradient. Numbers match the worked example with learning rate 0.1.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 20, w: 120, label: 'w=1 · x=2', tone: 'blue', index: 0 });
+    box(svg, { x: 170, y: 20, w: 120, label: 'y = 2', tone: 'blue', index: 1 });
+    box(svg, { x: 330, y: 20, w: 138, label: 'loss = 1 (t=3)', tone: 'orange', index: 2 });
+    arrow(svg, { x1: 132, y1: 42, x2: 168, y2: 42, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 290, y1: 42, x2: 328, y2: 42, tone: 'orange', index: 2 });
+    note(svg, 240, 84, 'forward →', 3);
+    svgNode(svgNode(svg, 'g', { class: 'dg-purple dg-pop', style: '--i:4' }), 'path', { d: 'M400 112H72', class: 'dg-dash dg-flow' });
+    note(svg, 240, 104, '← backward: chain rule', 4);
+    box(svg, { x: 12, y: 140, w: 150, label: 'dL/dw = −4', tone: 'purple', index: 5 });
+    arrow(svg, { x1: 162, y1: 162, x2: 218, y2: 162, tone: 'teal', index: 6 });
+    box(svg, { x: 220, y: 140, w: 248, label: 'optimizer: w 1 → 1.4', tone: 'teal', index: 7, solid: true });
+    note(svg, 344, 204, 'new loss ≈ 0.04', 8);
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-blue dg-travel', style: "offset-path:path('M72 42H315')" });
+    return figure;
+  };
+
+  builders['prefill-and-decode'] = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A request through time',
+      alt: 'A request waits in a queue, then prefill processes the whole prompt at once, the first token arrives, and decode produces later tokens one at a time.',
+      caption: 'Prefill reads the whole prompt in parallel and ends at the first token; decode then emits one token per step. Time to first token includes queueing and prefill. Widths are illustrative.',
+      height: 180
+    });
+    box(svg, { x: 12, y: 30, w: 58, label: 'queue', tone: 'purple', index: 0 });
+    box(svg, { x: 76, y: 30, w: 150, label: 'prefill: all at once', tone: 'orange', index: 1 });
+    ['t1', 't2', 't3', 't4', 't5'].forEach((t, i) => box(svg, { x: 240 + i * 46, y: 30, w: 40, label: t, tone: 'teal', index: 3 + i * 1.5, solid: i === 0 }));
+    svgNode(svg, 'path', { d: 'M12 90V102H226V90', class: 'dg-stroke dg-orange dg-draw', pathLength: 1, style: '--i:2' });
+    note(svg, 119, 126, 'time to first token', 2);
+    svgNode(svg, 'path', { d: 'M240 90V102H466V90', class: 'dg-stroke dg-teal dg-draw', pathLength: 1, style: '--i:8' });
+    note(svg, 353, 126, 'decode: one token per step', 8);
+    note(svg, 353, 148, 'gaps between tokens = inter-token latency', 9);
+    return figure;
+  };
+
+  builders.mcp = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'One protocol between the app and its tools',
+      alt: 'A host application contains an MCP client. The client exchanges protocol messages with an MCP server, which exposes tools, resources, and prompts.',
+      caption: 'The host owns the conversation and the model; the client speaks the protocol; the server exposes capabilities. Any compatible client can use any compatible server. Arrow labels are simplified.',
+      height: 196
+    });
+    box(svg, { x: 12, y: 76, w: 100, label: 'Host app', tone: 'blue', index: 0 });
+    box(svg, { x: 144, y: 76, w: 96, label: 'MCP client', tone: 'teal', index: 1 });
+    box(svg, { x: 272, y: 76, w: 96, label: 'MCP server', tone: 'orange', index: 2, solid: true });
+    arrow(svg, { x1: 112, y1: 98, x2: 142, y2: 98, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 240, y1: 98, x2: 270, y2: 98, tone: 'teal', index: 2 });
+    ['tools', 'resources', 'prompts'].forEach((label, i) => {
+      box(svg, { x: 394, y: 24 + i * 52, w: 78, h: 38, label, tone: 'orange', index: 3 + i });
+      arrow(svg, { x1: 368, y1: 98, x2: 392, y2: 43 + i * 52, tone: 'orange', index: 3 + i });
+    });
+    note(svg, 200, 160, 'requests and results as protocol messages', 6);
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: "offset-path:path('M62 98H262')" });
+    return figure;
+  };
+
+  builders['precision-recall'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Same hits, two denominators',
+      alt: 'Of 20 alerts, 15 were real incidents, so precision is 75 percent. Of 30 real incidents, 15 were caught, so recall is 50 percent.',
+      caption: 'Precision asks how many alerts were right; recall asks how many real incidents were caught. Raising one often lowers the other, so choose by which mistake costs more. Counts are illustrative.',
+      height: 250
+    });
+    [[175, 'dg-blue', 'alerts (20)', 50, 125], [265, 'dg-orange', 'real incidents (30)', 70, 335]].forEach(([cx, tone, label, r, lx], i) => {
+      const g = svgNode(svg, 'g', { class: `${tone} dg-pop`, style: `--i:${i}` });
+      svgNode(g, 'circle', { cx, cy: 100, r, class: 'dg-fill', style: 'fill-opacity:.2;stroke:var(--tone);stroke-width:2' });
+      svgNode(svg, 'text', { x: lx, y: 16, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: `--i:${i + 1}` }, label);
+    });
+    svgNode(svg, 'text', { x: 210, y: 106, 'text-anchor': 'middle', class: 'dg-pop', style: '--i:2' }, '15');
+    svgNode(svg, 'text', { x: 153, y: 106, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:3' }, '5 false');
+    svgNode(svg, 'text', { x: 292, y: 106, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:3' }, '15 missed');
+    [['precision', 75, 'dg-blue', 188], ['recall', 50, 'dg-orange', 222]].forEach(([name, pct, tone, y], i) => {
+      svgNode(svg, 'text', { x: 12, y: y + 11, class: 'dg-pop', style: `--i:${4 + i}` }, name);
+      svgNode(svg, 'rect', { x: 100, y, width: 300, height: 14, rx: 7, fill: 'var(--line)', opacity: 0.5 });
+      const g = svgNode(svg, 'g', { class: tone });
+      svgNode(g, 'rect', { x: 100, y, width: 3 * pct, height: 14, rx: 7, class: 'dg-fill dg-growx', style: `--i:${4 + i}` });
+      svgNode(svg, 'text', { x: 412, y: y + 12, class: 'dg-pop', style: `--i:${6 + i}` }, pct + '%');
+    });
+    return figure;
+  };
+
+  builders.grounding = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A citation still needs a check',
+      alt: 'Evidence is retrieved, the model writes claims tied to sources, and a verification step keeps supported claims and flags one whose source is outdated.',
+      caption: 'A real source can still be irrelevant or stale, so verification checks support, freshness, and scope. Unsupported claims are corrected, qualified, or dropped. The flagged claim is illustrative.',
+      height: 200
+    });
+    box(svg, { x: 12, y: 30, w: 100, label: 'Evidence', tone: 'blue', index: 0 });
+    box(svg, { x: 190, y: 30, w: 100, label: 'Claims', tone: 'teal', index: 2 });
+    box(svg, { x: 368, y: 30, w: 100, label: 'Verify', tone: 'orange', index: 4, solid: true });
+    arrow(svg, { x1: 112, y1: 52, x2: 188, y2: 52, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 290, y1: 52, x2: 366, y2: 52, tone: 'teal', index: 3 });
+    note(svg, 240, 20, 'each claim carries a source ID', 3);
+    arrow(svg, { x1: 400, y1: 74, x2: 350, y2: 120, tone: 'teal', index: 5 });
+    arrow(svg, { x1: 436, y1: 74, x2: 436, y2: 120, tone: 'orange', index: 5 });
+    box(svg, { x: 290, y: 122, w: 100, h: 40, label: 'supported ✓', tone: 'teal', index: 6 });
+    box(svg, { x: 400, y: 122, w: 76, h: 40, label: 'flagged', tone: 'orange', index: 6, solid: true });
+    note(svg, 420, 184, 'source is out of date', 7);
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M62 52H418')" });
+    return figure;
+  };
+
+  builders.caching = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Reuse only when the key matches',
+      alt: 'A request is looked up by a key made of input, version, and access scope. A hit returns the stored result; a miss computes the result and stores it.',
+      caption: 'The key must include everything that changes the answer, including versions and who may see it. A hit skips the work; a miss pays for it once and stores it for next time.',
+      height: 210
+    });
+    box(svg, { x: 12, y: 84, w: 80, label: 'request', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 92, y1: 106, x2: 118, y2: 106, tone: 'blue', index: 1 });
+    box(svg, { x: 120, y: 84, w: 110, label: 'key lookup', tone: 'purple', index: 2 });
+    note(svg, 175, 148, 'input · version · access', 3);
+    arrow(svg, { x1: 230, y1: 94, x2: 276, y2: 52, tone: 'teal', index: 4 });
+    arrow(svg, { x1: 230, y1: 118, x2: 276, y2: 160, tone: 'orange', index: 4 });
+    box(svg, { x: 278, y: 30, w: 190, h: 44, label: 'hit: return stored result', tone: 'teal', index: 5, solid: true });
+    box(svg, { x: 278, y: 138, w: 110, h: 44, label: 'miss: compute', tone: 'orange', index: 5 });
+    arrow(svg, { x1: 388, y1: 160, x2: 410, y2: 160, tone: 'orange', index: 6 });
+    box(svg, { x: 412, y: 138, w: 56, h: 44, label: 'store', tone: 'orange', index: 6 });
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: "offset-path:path('M52 106H175L373 52')" });
+    return figure;
+  };
+
+  builders['fine-tuning-types'] = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Pick one from each row',
+      alt: 'Two independent choices: an objective, either supervised examples or preferences, and an update method, either full tuning or LoRA adapters. Any pairing works, such as SFT with LoRA.',
+      caption: 'What to learn and what to change are separate decisions, not sequential steps. SFT + LoRA is one common pairing; the highlighted link cycles through the four valid combinations.',
+      height: 200
+    });
+    note(svg, 240, 16, 'Objective: what to learn', 0);
+    box(svg, { x: 40, y: 26, w: 170, label: 'SFT', tone: 'blue', index: 1 });
+    box(svg, { x: 270, y: 26, w: 170, label: 'Preferences / rewards', tone: 'blue', index: 2 });
+    note(svg, 240, 118, 'Update method: what changes', 3);
+    box(svg, { x: 40, y: 128, w: 170, label: 'Full tuning', tone: 'orange', index: 4 });
+    box(svg, { x: 270, y: 128, w: 170, label: 'LoRA adapters', tone: 'orange', index: 5 });
+    [[125, 125], [125, 355], [355, 355], [355, 125]].forEach(([from, to], i) => {
+      svgNode(svg, 'path', { d: `M${from} 74L${to} 126`, class: 'dg-stroke dg-purple dg-ring dg-ring4', style: `--s:${i}` });
+    });
+    note(svg, 240, 192, 'any objective can pair with any update method', 6);
+    return figure;
+  };
+
+  builders['llm-as-a-judge'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A judge scores the answer, then humans check the judge',
+      alt: 'A candidate answer, a rubric, and source evidence feed a model judge. The judge outputs a structured grade with a reason. A sample of grades is compared with human labels to calibrate the judge.',
+      caption: 'The judge sees the answer, the rubric, and the evidence, and returns a structured grade. Its scores are only trustworthy after comparison with human labels on a sample. Layout is illustrative.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 14, w: 110, h: 38, label: 'Answer', tone: 'blue', index: 0 });
+    box(svg, { x: 12, y: 66, w: 110, h: 38, label: 'Rubric', tone: 'purple', index: 1 });
+    box(svg, { x: 12, y: 118, w: 110, h: 38, label: 'Evidence', tone: 'teal', index: 2 });
+    [33, 85, 137].forEach((y, i) => arrow(svg, { x1: 122, y1: y, x2: 176, y2: 85, tone: ['blue', 'purple', 'teal'][i], index: 3 }));
+    box(svg, { x: 178, y: 62, w: 110, h: 46, label: 'Judge', tone: 'orange', index: 4, solid: true });
+    arrow(svg, { x1: 288, y1: 85, x2: 330, y2: 85, tone: 'orange', index: 5 });
+    box(svg, { x: 332, y: 62, w: 136, h: 46, label: 'Grade + reason', tone: 'orange', index: 6 });
+    svgNode(svg, 'path', { d: 'M400 108V170H233V112', class: 'dg-dash dg-flow dg-teal dg-pop', style: '--i:8' });
+    box(svg, { x: 290, y: 150, w: 110, h: 38, label: 'Human labels', tone: 'teal', index: 7 });
+    note(svg, 240, 206, 'compare on a sample, then adjust the rubric', 8);
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M67 33L233 85H400')" });
+    return figure;
+  };
+
+  const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
 
