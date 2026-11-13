@@ -520,6 +520,101 @@
     return figure;
   };
 
+  builders['react-agent-loop'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Think, act, observe, repeat',
+      alt: 'A loop of three boxes: think, act with a tool, observe the result. The loop returns to think until a stop condition sends it to the final answer; a step budget also stops it.',
+      caption: 'The model decides, the runtime executes, and the result feeds the next decision. Stop conditions and budgets keep the loop bounded. Step counts are illustrative.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 30, w: 100, label: 'think', tone: 'blue', index: 0 });
+    box(svg, { x: 190, y: 30, w: 100, label: 'act (tool)', tone: 'teal', index: 2 });
+    box(svg, { x: 190, y: 120, w: 100, label: 'observe', tone: 'orange', index: 4 });
+    arrow(svg, { x1: 112, y1: 50, x2: 188, y2: 50, tone: 'teal', index: 1 });
+    arrow(svg, { x1: 240, y1: 70, x2: 240, y2: 118, tone: 'orange', index: 3 });
+    arrow(svg, { x1: 188, y1: 140, x2: 62, y2: 72, tone: 'blue', index: 5 });
+    box(svg, { x: 360, y: 30, w: 108, label: 'final answer', tone: 'blue', index: 6, solid: true });
+    arrow(svg, { x1: 290, y1: 50, x2: 358, y2: 50, tone: 'blue', index: 6 });
+    svgNode(svg, 'text', { x: 324, y: 42, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'done?');
+    svgNode(svg, 'text', { x: 414, y: 142, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'budget: max 8 steps');
+    svgNode(svg, 'text', { x: 414, y: 162, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'then stop and report');
+    return figure;
+  };
+
+  builders['hnsw'] = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Hop down the layers toward the query',
+      alt: 'Three layers of a graph, sparse at the top and dense at the bottom. A search path enters at the top, hops toward the query, drops a layer, and ends at the nearest vectors on the bottom layer.',
+      caption: 'Search starts on a sparse layer, makes long hops, then refines on denser layers. It is approximate: it may miss the true nearest neighbour. Positions are illustrative.',
+      height: 214
+    });
+    const layers = [['layer 2 (sparse)', 20, [60, 200, 380]], ['layer 1', 80, [40, 120, 220, 300, 400]], ['layer 0 (all vectors)', 140, [30, 90, 150, 210, 270, 330, 390, 440]]];
+    layers.forEach(([label, y, xs], li) => {
+      svgNode(svg, 'text', { x: 10, y: y - 6, class: 'dg-small dg-pop', style: '--i:' + li }, label);
+      xs.forEach((x, k) => svgNode(svg, 'circle', { cx: x, cy: y + 14, r: 6, class: 'dg-pop', style: 'fill:var(--tone);fill-opacity:.35;stroke:var(--tone);stroke-width:1.5;--i:' + (li * 2 + (k % 2)) }));
+    });
+    svgNode(svg, 'path', { d: 'M60 34L200 34L220 94L270 154L330 154', class: 'dg-draw', style: 'fill:none;stroke:var(--tone);stroke-width:2.5;--i:4' });
+    svgNode(svg, 'text', { x: 340, y: 190, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:6' }, 'nearest neighbours found');
+    return figure;
+  };
+
+  builders['reciprocal-rank-fusion'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Fuse ranks, not scores',
+      alt: 'Two ranked lists, keyword and vector, each give document A a rank. The formula 1 over 60 plus rank is added for each list, and document A has the highest total, so it is first in the fused list.',
+      caption: 'Each list contributes 1/(60 + rank) per document; totals decide the fused order. Documents ranked well by both retrievers rise. Numbers are illustrative.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 30, w: 110, label: 'keyword: B, A, C', tone: 'blue', index: 0 });
+    box(svg, { x: 12, y: 120, w: 110, label: 'vector: D, A, B', tone: 'teal', index: 1 });
+    arrow(svg, { x1: 122, y1: 50, x2: 176, y2: 92, tone: 'blue', index: 2 });
+    arrow(svg, { x1: 122, y1: 140, x2: 176, y2: 112, tone: 'teal', index: 2 });
+    box(svg, { x: 178, y: 80, w: 130, label: 'sum 1/(60+rank)', tone: 'orange', index: 3, solid: true });
+    arrow(svg, { x1: 308, y1: 100, x2: 340, y2: 100, tone: 'orange', index: 4 });
+    ['1. A  (.0325)', '2. B  (.0323)', '3. D  (.0164)', '4. C  (.0159)'].forEach((t, k) => svgNode(svg, 'text', { x: 346, y: 70 + k * 22, class: 'dg-small dg-pop', style: '--i:' + (5 + k) }, t));
+    return figure;
+  };
+
+  builders['human-in-the-loop'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Pause before the risky step',
+      alt: 'An agent drafts an action and reaches an approval gate. A person approves, edits, or rejects. Approve and edit continue to execution; reject goes to a handled fallback. The state is saved while waiting.',
+      caption: 'The gate shows the exact action. Approve or edit resumes execution; rejection is a handled path, not an error. Workflow state is saved while waiting.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 86, w: 90, label: 'draft action', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 102, y1: 106, x2: 140, y2: 106, tone: 'blue', index: 1 });
+    box(svg, { x: 142, y: 86, w: 100, label: 'approval gate', tone: 'orange', index: 2, solid: true });
+    [['approve / edit', 30, 'teal', 'execute'], ['reject', 150, 'blue', 'fallback']].forEach(([lab, y, tone, out], i) => {
+      arrow(svg, { x1: 242, y1: 106, x2: 280, y2: y + 20, tone, index: 3 });
+      box(svg, { x: 282, y, w: 90, h: 40, label: lab, tone, index: 4 });
+      arrow(svg, { x1: 372, y1: y + 20, x2: 398, y2: y + 20, tone, index: 5 });
+      box(svg, { x: 400, y, w: 70, h: 40, label: out, tone, index: 6 });
+    });
+    svgNode(svg, 'text', { x: 192, y: 138, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'state saved');
+    return figure;
+  };
+
+  builders['golden-datasets'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A regression gate before release',
+      alt: 'A change goes through a golden dataset run. Scores are compared to the baseline by slice. If no slice drops below threshold the change ships; otherwise it is blocked.',
+      caption: 'Compare each slice with the baseline, not just the overall score. A slice that drops, such as refunds, blocks the release. Numbers are illustrative.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 86, w: 80, label: 'change', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 92, y1: 106, x2: 118, y2: 106, tone: 'blue', index: 1 });
+    box(svg, { x: 120, y: 86, w: 110, label: 'golden set run', tone: 'teal', index: 2 });
+    arrow(svg, { x1: 230, y1: 106, x2: 256, y2: 106, tone: 'teal', index: 3 });
+    box(svg, { x: 258, y: 86, w: 100, label: 'vs. baseline', tone: 'orange', index: 4, solid: true });
+    arrow(svg, { x1: 358, y1: 96, x2: 386, y2: 52, tone: 'teal', index: 5 });
+    arrow(svg, { x1: 358, y1: 116, x2: 386, y2: 160, tone: 'blue', index: 5 });
+    box(svg, { x: 388, y: 32, w: 82, h: 40, label: 'ship', tone: 'teal', index: 6 });
+    box(svg, { x: 388, y: 140, w: 82, h: 40, label: 'blocked', tone: 'blue', index: 6 });
+    svgNode(svg, 'text', { x: 308, y: 190, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'refunds slice 95% to 80%');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
