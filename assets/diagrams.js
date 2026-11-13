@@ -79,6 +79,63 @@
 
   // --- Registry ---
   const builders = {};
+
+  builders.rag = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Search first, then generate',
+      alt: 'A question goes to a document search, the retrieved passages go to the language model, and the model writes an answer grounded in them.',
+      caption: 'The model answers using passages retrieved for this question, so the answer can be traced back to sources. Retrieval quality still limits answer quality.',
+      height: 200
+    });
+    box(svg, { x: 16, y: 40, w: 84, label: 'Ask', tone: 'blue', index: 0 });
+    box(svg, { x: 132, y: 40, w: 84, label: 'Docs', tone: 'blue', index: 1 });
+    box(svg, { x: 248, y: 40, w: 84, label: 'LLM', tone: 'orange', index: 2 });
+    box(svg, { x: 364, y: 40, w: 100, label: 'Answer', tone: 'teal', index: 3, solid: true });
+    arrow(svg, { x1: 100, y1: 62, x2: 130, y2: 62, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 216, y1: 62, x2: 246, y2: 62, tone: 'blue', index: 2 });
+    arrow(svg, { x1: 332, y1: 62, x2: 362, y2: 62, tone: 'orange', index: 3 });
+    // Source stack under "Docs"
+    for (let i = 0; i < 3; i++) {
+      const g = svgNode(svg, 'g', { class: 'dg-blue dg-pop', style: `--i:${4 + i}` });
+      svgNode(g, 'rect', { x: 140 + i * 8, y: 112 + i * 8, width: 56, height: 22, rx: 4, class: 'dg-box', style: 'fill:var(--paper);stroke:var(--tone);stroke-width:1.5' });
+    }
+    svgNode(svg, 'text', { x: 174, y: 172, 'text-anchor': 'middle', class: 'dg-small' }, 'your documents');
+    svgNode(svg, 'path', { d: 'M174 110V86', class: 'dg-dash dg-blue' });
+    // Dot travelling along the whole pipeline
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M58 62H414')" });
+    return figure;
+  };
+
+  builders.temperature = ({ svgNode, makeFigure }) => {
+    const logits = [3, 2, 1, 0.5];
+    const labels = ['A', 'B', 'C', 'D'];
+    const panels = [
+      { x: 20, name: 'Low temperature: sharp', t: 0.3, tone: 'blue' },
+      { x: 260, name: 'High temperature: flat', t: 2, tone: 'orange' }
+    ];
+    const top = panels.map(p => Math.round(softmax(logits, p.t)[0] * 100));
+    const { figure, svg } = makeFigure({
+      title: 'Same scores, different sampling odds',
+      alt: `Four candidate tokens with fixed scores. At low temperature token A gets ${top[0]}% of the probability; at high temperature it gets ${top[1]}%.`,
+      caption: 'Temperature reshapes the probabilities of the same candidate tokens. Lower values favor the top token more strongly; this does not make the top token correct.',
+      height: 240
+    });
+    const base = 190, max = 120;
+    panels.forEach((panel, pi) => {
+      svgNode(svg, 'text', { x: panel.x + 100, y: 24, 'text-anchor': 'middle' }, panel.name);
+      svgNode(svg, 'line', { x1: panel.x, y1: base, x2: panel.x + 200, y2: base, stroke: 'var(--line)', 'stroke-width': 2 });
+      softmax(logits, panel.t).forEach((p, i) => {
+        const height = Math.max(p * max, 3);
+        const x = panel.x + 14 + i * 48;
+        const g = svgNode(svg, 'g', { class: `dg-${panel.tone}` });
+        svgNode(g, 'rect', { x, y: base - height, width: 34, height, rx: 4, class: 'dg-fill dg-grow', style: `--i:${pi * 2 + i}` });
+        svgNode(g, 'text', { x: x + 17, y: base - height - 6, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: `--i:${pi * 2 + i + 3}` }, Math.round(p * 100) + '%');
+        svgNode(svg, 'text', { x: x + 17, y: base + 20, 'text-anchor': 'middle' }, labels[i]);
+      });
+    });
+    svgNode(svg, 'text', { x: 240, y: 232, 'text-anchor': 'middle', class: 'dg-small' }, 'next-token odds');
+    return figure;
+  };
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
