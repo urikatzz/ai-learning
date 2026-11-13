@@ -201,6 +201,74 @@
     return figure;
   };
 
+  builders.agents = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'The decision and action loop',
+      alt: 'An agent loops through four steps: observe the task and evidence, decide the next step, act with a tool, then check the result before repeating or finishing.',
+      caption: 'The model chooses steps; the surrounding application executes them. The loop ends when the check passes or a limit is reached.',
+      height: 220
+    });
+    box(svg, { x: 40, y: 30, w: 120, label: 'Observe', tone: 'blue', index: 0 });
+    box(svg, { x: 320, y: 30, w: 120, label: 'Decide', tone: 'purple', index: 1, solid: true });
+    box(svg, { x: 320, y: 140, w: 120, label: 'Act', tone: 'orange', index: 2 });
+    box(svg, { x: 40, y: 140, w: 120, label: 'Check', tone: 'teal', index: 3 });
+    arrow(svg, { x1: 160, y1: 52, x2: 318, y2: 52, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 380, y1: 76, x2: 380, y2: 138, tone: 'purple', index: 2 });
+    arrow(svg, { x1: 320, y1: 162, x2: 162, y2: 162, tone: 'orange', index: 3 });
+    arrow(svg, { x1: 100, y1: 138, x2: 100, y2: 78, tone: 'teal', index: 4 });
+    svgNode(svg, 'text', { x: 240, y: 112, 'text-anchor': 'middle', class: 'dg-small' }, 'repeat until done');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-purple dg-travel', style: "offset-path:path('M100 52H380V162H100Z')" });
+    return figure;
+  };
+
+  builders.context = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A context window slides over the text',
+      alt: 'A row of tokens with a highlighted window over the most recent ones. As a new token arrives on the right, the oldest token on the left falls out of view.',
+      caption: 'The model can only consult what fits in the window. Older tokens that fall out are not visible to it unless re-supplied or summarized.',
+      height: 150
+    });
+    const x0 = 20, step = 36;
+    for (let i = 0; i < 12; i++) {
+      const classes = ['dg-teal'];
+      if (i < 4) classes.push('dg-old');
+      if (i === 4) classes.push('dg-drop');
+      if (i === 11) classes.push('dg-add');
+      const g = svgNode(svg, 'g', { class: classes.join(' ') + ' dg-box' });
+      svgNode(g, 'rect', { x: x0 + i * step, y: 50, width: 28, height: 34, rx: 6, style: i === 11 ? 'opacity:1' : '' });
+    }
+    // Window outline sits over cells 4..10 and slides one cell to the right
+    svgNode(svg, 'rect', {
+      x: x0 + 4 * step - 5, y: 42, width: 7 * step + 2, height: 50, rx: 10,
+      fill: 'none', stroke: 'var(--dg-purple)', 'stroke-width': 3, class: 'dg-slide'
+    });
+    svgNode(svg, 'text', { x: 240, y: 128, 'text-anchor': 'middle', class: 'dg-small' }, 'newest in, oldest out');
+    return figure;
+  };
+
+  builders['kv-cache'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Reuse stored keys and values',
+      alt: 'Earlier tokens The, cat and sat have their keys and values stored in a cache. When the new token on arrives, the model reuses the cache instead of recomputing the earlier tokens, then adds the new token to the cache.',
+      caption: 'Caching saves recomputation of earlier tokens during generation, at the cost of memory that grows with context length.',
+      height: 190
+    });
+    const container = svgNode(svg, 'g', { class: 'dg-blue dg-pop', style: '--i:0' });
+    svgNode(container, 'rect', { x: 16, y: 40, width: 270, height: 70, rx: 12, class: 'dg-dash' });
+    svgNode(container, 'text', { x: 28, y: 34, class: 'dg-small' }, 'KV cache');
+    ['The', 'cat', 'sat'].forEach((label, i) => box(svg, { x: 30 + i * 84, y: 52, w: 72, h: 46, label, tone: 'blue', index: 1 + i }));
+    arrow(svg, { x1: 288, y1: 75, x2: 346, y2: 75, tone: 'orange', index: 4 });
+    box(svg, { x: 350, y: 52, w: 100, h: 46, label: 'on', tone: 'orange', index: 5, solid: true });
+    svgNode(svg, 'text', { x: 400, y: 40, 'text-anchor': 'middle', class: 'dg-small' }, 'new token');
+    svgNode(svg, 'text', { x: 151, y: 134, 'text-anchor': 'middle', class: 'dg-small' }, 'computed once, reused');
+    svgNode(svg, 'path', {
+      d: arcPath(400, 270, 108, -40), pathLength: 1,
+      class: 'dg-stroke dg-draw dg-orange', style: '--i:6;stroke-dasharray:1'
+    });
+    svgNode(svg, 'text', { x: 330, y: 178, 'text-anchor': 'middle', class: 'dg-small' }, 'then appended to the cache');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
