@@ -1,0 +1,59 @@
+/* Animated diagrams: tones, card look, motion. Static final state is the default
+   for reduced motion; animations only run inside .dg-in (set by revealOnScroll). */
+:root{--dg-teal:#0f8b8d;--dg-blue:#2f6fd0;--dg-orange:#d9701f;--dg-purple:#7c4ddb}
+body.dark{--dg-teal:#4fd1c5;--dg-blue:#6ea8ff;--dg-orange:#ffa15c;--dg-purple:#b18cff}
+
+.dg-figure{overflow:hidden}
+.dg-figure svg{max-width:640px;margin:auto}
+.dg-figure text{font-family:'DM Sans',sans-serif;font-size:15px;fill:var(--ink)}
+.dg-figure .dg-small{font-size:13px;fill:var(--muted)}
+
+.dg-teal{--tone:var(--dg-teal)}.dg-blue{--tone:var(--dg-blue)}
+.dg-orange{--tone:var(--dg-orange)}.dg-purple{--tone:var(--dg-purple)}
+.dg-box rect{fill:color-mix(in srgb,var(--tone) 14%,var(--paper));stroke:var(--tone);stroke-width:2}
+.dg-box.dg-solid rect{fill:var(--tone)}
+.dg-box.dg-solid text{fill:#fff;font-weight:700}
+.dg-box text{font-weight:600}
+.dg-stroke{fill:none;stroke:var(--tone,var(--muted));stroke-width:2;stroke-linecap:round}
+.dg-dash{stroke-dasharray:5 5;fill:none;stroke:var(--tone,var(--muted));stroke-width:1.6}
+.dg-dot{fill:var(--tone,var(--accent))}
+.dg-fill{fill:var(--tone)}
+.dg-old{opacity:.35}
+
+/* Entrance: hidden until the figure scrolls into view */
+.dg-pop{opacity:0;transform:translateY(8px)}
+.dg-draw{stroke-dasharray:1;stroke-dashoffset:1}
+.dg-grow{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+.dg-in .dg-pop{animation:dg-pop .5s ease-out forwards;animation-delay:calc(var(--i,0)*.12s)}
+.dg-in .dg-draw{animation:dg-draw .9s ease-out forwards;animation-delay:calc(var(--i,0)*.12s)}
+.dg-in .dg-grow{animation:dg-grow .8s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i,0)*.12s)}
+
+/* Continuous motion */
+.dg-flow{stroke-dasharray:6 6}
+.dg-in .dg-flow{animation:dg-flow 1s linear infinite}
+.dg-travel{offset-rotate:0deg;offset-distance:100%}
+.dg-in .dg-travel{animation:dg-travel 3.2s ease-in-out infinite}
+.dg-slide{}
+.dg-in .dg-slide{animation:dg-slide 4s ease-in-out infinite}
+.dg-in .dg-drop{animation:dg-drop 4s ease-in-out infinite}
+.dg-in .dg-add{animation:dg-add 4s ease-in-out infinite}
+.dg-drift{}
+.dg-in .dg-drift{animation:dg-drift 1.4s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*.1s)}
+
+@keyframes dg-pop{to{opacity:1;transform:none}}
+@keyframes dg-draw{to{stroke-dashoffset:0}}
+@keyframes dg-grow{to{transform:scaleY(1)}}
+@keyframes dg-flow{to{stroke-dashoffset:-12}}
+@keyframes dg-travel{0%{offset-distance:0%}85%,100%{offset-distance:100%}}
+@keyframes dg-slide{0%,35%{transform:translateX(0)}55%,100%{transform:translateX(36px)}}
+@keyframes dg-drop{0%,35%{opacity:1}55%,100%{opacity:.35}}
+@keyframes dg-add{0%,35%{opacity:.35}55%,100%{opacity:1}}
+@keyframes dg-drift{from{transform:translate(var(--dx),var(--dy))}to{transform:none}}
+
+@media(prefers-reduced-motion:reduce){
+  .dg-pop,.dg-draw,.dg-grow,.dg-flow,.dg-travel,.dg-slide,.dg-drop,.dg-add,.dg-drift{animation:none!important}
+  .dg-pop{opacity:1;transform:none}
+  .dg-draw{stroke-dashoffset:0}
+  .dg-grow{transform:none}
+  .dg-drop{opacity:.35}
+}

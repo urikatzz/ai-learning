@@ -42,3 +42,33 @@ Run `python3 scripts/check-glossary.py` to check unique identifiers, required co
 Run `python3 scripts/check-glossary.py --links --report /tmp/ai-learning-links.json` to also check all learning-resource URLs using curl. The report records status, redirect destination, and page title. HTTP success establishes reachability, not factual accuracy or future availability; inspect page content for relevance and soft error pages.
 
 For visual checks, serve with `python3 -m http.server 8765 --bind 127.0.0.1`, then open `http://127.0.0.1:8765`. Check learning-path links, search, filters, term sections, self-checks, Back/Forward navigation, both themes, and narrow-screen diagrams.
+
+## Animated diagrams
+
+Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, and KV cache render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
+
+#### Scenario: Diagram animates on first view
+
+- **GIVEN** a term page with an SVG diagram below the fold
+- **WHEN** the figure scrolls into view
+- **THEN** strokes draw and boxes stagger in once
+- **AND** flowing arrows keep animating
+
+#### Scenario: Reduced motion
+
+- **GIVEN** the visitor prefers reduced motion
+- **WHEN** a term page with a diagram loads
+- **THEN** the diagram renders in its final static state
+- **AND** no flow, draw, or slide animation runs
+
+#### Scenario: Term without a builder
+
+- **GIVEN** a term with a plain `diagrams` entry and no SVG builder
+- **WHEN** its page renders
+- **THEN** the existing text-box figure is shown
+
+#### Scenario: Dark theme
+
+- **GIVEN** the dark theme is active
+- **WHEN** a diagram renders
+- **THEN** category colors use their dark-theme token values

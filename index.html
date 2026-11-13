@@ -32,6 +32,7 @@ td{padding:20px 22px;border-bottom:1px solid var(--line);vertical-align:middle}t
 
 </style>
 <link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/diagrams.css">
 </head>
 <body>
 <a class="skip" href="#notebook">Skip to glossary</a>
@@ -51,6 +52,7 @@ td{padding:20px 22px;border-bottom:1px solid var(--line);vertical-align:middle}t
 <main id="detail-view" class="detail" hidden></main>
 <footer><span class="signature">Uri Katz © <span id="year"></span></span><span>Always a work in progress. <span style="color:var(--accent)">✳</span></span></footer>
 </div>
+<script src="assets/diagrams.js"></script>
 <script>
 
 'use strict';
@@ -3270,20 +3272,6 @@ function conceptFigure(diagram){
  }
  figure.append(el('figcaption',null,diagram.caption));return figure;
 }
-function temperatureFigure(){
- const figure=el('figure','concept-figure');figure.append(el('h3',null,'Same scores, different sampling probabilities'));
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 560 210');svg.setAttribute('role','img');svg.setAttribute('aria-labelledby','temperature-figure-title');
- const node=(tag,attrs,text)=>{const e=document.createElementNS(svg.namespaceURI,tag);for(const [key,value] of Object.entries(attrs))e.setAttribute(key,value);if(text)e.textContent=text;svg.append(e);};
- node('title',{id:'temperature-figure-title'},'For logits 2 and 1: at temperature 1 the probabilities are 73% and 27%; at temperature 0.5 they are 88% and 12%.');
- for(const [y,label,p] of [[45,'T = 1',0.731],[125,'T = 0.5',0.881]]){
-  node('text',{x:5,y:y+25,fill:'currentColor','font-size':16},label);
-  node('rect',{x:100,y,width:400*p,height:40,fill:'var(--accent)',rx:3});
-  node('rect',{x:100+400*p,y,width:400*(1-p),height:40,fill:'var(--soft)',stroke:'var(--muted)',rx:3});
-  node('text',{x:100,y:y-10,fill:'currentColor','font-size':14},'Token A: '+Math.round(p*100)+'%');
-  node('text',{x:500,y:y-10,fill:'currentColor','font-size':14,'text-anchor':'end'},'B: '+Math.round((1-p)*100)+'%');
- }
- figure.append(svg,el('figcaption',null,'Two possible tokens with fixed logits 2 and 1. Lower temperature favors A more strongly; it does not supply evidence that A is correct.'));return figure;
-}
 function renderLearningPaths(){
  for(const path of learningPaths){const card=el('article','path-card');card.append(el('h3',null,path.title),el('p',null,path.description));const list=el('ol');
   for(const slug of path.terms){const note=bySlug.get(slug);const item=el('li');const link=el('a',null,note.title);link.href='#term/'+slug;item.append(link);list.append(item);}card.append(list);$('path-grid').append(card);
@@ -3310,8 +3298,8 @@ function termPage(note){
  if(note.pending){article.append(section('definition','01','What to clarify',note.what),section('example','02','Next step',note.example));}
  else{
   article.append(section('definition','01','What it is',note.detail||note.what),section('mechanics','02','How it works',note.how),section('example','03','A practical example',note.example,'example-box'),section('distinction','04','Keep in mind',note.watch));
-  if(diagrams[note.slug])article.querySelector('#mechanics').append(conceptFigure(diagrams[note.slug]));
-  if(note.slug==='temperature')article.querySelector('#mechanics').append(temperatureFigure());
+  if(Diagrams.has(note.slug))article.querySelector('#mechanics').append(Diagrams.build(note.slug));
+  else if(diagrams[note.slug])article.querySelector('#mechanics').append(conceptFigure(diagrams[note.slug]));
   if(studyQuestions[note.slug]){const [question,answer]=studyQuestions[note.slug];const check=el('details','study-question');check.append(el('summary',null,'Check your understanding: '+question),el('p',null,answer));article.querySelector('#distinction').append(check);}
   if(note.related.length){const s=el('section','article-section');s.id='connections';const heading=el('h2');heading.append(el('span',null,'05'),document.createTextNode('Connect the ideas'));s.append(heading);const links=el('div','related');for(const title of note.related){const related=byTitle.get(title);if(!related)continue;const link=el('a',null,title+' →');link.href='#term/'+related.slug;links.append(link);}s.append(links);article.append(s);}
   if(note.sources.length){const s=el('section','article-section');s.id='references';const heading=el('h2');heading.append(el('span',null,'06'),document.createTextNode('Read further'));s.append(heading);const list=el('ul','sources');for(const key of note.sources){const [label,url]=sources[key];const li=el('li');const link=el('a',null,label+' ↗');link.href=url;link.target='_blank';link.rel='noopener noreferrer';li.append(link,el('small',null,new URL(url).hostname));list.append(li);}s.append(list);article.append(s);}
