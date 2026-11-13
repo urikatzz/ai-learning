@@ -458,6 +458,68 @@
     return figure;
   };
 
+  builders['tool-calling'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'The model asks, the application acts',
+      alt: 'The model sends a request with a tool name and arguments to the tool, the application runs the tool, and the result returns to the model. The application executes the tool, not the model.',
+      caption: 'The model only requests a call with a name and arguments; your application validates and runs it, then returns the result. A requested call is not evidence that it ran.',
+      height: 220
+    });
+    box(svg, { x: 20, y: 78, w: 110, h: 60, label: 'Model', tone: 'purple', index: 0, solid: true });
+    box(svg, { x: 350, y: 78, w: 110, h: 60, label: 'Tool', tone: 'orange', index: 1 });
+    arrow(svg, { x1: 132, y1: 94, x2: 348, y2: 94, tone: 'purple', index: 2 });
+    svgNode(svg, 'text', { x: 240, y: 82, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:3' }, 'request: name + arguments');
+    arrow(svg, { x1: 348, y1: 124, x2: 132, y2: 124, tone: 'orange', index: 3 });
+    svgNode(svg, 'text', { x: 240, y: 150, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:4' }, 'result');
+    svgNode(svg, 'text', { x: 405, y: 164, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:4' }, 'run by your app');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-purple dg-travel', style: "offset-path:path('M132 94H348V124H132');animation-duration:4s" });
+    svgNode(svg, 'text', { x: 240, y: 204, 'text-anchor': 'middle', class: 'dg-small' }, 'the application executes the tool, not the model');
+    return figure;
+  };
+
+  builders.chunking = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Split a document into overlapping chunks',
+      alt: 'A long document bar is split into four chunks. Neighboring chunks share a small overlap, highlighted and labelled overlap, so a sentence cut at a boundary still appears whole in one chunk.',
+      caption: 'Chunks are the units a retrieval system stores and returns. A small overlap keeps boundary context; sizes and overlap are tunable, and too much overlap duplicates text.',
+      height: 206
+    });
+    box(svg, { x: 20, y: 20, w: 440, h: 30, label: 'long document', tone: 'blue', index: 0 });
+    for (let i = 0; i < 4; i++) {
+      const g = svgNode(svg, 'g', { class: 'dg-drift', style: `--i:${i + 1};--dx:0px;--dy:-64px` });
+      box(g, { x: 20 + i * 105, y: i % 2 ? 124 : 80, w: 125, h: 34, label: `chunk ${i + 1}`, tone: 'teal', index: 3 });
+    }
+    for (let i = 1; i < 4; i++) {
+      const x = 20 + i * 105;
+      const g = svgNode(svg, 'g', { class: 'dg-orange dg-pop', style: `--i:${6 + i}` });
+      svgNode(g, 'rect', { x, y: 74, width: 20, height: 90, rx: 4, style: 'fill:var(--tone);fill-opacity:.35;stroke:var(--tone);stroke-width:1.5' });
+      svgNode(g, 'text', { x: x + 10, y: 188, 'text-anchor': 'middle', class: 'dg-small' }, 'overlap');
+    }
+    return figure;
+  };
+
+  builders['hybrid-retrieval'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Two searches, one fused list',
+      alt: 'A query goes to a keyword lane using BM25 and a vector lane. Each returns its own ranked list, and a fuse step merges the two lists into one.',
+      caption: 'Keyword search catches exact terms and codes; vector search catches similar meaning. Fusing their ranked lists can improve coverage. Rankings shown are illustrative and fusion methods vary.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 98, w: 70, label: 'Query', tone: 'blue', index: 0 });
+    const lanes = [['keyword (BM25)', 40, 'blue', ['d1', 'd3', 'd2']], ['vector', 160, 'teal', ['d2', 'd1', 'd4']]];
+    lanes.forEach(([label, y, tone, ids], li) => {
+      const cy = y + 20;
+      arrow(svg, { x1: 82, y1: li ? 130 : 110, x2: 106, y2: cy + (li ? -6 : 6), tone, index: 1 });
+      box(svg, { x: 108, y, w: 124, h: 40, label, tone, index: 2 });
+      ids.forEach((id, k) => box(svg, { x: 244 + k * 40, y: cy - 14, w: 34, h: 28, label: id, tone, index: 3 + k }));
+      arrow(svg, { x1: 366, y1: cy, x2: 386, y2: cy + (li ? -22 : 22), tone, index: 6 });
+    });
+    box(svg, { x: 388, y: 98, w: 80, label: 'fuse', tone: 'orange', index: 7, solid: true });
+    svgNode(svg, 'text', { x: 428, y: 162, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:8' }, 'one merged list');
+    svgNode(svg, 'text', { x: 428, y: 182, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:8' }, 'd1 d2 d3 d4');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
