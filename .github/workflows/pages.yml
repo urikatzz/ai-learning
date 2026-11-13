@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html .nojekyll dist/
+          cp -R assets dist/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
