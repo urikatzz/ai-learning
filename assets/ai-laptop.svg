@@ -9,6 +9,19 @@
 <filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
 <g id="brain" stroke="url(#neon)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M448 158c-7-25-38-26-48-5-19-5-36 6-39 24-21 1-34 18-31 36-20 13-20 35-7 49-7 24 11 43 30 43 5 22 27 31 47 22l13 26v23m40-218c10-28 41-27 51-7 23-3 39 11 39 29 20 4 33 24 26 43 18 18 15 39-1 52 2 24-18 39-39 36-12 19-33 19-49 10l-10 28v27M448 158l-7 36m-41-41 5 23-12 14m-32-13 10 22-12 13m-29 1 18 15-5 17m-20 17 22-5 12 12m-4 36 13-17 18 3m16 36 8-22m96-154-13 22 10 14m42-7-19 11 5 19m40 13-24 5-2 17m25 30-24-8-13 12m-2 32-11-23-15 1m-22 14-6-19"/></g>
 </defs>
+<style>
+/* Motion lives inside the SVG because external CSS/JS do not run for image-embedded SVGs. */
+.float{animation:float 6s ease-in-out infinite}
+.pulse{animation:pulse 3s ease-in-out infinite}
+.dot{transform-box:fill-box;animation:drift 4.5s ease-in-out infinite;opacity:0}
+.d2{animation-delay:.9s}.d3{animation-delay:1.8s}.d4{animation-delay:2.7s}.d5{animation-delay:3.6s}
+@keyframes float{50%{transform:translateY(-6px)}}
+@keyframes pulse{50%{opacity:.35}}
+/* Each dot fades in, travels toward the brain (--x/--y), then fades out. */
+@keyframes drift{0%{opacity:0;transform:translate(0,0)}20%{opacity:.9}80%{opacity:.7}100%{opacity:0;transform:translate(var(--x),var(--y))}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.dot{opacity:0}}
+</style>
+<g class="float">
 <ellipse cx="434" cy="286" rx="315" ry="177" fill="url(#halo)"/>
 <ellipse cx="401" cy="414" rx="300" ry="17" fill="#050511" opacity=".8" filter="url(#shadow)"/>
 <path d="m248 87 450-42q26-2 21 26l-49 297q-3 21-26 22l-457-23Z" fill="#27254b" stroke="url(#rim)" stroke-width="3"/>
@@ -16,7 +29,7 @@
 <path d="m249 111 443-41-48 281-443-18Z" fill="url(#screen)"/>
 <circle cx="468" cy="80" r="2" fill="#39365c"/>
 <g stroke="#7770ff" stroke-width="4" opacity=".45"><path d="m267 145 87-6m-91 20 31-2m7-1 19-1m-61 19 60-4m-64 19 44-2m-48 19 77-4m-82 23 32-1m-36 22 62-2m-66 19 22-1m-27 21 77 1m-81 16 53 2"/><path d="m573 128 92-6m-96 20 78-4m-82 17 91-4m-96 18 54-2m-42 78 68 2m-74 15 37 1m-41 16 69 3m-73 15 52 2m-57 16 64 3" opacity=".4"/></g>
-<use href="#brain" filter="url(#glow)" stroke-width="9"/>
+<use class="pulse" href="#brain" filter="url(#glow)" stroke-width="9"/>
 <use href="#brain"/>
 <text x="383" y="273" font-family="Arial,sans-serif" font-weight="bold" font-style="italic" font-size="76" fill="#af8bff" filter="url(#glow)">AI</text>
 <text x="383" y="273" font-family="Arial,sans-serif" font-weight="bold" font-style="italic" font-size="76" fill="#ebe0ff">AI</text>
@@ -26,4 +39,10 @@
 <g stroke="#5d63c5" opacity=".7"><path d="m207 370 376 20m-398-14 377 20m-394-14 376 20M239 366l-53 17m82-15-53 17m82-16-53 18m82-16-54 17m83-16-54 18m83-16-54 18m84-16-54 17m84-16-54 18m84-16-54 18m84-16-54 17m83-15-54 17m84-16-54 17"/></g>
 <path d="m284 393 108 6-20 8-112-7Z" fill="#9499f5" opacity=".6"/>
 <path d="m582 408 30-10" stroke="#111329" stroke-width="5"/>
+<circle class="dot d1" cx="290" cy="130" r="3.5" fill="#a16aff" style="--x:120px;--y:80px"/>
+<circle class="dot d2" cx="300" cy="330" r="3.5" fill="#d579ff" style="--x:110px;--y:-90px"/>
+<circle class="dot d3" cx="600" cy="120" r="3.5" fill="#d579ff" style="--x:-130px;--y:90px"/>
+<circle class="dot d4" cx="610" cy="310" r="3.5" fill="#a16aff" style="--x:-140px;--y:-70px"/>
+<circle class="dot d5" cx="430" cy="95" r="3.5" fill="#a16aff" style="--x:0px;--y:70px"/>
+</g>
 </svg>

@@ -45,7 +45,7 @@ For visual checks, serve with `python3 -m http.server 8765 --bind 127.0.0.1`, th
 
 ## Animated diagrams
 
-Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, and KV cache render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
+Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
 
 #### Scenario: Diagram animates on first view
 
@@ -72,3 +72,34 @@ Term pages for RAG, temperature, transformers (attention), tokenization, embeddi
 - **GIVEN** the dark theme is active
 - **WHEN** a diagram renders
 - **THEN** category colors use their dark-theme token values
+
+## Index screen motion
+
+Motion lives in `assets/ai-laptop.svg` (hero, CSS inside the SVG), `assets/motion.css` (topic icons, path cards) and `revealOnView` in `index.html`.
+
+#### Scenario: Hero float and glow
+
+- **GIVEN** the home screen is open
+- **WHEN** the hero image loads
+- **THEN** the laptop floats gently up and down and the brain glow pulses
+- **AND** a few small purple dots drift toward the brain
+
+#### Scenario: Topic icon animation
+
+- **GIVEN** the Popular Topics cards are shown
+- **WHEN** a card scrolls into view once, or is hovered or keyboard-focused
+- **THEN** its icon animates: chip pins blink, ML bars grow, network nodes pulse in sequence, or the line draws itself
+- **AND** the icon looks identical at rest
+
+#### Scenario: Learning path cards stagger in
+
+- **GIVEN** JavaScript has set `js-motion` on the page
+- **WHEN** path cards scroll into view
+- **THEN** each fades and slides in, delayed 80ms per card index
+- **AND** without IntersectionObserver the cards are shown immediately, and without JavaScript they are never hidden
+
+#### Scenario: Reduced motion
+
+- **GIVEN** the visitor prefers reduced motion
+- **WHEN** the home screen renders
+- **THEN** the hero, icons and cards are fully visible and static
