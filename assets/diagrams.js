@@ -766,10 +766,10 @@
     arrow(svg, { x1: 230, y1: 94, x2: 276, y2: 52, tone: 'teal', index: 4 });
     arrow(svg, { x1: 230, y1: 118, x2: 276, y2: 160, tone: 'orange', index: 4 });
     box(svg, { x: 278, y: 30, w: 190, h: 44, label: 'hit: return stored result', tone: 'teal', index: 5, solid: true });
-    box(svg, { x: 278, y: 138, w: 110, h: 44, label: 'miss: compute', tone: 'orange', index: 5 });
+    box(svg, { x: 278, y: 138, w: 110, h: 44, label: 'miss: run it', tone: 'orange', index: 5 });
     arrow(svg, { x1: 388, y1: 160, x2: 410, y2: 160, tone: 'orange', index: 6 });
     box(svg, { x: 412, y: 138, w: 56, h: 44, label: 'store', tone: 'orange', index: 6 });
-    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: "offset-path:path('M52 106H175L373 52')" });
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: "offset-path:path('M52 106H175L262 60')" });
     return figure;
   };
 
@@ -783,13 +783,12 @@
     note(svg, 240, 16, 'Objective: what to learn', 0);
     box(svg, { x: 40, y: 26, w: 170, label: 'SFT', tone: 'blue', index: 1 });
     box(svg, { x: 270, y: 26, w: 170, label: 'Preferences / rewards', tone: 'blue', index: 2 });
-    note(svg, 240, 118, 'Update method: what changes', 3);
     box(svg, { x: 40, y: 128, w: 170, label: 'Full tuning', tone: 'orange', index: 4 });
     box(svg, { x: 270, y: 128, w: 170, label: 'LoRA adapters', tone: 'orange', index: 5 });
     [[125, 125], [125, 355], [355, 355], [355, 125]].forEach(([from, to], i) => {
       svgNode(svg, 'path', { d: `M${from} 74L${to} 126`, class: 'dg-stroke dg-purple dg-ring dg-ring4', style: `--s:${i}` });
     });
-    note(svg, 240, 192, 'any objective can pair with any update method', 6);
+    note(svg, 240, 192, 'top row: what to learn · bottom row: what changes', 6);
     return figure;
   };
 
