@@ -76,7 +76,12 @@ const notes = [
       "Software factory",
       "Evals",
       "Orca",
-      "Herdr"
+      "Herdr",
+      "Multi-agent patterns",
+      "Orchestrator–workers",
+      "Hierarchical agents",
+      "Blackboard architecture",
+      "Role-playing agent societies"
     ],
     "slug": "agent-teams",
     "detail": "A team is useful when a task contains distinct pieces that can be investigated separately. Agents may share one model or use different models; their roles, available tools, and working context distinguish them. A coordinator or explicit workflow decides how their outputs become one result."
@@ -96,7 +101,17 @@ const notes = [
       "Harness",
       "Tools",
       "Loop engineering",
-      "Classical agent types (reflex, goal, utility)"
+      "Classical agent types (reflex, goal, utility)",
+      "LangChain",
+      "Interaction as a judge",
+      "Reinforcement learning",
+      "ReAct and agent loops",
+      "LangGraph",
+      "Human-in-the-loop approval gates",
+      "Workflow vs. agent",
+      "Ambient (event-driven) agents",
+      "Cognitive architecture for language agents (CoALA)",
+      "BDI architecture"
     ],
     "slug": "agents",
     "detail": "An AI agent combines a model with software that lets it observe and act. The model helps choose the next step; the surrounding application actually executes that step. Autonomy is a matter of degree: a fixed workflow may call a model without letting it decide the workflow."
@@ -134,7 +149,8 @@ const notes = [
       "KV cache",
       "RAG vs. CAG",
       "Embedding models",
-      "Permissions / controls"
+      "Permissions / controls",
+      "Prompt caching"
     ],
     "sources": [
       "promptCacheDocs",
@@ -154,7 +170,9 @@ const notes = [
     "related": [
       "Reasoning",
       "Model effort",
-      "Evals"
+      "Evals",
+      "ReAct and agent loops",
+      "Tree of Thoughts"
     ],
     "slug": "chain-of-thought",
     "detail": "Chain-of-thought prompting encourages a language model to generate intermediate steps for a problem, often through worked examples. It can improve some multi-step tasks, but a written explanation is not a reliable recording of the computation that produced an answer."
@@ -173,7 +191,8 @@ const notes = [
     "related": [
       "RAG",
       "Tokenization",
-      "Context"
+      "Context",
+      "Metadata filtering"
     ],
     "slug": "chunking",
     "detail": "A chunk is the unit a retrieval system stores and returns. Good chunks contain enough information to make sense on their own while staying focused on one topic. Chunking also preserves a connection to the original document so an answer can cite its evidence."
@@ -211,7 +230,8 @@ const notes = [
     "related": [
       "Skills",
       "Hooks",
-      "stdin / stdout"
+      "stdin / stdout",
+      "tmux"
     ],
     "slug": "commands",
     "detail": "A command is an explicit entry point for an action. In a terminal it usually names an executable plus arguments. In an assistant interface, a slash command may insert instructions, run a workflow, or invoke an application feature; its meaning belongs to that host."
@@ -230,14 +250,26 @@ const notes = [
     "related": [
       "Memory",
       "Context compaction",
-      "Tokenization"
+      "Tokenization",
+      "Chunking",
+      "Harness",
+      "KV cache",
+      "Progressive disclosure",
+      "Prompt engineering",
+      "Query rewriting",
+      "RAG vs. CAG",
+      "Subagents",
+      "Top-p and token budgets",
+      "Context engineering",
+      "Handoffs and swarm",
+      "Agent memory types"
     ],
     "slug": "context",
     "detail": "Context is the input the model can consult for one invocation. It can include instructions, conversation history, tool descriptions, retrieved documents, and images. A context window is a capacity limit, usually expressed in tokens; it is not a guarantee that every included detail will be used correctly."
   },
   {
     "title": "Context compaction",
-    "category": "rag",
+    "category": "agents",
     "what": "Reducing accumulated conversation or task context while retaining useful information.",
     "how": "Preserve the objective, user constraints, decisions, completed actions, unresolved issues, and artifact locations. Keep exact identifiers and error messages when later steps depend on them. Validate important summary facts against the original files or logs, which remain the authoritative record.",
     "example": "After 30 debugging commands, save: which test fails, the current hypothesis, files edited, the latest test result, and the next experiment. Store the full log as an artifact. A later agent can resume efficiently and reopen the log if a precise stack trace is needed.",
@@ -249,7 +281,13 @@ const notes = [
     "related": [
       "Context",
       "Memory",
-      "Harness"
+      "Harness",
+      "Deep Agents (deepagents)",
+      "Pi",
+      "Context engineering",
+      "Group chat orchestration",
+      "Coding agent architecture",
+      "Agent memory types"
     ],
     "slug": "context-compaction",
     "detail": "Compaction replaces a long history with a shorter representation of what matters for continuing a task. It is a context-management technique, not model training. A summary saves space but can omit details, introduce mistakes, or blur the difference between facts and guesses."
@@ -285,7 +323,11 @@ const notes = [
       "Machine learning",
       "Training",
       "Evals",
-      "Model distillation"
+      "Model distillation",
+      "Confused deputy",
+      "Permission-aware retrieval",
+      "Context minimization",
+      "Data egress control"
     ],
     "sources": [
       "leakageGuide",
@@ -329,7 +371,8 @@ const notes = [
     "related": [
       "Machine learning",
       "Transformers",
-      "Weights"
+      "Weights",
+      "Self-supervised learning"
     ],
     "slug": "deep-learning",
     "detail": "Deep learning is a subset of machine learning that uses layered neural networks to learn representations. Earlier layers transform raw input into features; later layers combine those features for the task. These representations are learned from data rather than entirely hand-designed."
@@ -348,7 +391,14 @@ const notes = [
     "related": [
       "Memory",
       "Graph engineering",
-      "Harness"
+      "Harness",
+      "Deep Agents (deepagents)",
+      "Herdr",
+      "Retries",
+      "tmux",
+      "Upstash boxes",
+      "LangGraph",
+      "Ambient (event-driven) agents"
     ],
     "slug": "durable-agents",
     "detail": "Durability means task progress survives beyond one in-memory execution. A durable agent can pause for approval or recover from a process failure by restoring saved state. This is an execution guarantee provided by infrastructure, not an intrinsic ability of the model."
@@ -367,14 +417,21 @@ const notes = [
     "related": [
       "Vector databases",
       "Hybrid retrieval",
-      "RAG"
+      "RAG",
+      "Caching",
+      "Models",
+      "Multimodal models",
+      "Natural language processing (NLP)",
+      "RAG vs. GraphRAG",
+      "HNSW (approximate nearest neighbor)",
+      "Similarity metrics (cosine, dot product)"
     ],
     "slug": "embedding-models",
     "detail": "An embedding is a list of numbers representing properties of an input. Models are trained so that useful relationships in text, images, or other data correspond to relationships between vectors. Semantic similarity is learned from an objective; it is not a universal measure of meaning or truth."
   },
   {
     "title": "Evals",
-    "category": "agents",
+    "category": "systems",
     "what": "Repeatable assessments of a model or application's behavior.",
     "how": "Build a representative dataset with ordinary, difficult, and failure cases. Separate development cases from a held-out set. Record model and prompt versions, repeat stochastic cases when necessary, and compare quality alongside latency and cost. Inspect failures by category instead of relying only on an average score.",
     "example": "For a policy assistant, test answerable questions, ambiguous questions, and questions with no supporting source. Score factual correctness, citation support, and appropriate abstention separately. A system that always answers can look helpful while failing the unsupported-question cases.",
@@ -387,7 +444,36 @@ const notes = [
       "Opik",
       "Langfuse",
       "Precision / recall",
-      "Data leakage"
+      "Data leakage",
+      "Agent teams",
+      "Chain of thought",
+      "Grounding",
+      "Guardrails",
+      "Guardrails AI",
+      "Hallucinations",
+      "Jailbreak",
+      "JEV",
+      "Karpathy wiki / second brain",
+      "Interaction as a judge",
+      "Loop engineering",
+      "Loss functions",
+      "Machine learning",
+      "MLflow",
+      "Observability",
+      "Omp",
+      "Preference optimization",
+      "Prompt engineering",
+      "Reranking",
+      "Software factory",
+      "Spec-driven development",
+      "Structured outputs",
+      "RAG diagnostics",
+      "Few-shot prompting",
+      "Golden datasets and regression testing",
+      "Provider adapters",
+      "Evaluator–optimizer",
+      "Reflection and Reflexion",
+      "Security evals and red teaming"
     ],
     "slug": "evals",
     "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment."
@@ -407,7 +493,11 @@ const notes = [
       "LoRA",
       "Supervised fine-tuning (SFT)",
       "Fine-tuning types",
-      "Model distillation"
+      "Model distillation",
+      "Pre-training",
+      "Post-training",
+      "Hugging Face",
+      "Training"
     ],
     "slug": "fine-tuning",
     "detail": "Fine-tuning adapts an already trained model by changing learned parameters using additional data. It can teach a task, response style, or domain pattern. It differs from prompting or retrieval, which change the input without updating the model weights."
@@ -428,7 +518,8 @@ const notes = [
     "related": [
       "Supervised fine-tuning (SFT)",
       "Preference optimization",
-      "LoRA"
+      "LoRA",
+      "Fine-tuning"
     ],
     "slug": "fine-tuning-types",
     "detail": "Two independent choices describe an adaptation method: what the model learns from, and which parameters it updates. Confusing these axes leads to misleading comparisons such as treating LoRA and supervised fine-tuning as alternatives when they can be used together."
@@ -505,7 +596,12 @@ const notes = [
     "related": [
       "Loop engineering",
       "Durable agents",
-      "RAG vs. GraphRAG"
+      "RAG vs. GraphRAG",
+      "ComfyUI",
+      "Deep Agents (deepagents)",
+      "LangChain",
+      "n8n workflows",
+      "LLMCompiler"
     ],
     "slug": "graph-engineering",
     "detail": "In this glossary, graph engineering means designing an executable workflow graph. Nodes represent operations and edges represent allowed transitions. Explicit state and routing make it easier to inspect branching, retries, and human approval points than a large implicit loop."
@@ -523,7 +619,8 @@ const notes = [
       "Hallucinations",
       "RAG",
       "Query rewriting",
-      "Evals"
+      "Evals",
+      "Citations and provenance"
     ],
     "sources": [
       "groundingGuide",
@@ -546,7 +643,16 @@ const notes = [
       "Prompt injection",
       "Evals",
       "Structured outputs",
-      "Jailbreak"
+      "Jailbreak",
+      "LLM as a judge",
+      "Permissions / controls",
+      "Human-in-the-loop approval gates",
+      "Confused deputy",
+      "AI system architecture",
+      "Data egress control",
+      "Untrusted content separation",
+      "Structured extraction",
+      "Narrow tools and argument validation"
     ],
     "slug": "guardrails",
     "detail": "Guardrails are application controls designed to catch or prevent specific failure modes. Some inspect content, while others constrain allowed actions or enforce a schema. Their usefulness depends on where they run, what they detect, and what happens after a failure."
@@ -582,7 +688,10 @@ const notes = [
       "Grounding",
       "RAG",
       "Evals",
-      "LLM as a judge"
+      "LLM as a judge",
+      "Jailbreak",
+      "Citations and provenance",
+      "Multi-agent debate"
     ],
     "sources": [
       "hallucinationGuide",
@@ -604,7 +713,17 @@ const notes = [
       "Tools",
       "Context",
       "Omp",
-      "Deep Agents (deepagents)"
+      "Deep Agents (deepagents)",
+      "Context compaction",
+      "Durable agents",
+      "Hermes",
+      "Hooks",
+      "Loop engineering",
+      "Orca",
+      "Pi",
+      "Skills",
+      "Subagents",
+      "Coding agent architecture"
     ],
     "slug": "harness",
     "detail": "The harness is the application runtime that connects a model to tools and an environment. It manages the interaction around the model: instructions, context, tool execution, state, limits, and logging. Two systems using the same model can behave very differently because their harnesses differ."
@@ -631,7 +750,7 @@ const notes = [
   },
   {
     "title": "Hermes",
-    "category": "agents",
+    "category": "platforms",
     "what": "Nous Research’s agent runtime with reusable skills, persistent memory, and tools for ongoing work.",
     "how": "Configure a model provider and the tools needed for the task. Hermes runs a model-and-tool loop, can retain selected facts in memory, and can create or reuse skills for recurring procedures. Review saved procedures when their dependencies or assumptions change. Memory records facts or preferences; skills describe how to do something.",
     "example": "After working through a recurring report-generation task, an assistant can retain a skill describing the inputs, transformations, and checks. On a later run it reuses the procedure with fresh data. The report must still be checked because a useful previous workflow may no longer match the current files.",
@@ -644,7 +763,8 @@ const notes = [
       "Skills",
       "Memory",
       "Harness",
-      "Tools"
+      "Tools",
+      "Self-improving agents and skill libraries"
     ],
     "slug": "hermes",
     "detail": "Hermes Agent is an application that connects language models to tools and maintains information across sessions. It supports interactive use and messaging integrations. Its learning loop can turn experience into reusable procedures and saved knowledge; this application-level adaptation should not be confused with automatically training new model weights."
@@ -663,7 +783,8 @@ const notes = [
     "related": [
       "Commands",
       "Permissions / controls",
-      "Harness"
+      "Harness",
+      "Coding agent architecture"
     ],
     "slug": "hooks",
     "detail": "A hook is code or a configured action attached to a lifecycle event. Unlike asking a model to remember a rule, a supported hook is triggered by the runtime at a defined point. What it can observe, block, or modify depends on the host."
@@ -701,7 +822,12 @@ const notes = [
     "related": [
       "RAG",
       "Embedding models",
-      "Reranking"
+      "Reranking",
+      "Precision / recall",
+      "Query rewriting",
+      "Vector databases",
+      "Reciprocal rank fusion",
+      "Metadata filtering"
     ],
     "slug": "hybrid-retrieval",
     "detail": "Hybrid retrieval combines complementary ways of finding information. Lexical search matches terms and is useful for names or codes; dense vector search finds learned semantic similarities. Combining them can improve coverage when users mix exact identifiers with natural-language descriptions."
@@ -720,7 +846,17 @@ const notes = [
     "related": [
       "Training",
       "Models",
-      "Prefill and decode"
+      "Prefill and decode",
+      "ComfyUI",
+      "LLMs",
+      "LM Studio",
+      "Mixture of experts",
+      "MLX vs. PyTorch",
+      "Quantization",
+      "Routing and batching",
+      "Small language models (SLMs)",
+      "Temperature",
+      "Multimodal applications"
     ],
     "slug": "inference",
     "detail": "Inference applies a trained model to inputs. A classifier returns scores or labels, an embedding model returns vectors, and a generative model produces a sequence or other content. Its ordinary forward computations use existing weights without learning from the request."
@@ -738,7 +874,8 @@ const notes = [
     "related": [
       "Time to First Token (TTFT)",
       "Prefill and decode",
-      "Routing and batching"
+      "Routing and batching",
+      "Streaming responses (SSE)"
     ],
     "slug": "inter-token-latency-itl",
     "detail": "Inter-token latency describes how quickly an already-started answer continues. It matters for the perceived smoothness of streaming output. Report whether measurements come from server generation events or client arrival events because buffering and network delays can change the result."
@@ -778,7 +915,8 @@ const notes = [
     "related": [
       "Models",
       "Evals",
-      "Routing and batching"
+      "Routing and batching",
+      "Structured outputs"
     ],
     "slug": "jev",
     "detail": "Jev is the first model in TypeSafe’s System One family, designed for decisions consumed by software rather than free-form prose. The application supplies state and questions with defined answer types. Outputs include structured values and, depending on the question type, probability distributions or confidence measures. “System One” is TypeSafe’s product terminology, not a universal model standard."
@@ -795,7 +933,9 @@ const notes = [
     ],
     "related": [
       "MCP",
-      "stdin / stdout"
+      "stdin / stdout",
+      "MCP Apps",
+      "Agent-to-agent protocol (A2A)"
     ],
     "slug": "json-rpc-2-0-mcp",
     "detail": "JSON-RPC 2.0 defines structured requests, responses, and notifications encoded as JSON. A remote procedure call asks another component to run a named operation. MCP uses this message format and adds its own method definitions, capability rules, and transport behavior."
@@ -815,7 +955,8 @@ const notes = [
       "Memory",
       "RAG",
       "Progressive disclosure",
-      "Evals"
+      "Evals",
+      "Agent memory types"
     ],
     "slug": "karpathy-wiki-second-brain",
     "detail": "The llm-wiki gist proposes an agent-maintained Markdown knowledge base. Summaries and connections accumulate across questions. The user directs research and reviews edits. It is a workflow pattern, not a packaged application."
@@ -834,7 +975,9 @@ const notes = [
       "Prefill and decode",
       "Context",
       "RAG vs. CAG",
-      "Caching"
+      "Caching",
+      "Transformers",
+      "Prompt caching"
     ],
     "slug": "kv-cache",
     "detail": "In causal transformer decoding, each attention layer creates key and value vectors for processed tokens. The KV cache stores these vectors so later tokens can reuse them. It saves repeated computation, but it is runtime state rather than long-term knowledge or an answer cache."
@@ -854,7 +997,8 @@ const notes = [
       "Agents",
       "Graph engineering",
       "RAG",
-      "Deep Agents (deepagents)"
+      "Deep Agents (deepagents)",
+      "LangGraph"
     ],
     "slug": "langchain",
     "detail": "LangChain provides components and integrations for applications built around language models. It can connect model calls, tools, retrieval, and agent behavior behind common interfaces. LangGraph is a related orchestration runtime for explicit stateful workflows; the names are not interchangeable."
@@ -892,7 +1036,11 @@ const notes = [
       "Evals",
       "Guardrails",
       "Interaction as a judge",
-      "Opik"
+      "Opik",
+      "Hallucinations",
+      "Golden datasets and regression testing",
+      "Evaluator–optimizer",
+      "Multi-agent debate"
     ],
     "slug": "llm-as-a-judge",
     "detail": "A model judge applies evaluation criteria to candidate outputs. It is useful for qualities that are hard to express as exact string comparisons, such as relevance or clarity. Its scores are measurements from a fallible evaluator, not ground truth."
@@ -929,7 +1077,13 @@ const notes = [
     "related": [
       "Transformers",
       "Tokenization",
-      "Inference"
+      "Inference",
+      "GPT — Generative Pre-trained Transformer",
+      "Models",
+      "Multimodal models",
+      "Natural language processing (NLP)",
+      "Small language models (SLMs)",
+      "Temperature"
     ],
     "slug": "llms",
     "detail": "Large language models learn statistical patterns in language from substantial training data. Many generative LLMs are transformers trained to predict tokens, then adapted for useful interaction. “Large” has no fixed threshold, and language models differ in architecture, training, and supported tasks."
@@ -965,7 +1119,12 @@ const notes = [
     "related": [
       "Harness",
       "Agents",
-      "Evals"
+      "Evals",
+      "Graph engineering",
+      "ReAct and agent loops",
+      "Workflow vs. agent",
+      "Evaluator–optimizer",
+      "Reflection and Reflexion"
     ],
     "slug": "loop-engineering",
     "detail": "An agent loop turns one model response into part of a continuing process. Designing it means deciding what the agent sees, which actions it can request, and what evidence allows it to continue or stop. This is an engineering pattern rather than a standardized algorithm."
@@ -984,7 +1143,9 @@ const notes = [
     "related": [
       "Fine-tuning",
       "Weights",
-      "Quantization"
+      "Quantization",
+      "Fine-tuning types",
+      "Tensors"
     ],
     "slug": "lora",
     "detail": "LoRA approximates a weight update with two smaller matrices while freezing the base weights. For a weight matrix W, the adapted computation uses W + ΔW, where ΔW is a scaled product BA. The rank r of that product is chosen much smaller than the matrix dimensions."
@@ -1002,7 +1163,8 @@ const notes = [
       "Backpropagation",
       "Training",
       "Precision / recall",
-      "Evals"
+      "Evals",
+      "Model distillation"
     ],
     "sources": [
       "lossGuide",
@@ -1023,7 +1185,10 @@ const notes = [
     "related": [
       "Deep learning",
       "Training",
-      "Evals"
+      "Evals",
+      "Data leakage",
+      "Reinforcement learning",
+      "TensorFlow"
     ],
     "slug": "machine-learning",
     "detail": "Machine learning fits patterns from examples instead of requiring every behavior to be written as a rule. Supervised learning uses target labels; unsupervised methods seek structure; reinforcement learning uses rewards. Deep learning is one family of machine-learning methods, not the whole field."
@@ -1042,7 +1207,11 @@ const notes = [
       "MCP Apps",
       "JSON-RPC 2.0 (MCP)",
       "Tools",
-      "Agent-to-agent protocol (A2A)"
+      "Agent-to-agent protocol (A2A)",
+      "Omp",
+      "stdin / stdout",
+      "Tool calling",
+      "Tool allow list"
     ],
     "slug": "mcp",
     "detail": "Model Context Protocol defines a common way for AI applications to access capabilities from servers. The host is the user-facing application; clients handle communication with servers. Servers can offer tools for actions, resources for data, and prompts for reusable interaction templates."
@@ -1082,7 +1251,12 @@ const notes = [
       "Durable agents",
       "Hermes",
       "Karpathy wiki / second brain",
-      "Agent memory types"
+      "Agent memory types",
+      "Context compaction",
+      "Context engineering",
+      "Reflection and Reflexion",
+      "Blackboard architecture",
+      "BDI architecture"
     ],
     "slug": "memory",
     "detail": "Agent memory is information retained for later use. Short-term state may cover one task; long-term memory may store preferences, facts, or previous outcomes across sessions. It usually lives in application storage and is distinct from the model parameters learned during training."
@@ -1100,7 +1274,8 @@ const notes = [
     "related": [
       "Models",
       "Weights",
-      "Inference"
+      "Inference",
+      "Mixture of agents"
     ],
     "slug": "mixture-of-experts",
     "detail": "A mixture-of-experts model contains multiple expert subnetworks and a routing mechanism. In sparse MoE models, only selected experts process each token. This allows a larger total parameter count without activating all parameters for every token, although other layers may remain shared."
@@ -1118,7 +1293,8 @@ const notes = [
     "related": [
       "Evals",
       "Opik",
-      "Langfuse"
+      "Langfuse",
+      "Observability"
     ],
     "slug": "mlflow",
     "detail": "MLflow records experiments and supports model and AI application lifecycle workflows. A run groups configuration, metrics, and artifacts so results can be compared and reproduced. Tracing and evaluation extend this idea to applications containing several model and tool calls."
@@ -1155,7 +1331,8 @@ const notes = [
       "Fine-tuning",
       "Small language models (SLMs)",
       "Quantization",
-      "Loss functions"
+      "Loss functions",
+      "Data leakage"
     ],
     "sources": [
       "distillPaper",
@@ -1176,7 +1353,10 @@ const notes = [
     "related": [
       "Reasoning",
       "Temperature",
-      "Models"
+      "Models",
+      "Chain of thought",
+      "OpenRouter",
+      "Tree of Thoughts"
     ],
     "slug": "model-effort",
     "detail": "Reasoning effort is a provider- or runtime-specific control over inference-time work. It may request more internal reasoning tokens or a larger compute budget. It does not change the model weights or necessarily select a larger model, and the setting is not standardized across providers."
@@ -1196,7 +1376,15 @@ const notes = [
       "Weights",
       "LLMs",
       "Embedding models",
-      "JEV"
+      "JEV",
+      "ComfyUI",
+      "Hugging Face",
+      "Inference",
+      "Mixture of experts",
+      "Model effort",
+      "Multimodal models",
+      "Ollama",
+      "OpenRouter"
     ],
     "slug": "models",
     "detail": "A model is a learned computational mapping from inputs to outputs. Its architecture describes the operations; its parameters hold learned values. A checkpoint stores parameter values at a particular stage. A complete deployed system also needs preprocessing, runtime code, and an output interpretation."
@@ -1215,7 +1403,9 @@ const notes = [
     "related": [
       "Models",
       "LLMs",
-      "Embedding models"
+      "Embedding models",
+      "Multimodal applications",
+      "Computer-use agents"
     ],
     "slug": "multimodal-models",
     "detail": "A modality is a type of information, such as text, image, audio, or video. Multimodal models connect two or more modalities in their inputs or outputs. A model that reads images and produces text is multimodal even if it cannot generate images."
@@ -1269,7 +1459,15 @@ const notes = [
       "Opik",
       "MLflow",
       "Evals",
-      "Time to First Token (TTFT)"
+      "Time to First Token (TTFT)",
+      "RAG diagnostics",
+      "Multi-agent patterns",
+      "Golden datasets and regression testing",
+      "LLM gateway and AI governance",
+      "AI system architecture",
+      "Hierarchical agents",
+      "Ambient (event-driven) agents",
+      "Data egress control"
     ],
     "sources": [
       "observabilityGuide",
@@ -1326,7 +1524,9 @@ const notes = [
     ],
     "related": [
       "Models",
-      "Model effort"
+      "Model effort",
+      "LLM gateway and AI governance",
+      "Provider adapters"
     ],
     "slug": "openrouter",
     "detail": "OpenRouter provides a common gateway to models served by multiple providers. This can simplify comparisons and fallback configuration. The gateway interface does not make all underlying models identical in features, output quality, or data policies."
@@ -1345,7 +1545,8 @@ const notes = [
       "Evals",
       "Langfuse",
       "LLM as a judge",
-      "Observability"
+      "Observability",
+      "MLflow"
     ],
     "slug": "opik",
     "detail": "Opik supports observability and evaluation for LLM applications. Observability shows what happened during an execution; evaluation judges whether the result met a goal. Both are needed to understand regressions in multi-step systems."
@@ -1364,7 +1565,8 @@ const notes = [
       "Agent teams",
       "Subagents",
       "Harness",
-      "Tools"
+      "Tools",
+      "Herdr"
     ],
     "slug": "orca",
     "detail": "Orca brings coding-agent conversations, terminals, diffs, Git workflows, and a browser into one development environment. It can run different agent CLIs and organize parallel tasks in separate worktrees. A Git worktree is another working directory for the same repository, allowing tasks to use different branches without sharing the same checked-out files."
@@ -1383,7 +1585,22 @@ const notes = [
       "Tools",
       "Sandbox",
       "Guardrails",
-      "Least privilege"
+      "Least privilege",
+      "Caching",
+      "Hooks",
+      "Jailbreak",
+      "Prompt injection",
+      "Tool calling",
+      "Human-in-the-loop approval gates",
+      "Confused deputy",
+      "Permission-aware retrieval",
+      "Secrets and least-privilege IAM",
+      "CodeAct",
+      "Computer-use agents",
+      "Agent-to-agent protocol (A2A)",
+      "Excessive agency",
+      "Tool allow list",
+      "Approval vs authorization"
     ],
     "slug": "permissions-controls",
     "detail": "Permissions determine which capabilities a principal may use and on which resources. In agent systems, the model requests an action while application code enforces access. A prompt telling an agent to be careful is guidance, not an enforceable security boundary."
@@ -1421,7 +1638,9 @@ const notes = [
       "Evals",
       "Hybrid retrieval",
       "Reranking",
-      "Loss functions"
+      "Loss functions",
+      "RAG",
+      "Golden datasets and regression testing"
     ],
     "sources": [
       "precisionGuide",
@@ -1442,7 +1661,9 @@ const notes = [
     "related": [
       "Supervised fine-tuning (SFT)",
       "Reinforcement learning",
-      "Evals"
+      "Evals",
+      "Fine-tuning types",
+      "Post-training"
     ],
     "slug": "preference-optimization",
     "detail": "Preference optimization learns which outputs should be favored relative to alternatives. A dataset often contains a prompt, a chosen response, and a rejected response. Labels express a preference criterion, which may concern helpfulness, correctness, style, or another property."
@@ -1460,7 +1681,9 @@ const notes = [
     "related": [
       "KV cache",
       "Time to First Token (TTFT)",
-      "Inter-token Latency (ITL)"
+      "Inter-token Latency (ITL)",
+      "Inference",
+      "Streaming responses (SSE)"
     ],
     "slug": "prefill-and-decode",
     "detail": "An autoregressive language model first processes the input sequence and then extends it. Prefill computes representations for prompt tokens and often initializes a KV cache. Decode generates additional tokens using the prompt and tokens generated so far."
@@ -1479,7 +1702,9 @@ const notes = [
     "related": [
       "Skills",
       "Context",
-      "Tools"
+      "Tools",
+      "Karpathy wiki / second brain",
+      "Context engineering"
     ],
     "slug": "progressive-disclosure",
     "detail": "Progressive disclosure presents a useful overview first and exposes detail when needed. In an agent application, it can reduce irrelevant prompt content by loading instructions or resources on demand. In a learning interface, it lets beginners start with a definition and then explore mechanics."
@@ -1498,7 +1723,9 @@ const notes = [
     "related": [
       "Context",
       "Evals",
-      "Spec-driven development"
+      "Spec-driven development",
+      "System and role prompting",
+      "Few-shot prompting"
     ],
     "slug": "prompt-engineering",
     "detail": "Prompt engineering is the design and testing of model instructions, examples, and output requirements. A useful prompt makes the task and success criteria explicit. It can improve behavior without retraining, but it cannot guarantee correct facts or compensate for unavailable evidence."
@@ -1519,7 +1746,14 @@ const notes = [
       "Permissions / controls",
       "Jailbreak",
       "Indirect prompt injection",
-      "Three-layer AI security framework"
+      "Three-layer AI security framework",
+      "Guardrails AI",
+      "System and role prompting",
+      "Confused deputy",
+      "Multimodal applications",
+      "Computer-use agents",
+      "Untrusted content separation",
+      "Security evals and red teaming"
     ],
     "slug": "prompt-injection",
     "detail": "Prompt injection occurs when attacker-controlled text tries to alter an AI system’s instructions or actions. It can be direct, in a user message, or indirect, inside a web page, document, or tool result. The risk comes from mixing untrusted data with instruction-following behavior."
@@ -1541,7 +1775,8 @@ const notes = [
       "TensorFlow",
       "CUDA",
       "Tensors",
-      "Backpropagation"
+      "Backpropagation",
+      "Hugging Face"
     ],
     "slug": "pytorch",
     "detail": "PyTorch represents data as tensors: multidimensional arrays with a data type and device. Modules organize model layers, autograd differentiates computations, and optimizers update parameters. The same framework can support experiments, training, and inference."
@@ -1559,7 +1794,9 @@ const notes = [
     "related": [
       "Weights",
       "Inference",
-      "Small language models (SLMs)"
+      "Small language models (SLMs)",
+      "LoRA",
+      "Model distillation"
     ],
     "slug": "quantization",
     "detail": "Quantization stores or computes selected numerical values with a reduced representation, often using integers or compact floating-point formats. It can reduce model memory and memory-transfer cost. Weight quantization, activation quantization, and KV-cache quantization are separate choices."
@@ -1578,7 +1815,10 @@ const notes = [
     "related": [
       "RAG",
       "Hybrid retrieval",
-      "Context"
+      "Context",
+      "Grounding",
+      "Reciprocal rank fusion",
+      "Agentic RAG"
     ],
     "slug": "query-rewriting",
     "detail": "A rewrite makes a retrieval query more self-contained or searchable while preserving the user’s intent. It can resolve pronouns, clarify terminology, or split a compound question. It is a retrieval preparation step; the rewritten query is not itself an answer."
@@ -1602,7 +1842,17 @@ const notes = [
       "Grounding",
       "Hallucinations",
       "Precision / recall",
-      "Agentic RAG"
+      "Agentic RAG",
+      "Embedding models",
+      "Hybrid retrieval",
+      "Karpathy wiki / second brain",
+      "LangChain",
+      "Query rewriting",
+      "RAG vs. CAG",
+      "RAG vs. GraphRAG",
+      "FAISS",
+      "Citations and provenance",
+      "AI system architecture"
     ],
     "slug": "rag",
     "detail": "RAG combines retrieval from external information with model generation. The model receives selected evidence in its input rather than learning that evidence through a weight update. It is useful for changing, private, or specialized knowledge when the application can retrieve relevant sources."
@@ -1620,7 +1870,8 @@ const notes = [
     "related": [
       "RAG",
       "KV cache",
-      "Context"
+      "Context",
+      "Caching"
     ],
     "slug": "rag-vs-cag",
     "detail": "Cache-Augmented Generation, as used in the linked paper, preloads a bounded knowledge collection into a model’s context and reuses prepared inference state. RAG selects evidence for each query. CAG is a particular pattern, not a universal replacement for retrieval or a synonym for every caching technique."
@@ -1655,7 +1906,13 @@ const notes = [
     "related": [
       "Retries",
       "Routing and batching",
-      "Tokenization"
+      "Tokenization",
+      "Top-p and token budgets",
+      "LLM gateway and AI governance",
+      "Async, queueing and backpressure",
+      "Parallelization (sectioning and voting)",
+      "LLMCompiler",
+      "Ambient (event-driven) agents"
     ],
     "sources": [
       "rateLimitDocs",
@@ -1676,7 +1933,8 @@ const notes = [
     "related": [
       "Chain of thought",
       "Model effort",
-      "Tools"
+      "Tools",
+      "Tree of Thoughts"
     ],
     "slug": "reasoning",
     "detail": "Reasoning involves applying relationships, constraints, or evidence to reach a conclusion. In AI engineering, the word can refer to observed task-solving behavior, intermediate generated work, or specialized inference-time computation. None of these automatically implies human-like understanding or a correct result."
@@ -1694,7 +1952,8 @@ const notes = [
     "related": [
       "Machine learning",
       "Preference optimization",
-      "Agents"
+      "Agents",
+      "Classical agent types (reflex, goal, utility)"
     ],
     "slug": "reinforcement-learning",
     "detail": "Reinforcement learning trains a policy: a rule for choosing actions given observations. The objective is to improve expected cumulative reward, possibly across many steps. Unlike ordinary supervised learning, feedback may be delayed and does not always specify the best action directly."
@@ -1713,7 +1972,11 @@ const notes = [
     "related": [
       "Hybrid retrieval",
       "RAG",
-      "Evals"
+      "Evals",
+      "Precision / recall",
+      "Reciprocal rank fusion",
+      "RAG diagnostics",
+      "Agentic RAG"
     ],
     "slug": "reranking",
     "detail": "Reranking is a second-stage relevance assessment applied to a shortlist from an initial retriever. A common reranker examines the query and candidate text together, which can capture interactions missed by separately computed embeddings. More accurate scoring usually costs additional computation."
@@ -1730,7 +1993,8 @@ const notes = [
     "related": [
       "Rate limits",
       "Durable agents",
-      "Tool calling"
+      "Tool calling",
+      "Async, queueing and backpressure"
     ],
     "sources": [
       "retryGuide",
@@ -1750,7 +2014,14 @@ const notes = [
     "related": [
       "Time to First Token (TTFT)",
       "Inter-token Latency (ITL)",
-      "Inference"
+      "Inference",
+      "JEV",
+      "Rate limits",
+      "Workflow vs. agent",
+      "Multi-agent patterns",
+      "LLM gateway and AI governance",
+      "Async, queueing and backpressure",
+      "Router pattern"
     ],
     "slug": "routing-and-batching",
     "detail": "Routing chooses where a request should execute; batching groups work so an accelerator can process it efficiently. A router may consider model availability, load, or cache locality. A scheduler decides when and how requests share computation and memory."
@@ -1768,7 +2039,15 @@ const notes = [
     "related": [
       "Permissions / controls",
       "Prompt injection",
-      "Upstash boxes"
+      "Upstash boxes",
+      "MCP Apps",
+      "Docker and containers",
+      "Secrets and least-privilege IAM",
+      "Language Agent Tree Search (LATS)",
+      "Magentic orchestration",
+      "CodeAct",
+      "Computer-use agents",
+      "Coding agent architecture"
     ],
     "slug": "sandbox",
     "detail": "A sandbox constrains program execution through operating-system or runtime mechanisms. It can limit filesystem writes, network access, process creation, and resource consumption. Its guarantees depend on the implementation and configuration rather than the label “sandbox”."
@@ -1787,7 +2066,8 @@ const notes = [
     "related": [
       "Training",
       "GPT — Generative Pre-trained Transformer",
-      "Deep learning"
+      "Deep learning",
+      "Pre-training"
     ],
     "slug": "self-supervised-learning",
     "detail": "Self-supervised learning creates training targets from the data itself. It reduces the need for people to label every example, but still uses a defined objective and loss. It is widely used for pretraining representations before adapting them to downstream tasks."
@@ -1809,7 +2089,8 @@ const notes = [
       "Harness",
       "Hermes",
       "Pi",
-      "Self-improving agents and skill libraries"
+      "Self-improving agents and skill libraries",
+      "Tool allow list"
     ],
     "slug": "skills",
     "detail": "A skill packages a procedure and supporting resources for an agent to use on recurring tasks. Depending on the host, it can include instructions, scripts, examples, and templates. It extends the agent’s workflow through context and tools, without changing its learned weights."
@@ -1848,7 +2129,8 @@ const notes = [
     "related": [
       "Spec-driven development",
       "Agent teams",
-      "Evals"
+      "Evals",
+      "Role-playing agent societies"
     ],
     "slug": "software-factory",
     "detail": "A software factory describes a repeatable process for turning requirements into verified software artifacts. In an AI-assisted version, agents may perform planning, implementation, testing, or review. The phrase is an architectural metaphor rather than a single standardized product."
@@ -1866,7 +2148,8 @@ const notes = [
     "related": [
       "Software factory",
       "Evals",
-      "Prompt engineering"
+      "Prompt engineering",
+      "AI system architecture"
     ],
     "slug": "spec-driven-development",
     "detail": "Spec-driven development uses explicit requirements as the reference for implementation and verification. A useful specification describes observable behavior, constraints, and acceptance criteria. It can guide humans or agents and does not require a particular framework."
@@ -1885,7 +2168,8 @@ const notes = [
     "related": [
       "JSON-RPC 2.0 (MCP)",
       "Commands",
-      "MCP"
+      "MCP",
+      "tmux"
     ],
     "slug": "stdin-stdout",
     "detail": "Standard input, output, and error are process streams traditionally identified by file descriptors 0, 1, and 2. A shell or parent process can connect them to a terminal, file, or pipe. They carry bytes, so a communicating application must define encoding and message boundaries."
@@ -1903,7 +2187,16 @@ const notes = [
       "Tool calling",
       "Guardrails",
       "Evals",
-      "JEV"
+      "JEV",
+      "System and role prompting",
+      "Few-shot prompting",
+      "FastAPI and Pydantic",
+      "Streaming responses (SSE)",
+      "Provider adapters",
+      "Multimodal applications",
+      "Prompt chaining",
+      "Structured extraction",
+      "Narrow tools and argument validation"
     ],
     "sources": [
       "structuredDocs",
@@ -1926,7 +2219,15 @@ const notes = [
       "Agent teams",
       "Context",
       "Harness",
-      "Deep Agents (deepagents)"
+      "Deep Agents (deepagents)",
+      "Omp",
+      "Orca",
+      "Multi-agent patterns",
+      "Orchestrator–workers",
+      "Hierarchical agents",
+      "Agents as tools",
+      "Deep research agents",
+      "Structured extraction"
     ],
     "slug": "subagents",
     "detail": "A subagent is a delegated agent execution with a focused assignment. It often has its own context and may use a different role or tool set. A parent can use subagents sequentially or concurrently; separate context does not necessarily mean a separate filesystem or security boundary."
@@ -1945,7 +2246,9 @@ const notes = [
     "related": [
       "Fine-tuning",
       "Preference optimization",
-      "Training"
+      "Training",
+      "Fine-tuning types",
+      "Post-training"
     ],
     "slug": "supervised-fine-tuning-sft",
     "detail": "SFT adapts a pretrained model using examples of inputs paired with desired outputs. For language models, examples often contain conversations or instruction-response pairs. The training objective rewards assigning higher probability to the supplied target tokens."
@@ -1963,7 +2266,8 @@ const notes = [
     "related": [
       "Model effort",
       "Inference",
-      "LLMs"
+      "LLMs",
+      "Top-p and token budgets"
     ],
     "slug": "temperature",
     "detail": "Temperature changes the distribution used when sampling model output. For positive temperature T, token probabilities are proportional to exp(logit/T), where logits are unnormalized model scores. It controls randomness in selection, not the truthfulness of the underlying predictions."
@@ -2020,7 +2324,10 @@ const notes = [
     "related": [
       "Prefill and decode",
       "Inter-token Latency (ITL)",
-      "Routing and batching"
+      "Routing and batching",
+      "Observability",
+      "Prompt caching",
+      "Streaming responses (SSE)"
     ],
     "slug": "time-to-first-token-ttft",
     "detail": "TTFT measures the delay before a user starts receiving generated content. It is a user-facing responsiveness metric when timed at the client. Server-side measurements can omit network or application overhead, so reports must define their start and end events."
@@ -2038,7 +2345,8 @@ const notes = [
     "related": [
       "stdin / stdout",
       "Commands",
-      "Durable agents"
+      "Durable agents",
+      "Herdr"
     ],
     "slug": "tmux",
     "detail": "tmux runs persistent terminal sessions that can contain multiple windows and panes. A client attaches to a session for interaction, while a server maintains the terminal processes. It is useful for remote development and organizing concurrent command-line work."
@@ -2056,7 +2364,10 @@ const notes = [
     "related": [
       "LLMs",
       "Context",
-      "Chunking"
+      "Chunking",
+      "Natural language processing (NLP)",
+      "Rate limits",
+      "Top-p and token budgets"
     ],
     "slug": "tokenization",
     "detail": "Tokenization converts text into the discrete IDs consumed by a language model. Tokens may correspond to words, subwords, punctuation, bytes, or special control symbols. The tokenizer’s vocabulary and rules are part of the model’s input contract."
@@ -2075,7 +2386,14 @@ const notes = [
       "MCP",
       "Structured outputs",
       "Permissions / controls",
-      "Retries"
+      "Retries",
+      "ReAct and agent loops",
+      "FastAPI and Pydantic",
+      "Provider adapters",
+      "ReWOO",
+      "Agents as tools",
+      "CodeAct",
+      "Narrow tools and argument validation"
     ],
     "sources": [
       "toolCallingDocs",
@@ -2096,7 +2414,18 @@ const notes = [
       "MCP",
       "Permissions / controls",
       "Agents",
-      "Tool calling"
+      "Tool calling",
+      "Harness",
+      "Hermes",
+      "n8n workflows",
+      "Orca",
+      "Pi",
+      "Progressive disclosure",
+      "Reasoning",
+      "Upstash boxes",
+      "Agents as tools",
+      "Coding agent architecture",
+      "Tool allow list"
     ],
     "slug": "tools",
     "detail": "A tool exposes a capability the model can request, such as search, calculation, or a database operation. Tool descriptions and argument schemas tell the model how to request it. The application remains responsible for execution and for presenting trustworthy results back to the model."
@@ -2120,7 +2449,14 @@ const notes = [
       "Tensors",
       "Loss functions",
       "Backpropagation",
-      "Data leakage"
+      "Data leakage",
+      "CUDA",
+      "Pre-training",
+      "Inference",
+      "Machine learning",
+      "PyTorch",
+      "Supervised fine-tuning (SFT)",
+      "TensorFlow"
     ],
     "slug": "training",
     "detail": "Training adjusts a model using examples and a measurable objective. For neural networks, a loss function measures prediction error and gradients describe how parameter changes affect that loss. An optimizer uses these gradients to update weights; other model families can use different fitting procedures."
@@ -2140,7 +2476,8 @@ const notes = [
     "related": [
       "LLMs",
       "KV cache",
-      "GPT — Generative Pre-trained Transformer"
+      "GPT — Generative Pre-trained Transformer",
+      "Deep learning"
     ],
     "slug": "transformers",
     "detail": "Transformers build contextual representations using attention and feed-forward layers. Attention lets one position combine information from other positions according to learned relevance scores. Positional information is needed because attention alone does not encode sequence order."
@@ -2177,7 +2514,14 @@ const notes = [
     "related": [
       "Embedding models",
       "RAG",
-      "Hybrid retrieval"
+      "Hybrid retrieval",
+      "Memory",
+      "HNSW (approximate nearest neighbor)",
+      "Similarity metrics (cosine, dot product)",
+      "FAISS",
+      "Reciprocal rank fusion",
+      "Metadata filtering",
+      "Permission-aware retrieval"
     ],
     "slug": "vector-databases",
     "detail": "A vector database stores embeddings and finds vectors close to a query according to a similarity metric. Many support metadata filters and ordinary payload fields as well. Vector search is a retrieval component; it does not generate answers or prove that retrieved content is correct."
@@ -2198,13 +2542,16 @@ const notes = [
       "Models",
       "LoRA",
       "Tensors",
-      "Backpropagation"
+      "Backpropagation",
+      "Deep learning",
+      "Mixture of experts",
+      "Quantization"
     ],
     "slug": "weights",
     "detail": "Weights are learned numerical parameters used in a model’s computations. The term often informally includes biases and other trainable values. An architecture defines how these values are used, while a checkpoint stores their particular values after some amount of training."
   },
   {
-    "title": "HNSW (approximate nearest neighbour)",
+    "title": "HNSW (approximate nearest neighbor)",
     "category": "rag",
     "what": "A graph-based index that finds close vectors quickly without comparing against all of them.",
     "how": "Key parameters are M (links per node), efConstruction (build-time search width), and efSearch (query-time width). Raising them improves recall and costs memory, build time, or latency. How to measure it: compare HNSW results with exact search on a sample of queries (recall@k) and record p95 latency and index memory at each setting.",
@@ -2221,13 +2568,13 @@ const notes = [
       "Embedding models"
     ],
     "slug": "hnsw",
-    "detail": "Exact search compares a query with every stored vector, which gets slow at scale. HNSW (Hierarchical Navigable Small World) builds layered graphs of neighbouring vectors. Search starts on a sparse top layer, hops toward the query, then descends to denser layers. It trades a small chance of missing the true nearest neighbour for large speedups."
+    "detail": "Exact search compares a query with every stored vector, which gets slow at scale. HNSW (Hierarchical Navigable Small World) builds layered graphs of neighboring vectors. Search starts on a sparse top layer, hops toward the query, then descends to denser layers. It trades a small chance of missing the true nearest neighbor for large speedups."
   },
   {
     "title": "Similarity metrics (cosine, dot product)",
     "category": "rag",
     "what": "Ways to score how close two embedding vectors are.",
-    "how": "Use the metric the embedding model was trained for, as stated in its documentation. Normalize vectors once at ingestion if you want dot-product speed with cosine behaviour. Keep the same metric for indexing and querying. How to measure it: evaluate retrieval on labelled queries under each candidate metric.",
+    "how": "Use the metric the embedding model was trained for, as stated in its documentation. Normalize vectors once at ingestion if you want dot-product speed with cosine behavior. Keep the same metric for indexing and querying. How to measure it: evaluate retrieval on labelled queries under each candidate metric.",
     "example": "An index is built with L2 distance, but the embedding model expects cosine. Results look plausible but rank worse. Normalizing the vectors and switching to inner product restores the expected ranking.",
     "watch": "Mixing embedding models, normalization settings, or metrics between ingestion and query produces quietly bad rankings. Scores from different models are not comparable.",
     "sources": [
@@ -2237,7 +2584,7 @@ const notes = [
     "related": [
       "Embedding models",
       "Vector databases",
-      "HNSW (approximate nearest neighbour)",
+      "HNSW (approximate nearest neighbor)",
       "FAISS"
     ],
     "slug": "similarity-metrics",
@@ -2254,7 +2601,7 @@ const notes = [
       "faiss"
     ],
     "related": [
-      "HNSW (approximate nearest neighbour)",
+      "HNSW (approximate nearest neighbor)",
       "Vector databases",
       "Similarity metrics (cosine, dot product)",
       "RAG"
@@ -2314,7 +2661,9 @@ const notes = [
       "Grounding",
       "Hallucinations",
       "RAG",
-      "RAG diagnostics"
+      "RAG diagnostics",
+      "Agentic RAG",
+      "Deep research agents"
     ],
     "slug": "citations-and-provenance",
     "detail": "Provenance records where retrieved content originated: document, version, location, and retrieval time. Citations connect specific claims in an answer to that evidence so users can verify them. Together they make a grounded answer auditable."
@@ -2334,7 +2683,9 @@ const notes = [
       "Evals",
       "Observability",
       "Reranking",
-      "Golden datasets and regression testing"
+      "Golden datasets and regression testing",
+      "Citations and provenance",
+      "Agentic RAG"
     ],
     "slug": "rag-diagnostics",
     "detail": "A wrong answer has several possible causes: the right chunk was never retrieved, it was retrieved but dropped or buried, or it was present and the model misused it. Diagnostics separate these stages with their own measurements so fixes target the right component."
@@ -2353,7 +2704,8 @@ const notes = [
       "Prompt engineering",
       "Prompt injection",
       "Structured outputs",
-      "Few-shot prompting"
+      "Few-shot prompting",
+      "Untrusted content separation"
     ],
     "slug": "system-prompting",
     "detail": "A system prompt gives standing instructions that apply across a conversation, such as role, tone, constraints, and output format. Role prompting assigns a persona or expertise. Instruction hierarchy means system and developer instructions should take precedence over user or retrieved text."
@@ -2361,7 +2713,7 @@ const notes = [
   {
     "title": "Few-shot prompting",
     "category": "agents",
-    "what": "Including a few worked examples in the prompt to show the desired behaviour.",
+    "what": "Including a few worked examples in the prompt to show the desired behavior.",
     "how": "Choose diverse, realistic examples, including a hard case; keep their format consistent; place them clearly apart from the real input. Remove examples that no longer improve results. How to measure it: compare zero-shot and few-shot accuracy, and token cost, on a held-out test set.",
     "example": "A ticket-labelling prompt adds three examples, one of them an ambiguous ticket labelled 'needs-info'. The held-out test shows fewer wrong labels on ambiguous tickets.",
     "watch": "Models may copy surface details of examples, and examples cost tokens on every call. Do not evaluate with the same examples used in the prompt.",
@@ -2411,14 +2763,15 @@ const notes = [
       "Context compaction",
       "Progressive disclosure",
       "Prompt caching",
-      "Memory"
+      "Memory",
+      "Context minimization"
     ],
     "slug": "context-engineering",
     "detail": "The context window is a limited resource. Context engineering decides what to include (instructions, history, retrieved documents, tool results), what to summarize or drop, and in what order. It extends prompt writing to the whole information flow of an application."
   },
   {
     "title": "Prompt caching",
-    "category": "models",
+    "category": "systems",
     "what": "Reusing the processed form of a repeated prompt prefix to cut cost and latency.",
     "how": "Place stable content first and variable content last, keep that prefix byte-identical, mark cache points where the provider requires it, and watch cache expiry times. How to measure it: track cache hit rate, cached versus uncached tokens, and cost and time-to-first-token before and after.",
     "example": "A coding assistant sends a 20k-token project brief with each request. Moving the changing user question to the end lets later requests hit the cache, and per-request cost falls.",
@@ -2453,7 +2806,10 @@ const notes = [
       "Workflow vs. agent",
       "Chain of thought",
       "Plan-and-execute",
-      "ReWOO"
+      "ReWOO",
+      "Language Agent Tree Search (LATS)",
+      "CodeAct",
+      "Cognitive architecture for language agents (CoALA)"
     ],
     "slug": "react-agent-loop",
     "detail": "ReAct combines reasoning steps with actions: think about what is needed, call a tool, read the observation, and repeat until done. This loop is the core of many agents. Control comes from stop conditions, turn budgets, and recovery paths."
@@ -2473,7 +2829,8 @@ const notes = [
       "Human-in-the-loop approval gates",
       "Workflow vs. agent",
       "Durable agents",
-      "LangChain"
+      "LangChain",
+      "Multi-agent patterns"
     ],
     "slug": "langgraph",
     "detail": "LangGraph models an application as typed shared state, nodes (functions or model calls), and edges (including conditional ones). It adds checkpointing, interrupts, and resumable execution, so long or approval-dependent workflows can pause and continue."
@@ -2493,7 +2850,12 @@ const notes = [
       "LangGraph",
       "Guardrails",
       "Agents",
-      "Approval vs authorization"
+      "Approval vs authorization",
+      "Confused deputy",
+      "Plan-and-execute",
+      "Computer-use agents",
+      "Ambient (event-driven) agents",
+      "Excessive agency"
     ],
     "slug": "human-in-the-loop",
     "detail": "Approval gates place human judgment before risky or irreversible steps such as payments, deletions, or external messages. A good gate shows exactly what will happen, accepts approve, edit, or reject, and lets execution resume safely."
@@ -2515,7 +2877,10 @@ const notes = [
       "Routing and batching",
       "Loop engineering",
       "Prompt chaining",
-      "Router pattern"
+      "Router pattern",
+      "AI system architecture",
+      "Plan-and-execute",
+      "Classical agent types (reflex, goal, utility)"
     ],
     "slug": "workflow-vs-agent",
     "detail": "In a workflow, code defines the path and models handle individual steps. In an agent, the model chooses actions dynamically. Workflows are more predictable, cheaper, and easier to test; agents handle open-ended tasks but add variability and risk."
@@ -2539,7 +2904,15 @@ const notes = [
       "Routing and batching",
       "Supervisor architecture",
       "Handoffs and swarm",
-      "Hierarchical agents"
+      "Hierarchical agents",
+      "Router pattern",
+      "Orchestrator–workers",
+      "Group chat orchestration",
+      "Blackboard architecture",
+      "Role-playing agent societies",
+      "Magentic orchestration",
+      "Deep research agents",
+      "Agent-to-agent protocol (A2A)"
     ],
     "slug": "multi-agent-patterns",
     "detail": "Patterns include a supervisor that delegates and merges results, a router that sends requests to a specialist, specialists with narrow tools, and handoffs that pass control and context between agents. Each agent can keep an isolated context."
@@ -2559,7 +2932,8 @@ const notes = [
       "LLM as a judge",
       "Observability",
       "RAG diagnostics",
-      "Precision / recall"
+      "Precision / recall",
+      "Security evals and red teaming"
     ],
     "slug": "golden-datasets",
     "detail": "A golden dataset holds representative inputs with trusted expected outputs or scoring rubrics. Running it after each change to prompts, models, retrieval, or tools gives a baseline and reveals regressions that ordinary unit tests miss."
@@ -2580,7 +2954,12 @@ const notes = [
       "Permissions / controls",
       "Data leakage",
       "Guardrails",
-      "Human-in-the-loop approval gates"
+      "Human-in-the-loop approval gates",
+      "Permission-aware retrieval",
+      "Secrets and least-privilege IAM",
+      "Agent-to-agent protocol (A2A)",
+      "Least privilege",
+      "Indirect prompt injection"
     ],
     "slug": "confused-deputy",
     "detail": "In an AI system, the model or agent often holds credentials or tool access that the user does not. If untrusted text can steer it, an attacker can make it act with that authority. Prompt injection is a common way to trigger this."
@@ -2601,7 +2980,9 @@ const notes = [
       "Data leakage",
       "Confused deputy",
       "Permissions / controls",
-      "Vector databases"
+      "Vector databases",
+      "Least privilege",
+      "Context minimization"
     ],
     "slug": "permission-aware-retrieval",
     "detail": "Retrieval can surface restricted content if the index ignores permissions. Permission-aware retrieval applies the user's access rights at query time, usually through metadata filters on groups or document ACLs, so unauthorized chunks never reach the model."
@@ -2621,7 +3002,11 @@ const notes = [
       "Rate limits",
       "Routing and batching",
       "Provider adapters",
-      "Observability"
+      "Observability",
+      "Async, queueing and backpressure",
+      "Docker and containers",
+      "Secrets and least-privilege IAM",
+      "Mixture of agents"
     ],
     "slug": "llm-gateway",
     "detail": "A gateway sits between applications and providers. It can handle authentication and key management, quotas and budgets, logging, routing, policy enforcement, and approved-provider lists. Governance is the set of rules and audit trails around which models and data may be used."
@@ -2663,7 +3048,8 @@ const notes = [
       "Inter-token Latency (ITL)",
       "FastAPI and Pydantic",
       "Structured outputs",
-      "Prefill and decode"
+      "Prefill and decode",
+      "Multimodal applications"
     ],
     "slug": "streaming-responses",
     "detail": "Instead of waiting for the full answer, streaming delivers tokens as they are produced, which improves perceived speed. Server-sent events (SSE) is a simple one-way HTTP mechanism commonly used for this. Provider APIs stream events that your service can forward."
@@ -2683,7 +3069,8 @@ const notes = [
       "Retries",
       "Routing and batching",
       "FastAPI and Pydantic",
-      "LLM gateway and AI governance"
+      "LLM gateway and AI governance",
+      "Parallelization (sectioning and voting)"
     ],
     "slug": "async-queueing-backpressure",
     "detail": "Model calls are slow and rate-limited, so services run them concurrently with async code, place work in queues, and use backpressure to slow or reject new work when capacity is full. This protects both your service and the provider."
@@ -2724,7 +3111,8 @@ const notes = [
       "Permissions / controls",
       "LLM gateway and AI governance",
       "Confused deputy",
-      "Sandbox"
+      "Sandbox",
+      "Least privilege"
     ],
     "slug": "secrets-and-iam",
     "detail": "Secrets such as API keys must live in a secret manager or runtime configuration, not in source control or images. Identity and access management (IAM) assigns roles; least privilege means each service gets only the permissions its job requires, such as invoking one model."
@@ -2735,7 +3123,7 @@ const notes = [
     "what": "A thin interface that isolates provider-specific model code behind a common contract.",
     "how": "Define the internal types first, implement one adapter per provider, map errors and token usage consistently, and keep provider-only features behind explicit options. Contract-test every adapter against the same cases. How to measure it: run the same evaluation set through each adapter and compare quality, latency, and cost.",
     "example": "An app calls model.generate through its own interface. Adding a second provider means writing one new adapter and running the shared test suite, not changing application code.",
-    "watch": "Over-abstracting can hide useful provider features. Behaviour still differs between models, so an interface does not guarantee identical results.",
+    "watch": "Over-abstracting can hide useful provider features. Behavior still differs between models, so an interface does not guarantee identical results.",
     "sources": [
       "adapter"
     ],
@@ -2753,7 +3141,7 @@ const notes = [
     "title": "AI system architecture",
     "category": "agents",
     "what": "Designing how models, data, tools, and controls fit together to meet business requirements.",
-    "how": "Write requirements and acceptance criteria, sketch components and data flows, choose the simplest approach that meets them, define interfaces and failure behaviour, and plan evaluation before implementation. Record decisions and trade-offs. How to measure it: verify the built system against the acceptance criteria and budgets.",
+    "how": "Write requirements and acceptance criteria, sketch components and data flows, choose the simplest approach that meets them, define interfaces and failure behavior, and plan evaluation before implementation. Record decisions and trade-offs. How to measure it: verify the built system against the acceptance criteria and budgets.",
     "example": "A claims assistant needs answers from policy PDFs and live claim data. The design uses RAG for documents, a validated database tool for claim status, an approval gate for payouts, tracing for all steps, and a latency budget of 5 seconds.",
     "watch": "Starting with tools or frameworks before requirements produces systems that are hard to evaluate and change.",
     "sources": [
@@ -2805,7 +3193,8 @@ const notes = [
       "Workflow vs. agent",
       "Router pattern",
       "Structured outputs",
-      "Evaluator–optimizer"
+      "Evaluator–optimizer",
+      "Parallelization (sectioning and voting)"
     ],
     "slug": "prompt-chaining",
     "detail": "Prompt chaining trades latency for accuracy: each call has a narrower job than one large prompt. The control flow is ordinary code, so it is predictable and easy to test. It is the simplest agentic building block and is a workflow rather than an agent, because the model does not choose the steps."
@@ -2826,7 +3215,8 @@ const notes = [
       "Prompt chaining",
       "Multi-agent patterns",
       "Routing and batching",
-      "Supervisor architecture"
+      "Supervisor architecture",
+      "Handoffs and swarm"
     ],
     "slug": "router-pattern",
     "detail": "A router separates concerns: a classifier decides which prompt, model, tool set, or sub-agent handles the request, so each downstream path can be tuned narrowly. The classifier can be rules, a small model, or an embedding match. This is about task dispatch inside an application; it is different from gateway routing across model providers."
@@ -2847,7 +3237,9 @@ const notes = [
       "Orchestrator–workers",
       "Mixture of agents",
       "Rate limits",
-      "Async, queueing and backpressure"
+      "Async, queueing and backpressure",
+      "LLMCompiler",
+      "Multi-agent debate"
     ],
     "slug": "parallelization-pattern",
     "detail": "There are two variants. Sectioning splits a task into independent subtasks run concurrently. Voting runs the same task several times, perhaps with different prompts or models, and combines the results by majority, ranking, or a judge. Sectioning cuts latency; voting raises confidence."
@@ -2868,7 +3260,8 @@ const notes = [
       "Subagents",
       "Parallelization (sectioning and voting)",
       "Multi-agent patterns",
-      "Agent teams"
+      "Agent teams",
+      "Deep research agents"
     ],
     "slug": "orchestrator-workers",
     "detail": "Unlike parallelization, the subtasks are not known in advance: the orchestrator decides them from the input. Workers get narrow instructions and return concise results. It suits tasks such as changing an unknown number of files or researching an open question."
@@ -2910,7 +3303,9 @@ const notes = [
       "ReWOO",
       "LLMCompiler",
       "Human-in-the-loop approval gates",
-      "Workflow vs. agent"
+      "Workflow vs. agent",
+      "Magentic orchestration",
+      "BDI architecture"
     ],
     "slug": "plan-and-execute",
     "detail": "Separating planning from acting reduces the chance of wandering step by step, and lets a stronger model plan while cheaper models execute. The plan is a visible artifact that can be reviewed, edited, or approved before actions run."
@@ -2972,7 +3367,10 @@ const notes = [
       "Memory",
       "Loop engineering",
       "Agent memory types",
-      "Evals"
+      "Evals",
+      "Language Agent Tree Search (LATS)",
+      "Cognitive architecture for language agents (CoALA)",
+      "Self-improving agents and skill libraries"
     ],
     "slug": "reflection-reflexion",
     "detail": "Reflection adds a critique step to the same task. Reflexion stores written lessons from failed attempts in memory so a later attempt can avoid the same mistakes, without changing model weights. Feedback quality matters most: external signals such as test results beat self-opinion."
@@ -3033,7 +3431,9 @@ const notes = [
       "Hierarchical agents",
       "Agents as tools",
       "Handoffs and swarm",
-      "Orchestrator–workers"
+      "Orchestrator–workers",
+      "Router pattern",
+      "Magentic orchestration"
     ],
     "slug": "supervisor-architecture",
     "detail": "The supervisor owns control flow and the user conversation; specialists own narrow tool sets. All communication passes through the supervisor, which makes behavior easier to observe and constrain than free-form peer messaging."
@@ -3117,7 +3517,8 @@ const notes = [
       "Multi-agent debate",
       "Blackboard architecture",
       "Context compaction",
-      "Magentic orchestration"
+      "Magentic orchestration",
+      "Role-playing agent societies"
     ],
     "slug": "group-chat-orchestration",
     "detail": "A shared thread lets agents react to each other and refine ideas, such as a writer and a reviewer. A chat manager applies speaker-selection rules and termination criteria, so the group does not talk forever."
@@ -3217,7 +3618,8 @@ const notes = [
       "Plan-and-execute",
       "Computer-use agents",
       "Sandbox",
-      "Multi-agent patterns"
+      "Multi-agent patterns",
+      "Group chat orchestration"
     ],
     "slug": "magentic-orchestration",
     "detail": "Magentic-One uses an orchestrator that writes a plan, tracks facts and progress in ledgers, assigns steps to specialists such as a web browser, a file reader, or a coder, and re-plans when progress stalls. It handles open-ended tasks that need replanning."
@@ -3239,7 +3641,8 @@ const notes = [
       "Query rewriting",
       "Reranking",
       "RAG diagnostics",
-      "Citations and provenance"
+      "Citations and provenance",
+      "Deep research agents"
     ],
     "slug": "agentic-rag",
     "detail": "Classic RAG retrieves once. Agentic RAG lets the model rewrite queries, choose among sources, check whether retrieved evidence is sufficient, and retrieve again. Self-RAG and corrective RAG add critique of relevance and support."
@@ -3259,7 +3662,8 @@ const notes = [
       "Tool calling",
       "ReAct and agent loops",
       "Coding agent architecture",
-      "Permissions / controls"
+      "Permissions / controls",
+      "Self-improving agents and skill libraries"
     ],
     "slug": "codeact",
     "detail": "Code is expressive: one program can loop, branch, combine tools, and store variables. CodeAct uses a code interpreter as the action space, and observations return as output or errors. It needs strong sandboxing."
@@ -3280,7 +3684,8 @@ const notes = [
       "Prompt injection",
       "Human-in-the-loop approval gates",
       "Permissions / controls",
-      "Multimodal models"
+      "Multimodal models",
+      "Magentic orchestration"
     ],
     "slug": "computer-use-agents",
     "detail": "Instead of calling APIs, the model observes the screen and issues actions such as click, type, and scroll. This reaches software that has no API, but it is slower and more fragile than structured tools."
@@ -3387,7 +3792,9 @@ const notes = [
       "Context",
       "Context compaction",
       "Karpathy wiki / second brain",
-      "Cognitive architecture for language agents (CoALA)"
+      "Cognitive architecture for language agents (CoALA)",
+      "Reflection and Reflexion",
+      "Self-improving agents and skill libraries"
     ],
     "slug": "agent-memory-types",
     "detail": "Working memory is the current context. Episodic memory records past events and attempts, semantic memory stores facts, and procedural memory stores how to do things, such as instructions or learned skills. Generative Agents added a memory stream with retrieval and reflection; MemGPT manages memory tiers like an operating system."
@@ -3509,7 +3916,11 @@ const notes = [
       "Permissions / controls",
       "Confused deputy",
       "Secrets and least-privilege IAM",
-      "Excessive agency"
+      "Excessive agency",
+      "Three-layer AI security framework",
+      "Context minimization",
+      "Data egress control",
+      "Approval vs authorization"
     ],
     "slug": "least-privilege",
     "detail": "Least privilege applies at two levels in AI applications. First, restrict the agent's own credentials to the data and tools its job requires. Second, enforce the permissions of the person using it, so an agent never has more access than the user who asked."
@@ -3549,7 +3960,10 @@ const notes = [
       "Observability",
       "Guardrails",
       "Least privilege",
-      "Tool allow list"
+      "Tool allow list",
+      "Three-layer AI security framework",
+      "Context minimization",
+      "Indirect prompt injection"
     ],
     "slug": "data-egress-control",
     "detail": "A user may be allowed to read a document, yet the agent should not be able to send it anywhere. Egress control checks who receives data, what is shared, and whether the transfer is authorized, for emails, external API calls, and also logs and observability systems."
@@ -3630,7 +4044,10 @@ const notes = [
       "Narrow tools and argument validation",
       "Human-in-the-loop approval gates",
       "Least privilege",
-      "Permissions / controls"
+      "Permissions / controls",
+      "Three-layer AI security framework",
+      "Approval vs authorization",
+      "Security evals and red teaming"
     ],
     "slug": "excessive-agency",
     "detail": "Excessive agency is an OWASP-listed LLM risk. Even with good data and instruction controls, an agent may do harm if it has too many tools, tools that are too powerful, or too much freedom to act without approval."
@@ -3651,7 +4068,9 @@ const notes = [
       "MCP",
       "Skills",
       "Tools",
-      "Permissions / controls"
+      "Permissions / controls",
+      "Data egress control",
+      "Narrow tools and argument validation"
     ],
     "slug": "tool-allow-list",
     "detail": "Connecting an MCP server that exposes twenty tools to an agent that needs three adds risk for no benefit. A tool allow list makes the application define exactly which tools are available."
@@ -3671,7 +4090,8 @@ const notes = [
       "Excessive agency",
       "Tool allow list",
       "Structured outputs",
-      "Guardrails"
+      "Guardrails",
+      "Approval vs authorization"
     ],
     "slug": "narrow-tools",
     "detail": "Even an approved tool can be too powerful. A general SQL tool lets a manipulated agent read unrelated rows or delete tables. A narrow tool such as update_deal_status(deal_id, status) limits what any request can do."
