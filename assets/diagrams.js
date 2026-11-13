@@ -359,6 +359,105 @@
     return figure;
   };
 
+  builders.hallucinations = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Fluent is not the same as true',
+      alt: 'Asked for the capital of Australia, a model answers Sydney, of course, which is fluent but wrong and is marked with an X. The truth, Canberra, is marked with a check.',
+      caption: 'A confident, well-written answer can be unsupported. Ground answers in sources and verify claims that matter; evidence helps but does not guarantee correctness.',
+      height: 204
+    });
+    box(svg, { x: 16, y: 14, w: 250, h: 40, label: 'Capital of Australia?', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 141, y1: 56, x2: 141, y2: 80, tone: 'blue', index: 1 });
+    box(svg, { x: 16, y: 84, w: 250, h: 40, label: 'Sydney, of course.', tone: 'orange', index: 2 });
+    glyph(svgNode, svg, 'x', 306, 104, 'orange', 3);
+    svgNode(svg, 'text', { x: 336, y: 109, class: 'dg-small dg-pop', style: '--i:3' }, 'fluent, but wrong');
+    arrow(svg, { x1: 141, y1: 126, x2: 141, y2: 150, tone: 'teal', index: 4 });
+    box(svg, { x: 16, y: 154, w: 250, h: 40, label: 'Truth: Canberra', tone: 'teal', index: 5, solid: true });
+    glyph(svgNode, svg, 'check', 306, 174, 'teal', 6);
+    svgNode(svg, 'text', { x: 336, y: 179, class: 'dg-small dg-pop', style: '--i:6' }, 'matches a source');
+    return figure;
+  };
+
+  builders['rag-vs-graphrag'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Similar chunks vs connected entities',
+      alt: 'Left: a query retrieves three text chunks by vector similarity. Right: a small graph of five entities linked by relations such as relates and uses, which retrieval can follow.',
+      caption: 'GraphRAG is a form of RAG that also uses relationships between entities, not a replacement for it. Building and maintaining the graph adds cost, and which approach helps depends on the questions.',
+      height: 232
+    });
+    svgNode(svg, 'text', { x: 121, y: 22, 'text-anchor': 'middle' }, 'RAG: similar chunks');
+    svgNode(svg, 'text', { x: 359, y: 22, 'text-anchor': 'middle' }, 'GraphRAG: connected entities');
+    box(svg, { x: 16, y: 98, w: 72, h: 40, label: 'Query', tone: 'blue', index: 0 });
+    [0, 1, 2].forEach(i => {
+      const y = 46 + i * 52;
+      arrow(svg, { x1: 88, y1: 118, x2: 138, y2: y + 15, tone: 'blue', index: 1 + i });
+      box(svg, { x: 142, y, w: 84, h: 30, label: `chunk ${i + 1}`, tone: 'blue', index: 2 + i });
+    });
+    svgNode(svg, 'text', { x: 121, y: 214, 'text-anchor': 'middle', class: 'dg-small' }, 'vector similarity');
+    const n = [[300, 70], [400, 60], [350, 130], [280, 190], [430, 170]];
+    [[0, 1, 0], [0, 2, 1], [1, 2, 2], [2, 3, 3], [2, 4, 4]].forEach(([a, b, i]) => {
+      svgNode(svg, 'path', { d: `M${n[a][0]} ${n[a][1]}L${n[b][0]} ${n[b][1]}`, pathLength: 1, class: 'dg-stroke dg-draw dg-purple', style: `--i:${i + 2}` });
+    });
+    svgNode(svg, 'text', { x: 350, y: 48, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:7' }, 'relates');
+    svgNode(svg, 'text', { x: 400, y: 138, class: 'dg-small dg-pop', style: '--i:7' }, 'uses');
+    n.forEach(([cx, cy], i) => {
+      const g = svgNode(svg, 'g', { class: 'dg-purple dg-pop', style: `--i:${i + 1}` });
+      svgNode(g, 'circle', { cx, cy, r: 14, class: 'dg-dot' });
+    });
+    svgNode(svg, 'text', { x: 359, y: 224, 'text-anchor': 'middle', class: 'dg-small' }, 'follow relationships');
+    return figure;
+  };
+
+  builders.reranking = ({ svgNode, makeFigure, box }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Re-score the shortlist',
+      alt: 'Four candidates c1 to c4 come from retrieval in that order. A reranker scores each against the query and reorders them, moving c3 to the top. The scores are illustrative.',
+      caption: 'A reranker reads the query together with each candidate and reorders the shortlist; this is usually more accurate but costs extra computation. The scores shown are illustrative.',
+      height: 246
+    });
+    svgNode(svg, 'text', { x: 66, y: 24, 'text-anchor': 'middle' }, 'Retrieved order');
+    svgNode(svg, 'text', { x: 414, y: 24, 'text-anchor': 'middle' }, 'By relevance');
+    const order = [['c3', '0.92'], ['c1', '0.71'], ['c2', '0.55'], ['c4', '0.30']];
+    const from = { c1: 0, c2: 1, c3: 2, c4: 3 };
+    for (let i = 0; i < 4; i++) box(svg, { x: 16, y: 40 + i * 48, w: 100, h: 36, label: `c${i + 1}`, tone: 'blue', index: i });
+    order.forEach(([id, score], to) => {
+      const top = id === 'c3';
+      svgNode(svg, 'path', {
+        d: `M118 ${58 + from[id] * 48}L362 ${58 + to * 48}`, pathLength: 1,
+        class: `dg-stroke dg-draw dg-${top ? 'orange' : 'blue'}`, style: `--i:${4 + to};stroke-width:${top ? 3.5 : 1.6}`
+      });
+      box(svg, { x: 364, y: 40 + to * 48, w: 100, h: 36, label: `${id}  ${score}`, tone: top ? 'orange' : 'blue', index: 6 + to, solid: top });
+    });
+    svgNode(svg, 'text', { x: 240, y: 238, 'text-anchor': 'middle', class: 'dg-small' }, 'scores are illustrative');
+    return figure;
+  };
+
+  builders['vector-databases'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Find the nearest vectors',
+      alt: 'A 2D cloud of twelve stored points and a purple query point. Lines connect the query to its three nearest neighbors, which are returned as results.',
+      caption: 'A vector database returns stored embeddings nearest to the query. Approximate nearest-neighbor search trades a little recall for speed, and nearby vectors are similar, not necessarily correct.',
+      height: 214
+    });
+    const q = [240, 100];
+    const pts = [[60, 40], [120, 150], [90, 90], [150, 50], [200, 70], [275, 125], [228, 138], [330, 50], [380, 120], [420, 60], [350, 160], [440, 150]];
+    const near = [4, 5, 6];
+    pts.forEach(([cx, cy], i) => {
+      const hit = near.includes(i);
+      const g = svgNode(svg, 'g', { class: `dg-${hit ? 'purple' : 'blue'} dg-pop`, style: `--i:${i % 6}` });
+      svgNode(g, 'circle', { cx, cy, r: hit ? 7 : 5, class: 'dg-dot' });
+    });
+    near.forEach((p, i) => {
+      svgNode(svg, 'path', { d: `M${q[0]} ${q[1]}L${pts[p][0]} ${pts[p][1]}`, pathLength: 1, class: 'dg-stroke dg-draw dg-purple', style: `--i:${6 + i};stroke-width:1.6` });
+    });
+    const query = svgNode(svg, 'g', { class: 'dg-purple dg-pop', style: '--i:5' });
+    svgNode(query, 'circle', { cx: q[0], cy: q[1], r: 14, class: 'dg-stroke dg-pulse' });
+    svgNode(query, 'circle', { cx: q[0], cy: q[1], r: 6, class: 'dg-dot' });
+    svgNode(svg, 'text', { x: 240, y: 76, 'text-anchor': 'middle', class: 'dg-small' }, 'query');
+    svgNode(svg, 'text', { x: 240, y: 200, 'text-anchor': 'middle', class: 'dg-small' }, '3 nearest neighbors returned');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
