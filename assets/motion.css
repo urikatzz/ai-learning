@@ -1,0 +1,28 @@
+/* Index screen motion. Everything is visible at rest; animation only enhances. */
+
+/* Topic icons: play on hover, keyboard focus, and once when scrolled into view.
+   The -h keyframes duplicate the reveal ones so hover restarts the animation. */
+.topic-card svg *{transform-box:fill-box}
+.topic-card.motion-in .ico-pins{animation:pins-blink 1.2s ease-in-out 1}
+.topic-card:hover .ico-pins,.topic-card:focus-visible .ico-pins{animation:pins-blink-h 1.2s ease-in-out 1}
+.topic-card.motion-in .ico-bar{transform-origin:50% 100%;animation:bar-grow .7s cubic-bezier(.2,.8,.2,1) backwards 1;animation-delay:calc(var(--n,0)*90ms)}
+.topic-card:hover .ico-bar,.topic-card:focus-visible .ico-bar{transform-origin:50% 100%;animation:bar-grow-h .7s cubic-bezier(.2,.8,.2,1) backwards 1;animation-delay:calc(var(--n,0)*90ms)}
+.ico-bar:nth-child(2){--n:1}.ico-bar:nth-child(3){--n:2}.ico-bar:nth-child(4){--n:3}
+.topic-card.motion-in .ico-node{transform-origin:center;animation:node-pulse .9s ease-in-out 1;animation-delay:calc(var(--n,0)*180ms)}
+.topic-card:hover .ico-node,.topic-card:focus-visible .ico-node{transform-origin:center;animation:node-pulse-h .9s ease-in-out 1;animation-delay:calc(var(--n,0)*180ms)}
+.ico-node:nth-of-type(2){--n:1}.ico-node:nth-of-type(3){--n:2}.ico-node:nth-of-type(4){--n:3}
+.topic-card.motion-in .ico-line{stroke-dasharray:1;animation:line-draw 1.1s ease-out 1}
+.topic-card:hover .ico-line,.topic-card:focus-visible .ico-line{stroke-dasharray:1;animation:line-draw-h 1.1s ease-out 1}
+
+@keyframes pins-blink{0%,100%{opacity:1}35%{opacity:.25}65%{opacity:1}}
+@keyframes pins-blink-h{0%,100%{opacity:1}35%{opacity:.25}65%{opacity:1}}
+@keyframes bar-grow{from{transform:scaleY(0)}}
+@keyframes bar-grow-h{from{transform:scaleY(0)}}
+@keyframes node-pulse{50%{transform:scale(1.35)}}
+@keyframes node-pulse-h{50%{transform:scale(1.35)}}
+@keyframes line-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes line-draw-h{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion:reduce){
+ .topic-card *{animation:none!important}
+}
