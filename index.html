@@ -81,10 +81,11 @@ const notes = [
       "Orchestrator–workers",
       "Hierarchical agents",
       "Blackboard architecture",
-      "Role-playing agent societies"
+      "Role-playing agent societies",
+      "Supervisor architecture"
     ],
     "slug": "agent-teams",
-    "detail": "A team is useful when a task contains distinct pieces that can be investigated separately. Agents may share one model or use different models; their roles, available tools, and working context distinguish them. A coordinator or explicit workflow decides how their outputs become one result."
+    "detail": "A team is useful when a task contains distinct pieces that can be investigated separately. Agents may share one model or use different models; their roles, available tools, and working context distinguish them. A coordinator or explicit workflow decides how their outputs become one result. Agent teams describes the idea of several agents working together. Multi-agent patterns, Supervisor architecture, and Hierarchical agents are specific ways to organize one."
   },
   {
     "title": "Agents",
@@ -114,7 +115,7 @@ const notes = [
       "BDI architecture"
     ],
     "slug": "agents",
-    "detail": "An AI agent combines a model with software that lets it observe and act. The model helps choose the next step; the surrounding application actually executes that step. Autonomy is a matter of degree: a fixed workflow may call a model without letting it decide the workflow."
+    "detail": "An AI agent combines a model with software that lets it observe and act. The model helps choose the next step; the surrounding application actually executes that step. Autonomy is a matter of degree: a fixed workflow may call a model without letting it decide the workflow. Classical agent types describes the older textbook categories; this term covers LLM-based agents in practice."
   },
   {
     "title": "Backpropagation",
@@ -141,7 +142,7 @@ const notes = [
     "slug": "caching",
     "category": "systems",
     "what": "Reusing stored data or computation when a new request meets defined reuse conditions.",
-    "detail": "AI systems can cache documents, embeddings, retrieval results, prompt-prefix computation, or complete responses. These are different layers with different invalidation rules. A KV cache reuses attention state during decoding; provider prompt caching can reuse compatible prefix computation across requests. Neither necessarily reuses a final answer.",
+    "detail": "AI systems can cache documents, embeddings, retrieval results, prompt-prefix computation, or complete responses. These are different layers with different invalidation rules. A KV cache reuses attention state during decoding; provider prompt caching can reuse compatible prefix computation across requests. Neither necessarily reuses a final answer. Caching is the general idea. KV cache stores attention state inside one generation, and Prompt caching lets a provider reuse a repeated prompt prefix across requests.",
     "how": "Define a cache key containing the inputs, versions, and authorization scope that affect reuse. Choose a time-to-live and explicit invalidation rules. Exact caches require matching keys; semantic caches reuse similar questions and therefore need additional equivalence checks. Prevent many simultaneous misses from duplicating expensive work.\n\nWhen it matters: Cache repeated expensive work when the underlying data is stable enough and an invalidation strategy can keep results appropriate.",
     "example": "Cache a document embedding by content hash, embedding-model version, and preprocessing version. A response cache for a policy question also needs the policy version and access scope. Changing the policy should invalidate old answers even when the question text stays identical.\n\nHow to measure it: Report hit rate with a clear denominator, hit/miss latency, net cost including cache writes and storage, and stale or incorrect-hit rates. Benchmark a realistic mixture of cold and warm requests. A high hit rate can coexist with poor answers if reuse conditions are too broad.",
     "watch": "Never let reuse bypass authorization. Prompt caching does not expand the context window, and the cost and lifetime of cached prefixes depend on the provider.",
@@ -262,10 +263,11 @@ const notes = [
       "Top-p and token budgets",
       "Context engineering",
       "Handoffs and swarm",
-      "Agent memory types"
+      "Agent memory types",
+      "Context minimization"
     ],
     "slug": "context",
-    "detail": "Context is the input the model can consult for one invocation. It can include instructions, conversation history, tool descriptions, retrieved documents, and images. A context window is a capacity limit, usually expressed in tokens; it is not a guarantee that every included detail will be used correctly."
+    "detail": "Context is the input the model can consult for one invocation. It can include instructions, conversation history, tool descriptions, retrieved documents, and images. A context window is a capacity limit, usually expressed in tokens; it is not a guarantee that every included detail will be used correctly. Context is what the model sees now. Context engineering is the practice of choosing it, and Context minimization is the security-driven version of leaving data out."
   },
   {
     "title": "Context compaction",
@@ -476,7 +478,7 @@ const notes = [
       "Security evals and red teaming"
     ],
     "slug": "evals",
-    "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment."
+    "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment. Evals is the umbrella term. Golden datasets and regression testing is the practice of re-running a fixed case set after each change, and Security evals and red teaming tests attacks instead of quality."
   },
   {
     "title": "Fine-tuning",
@@ -497,10 +499,11 @@ const notes = [
       "Pre-training",
       "Post-training",
       "Hugging Face",
-      "Training"
+      "Training",
+      "Preference optimization"
     ],
     "slug": "fine-tuning",
-    "detail": "Fine-tuning adapts an already trained model by changing learned parameters using additional data. It can teach a task, response style, or domain pattern. It differs from prompting or retrieval, which change the input without updating the model weights."
+    "detail": "Fine-tuning adapts an already trained model by changing learned parameters using additional data. It can teach a task, response style, or domain pattern. It differs from prompting or retrieval, which change the input without updating the model weights. In the training lifecycle it comes after pre-training and overlaps with post-training. Fine-tuning types describes how the update is done, and SFT and Preference optimization are two common objectives."
   },
   {
     "title": "Fine-tuning types",
@@ -558,10 +561,11 @@ const notes = [
       "Pre-training",
       "Supervised fine-tuning (SFT)",
       "Preference optimization",
-      "Fine-tuning"
+      "Fine-tuning",
+      "Training"
     ],
     "slug": "post-training",
-    "detail": "Post-training covers the adaptation stages applied to a pre-trained model to make it useful and safe: instruction tuning, preference optimization, reinforcement learning, and similar methods. It turns a general next-token predictor into an assistant that follows instructions."
+    "detail": "Post-training covers the adaptation stages applied to a pre-trained model to make it useful and safe: instruction tuning, preference optimization, reinforcement learning, and similar methods. It turns a general next-token predictor into an assistant that follows instructions. Fine-tuning is the broader term for any further training. Post-training names the specific stage in which a base model becomes an assistant."
   },
   {
     "title": "GPT — Generative Pre-trained Transformer",
@@ -980,7 +984,7 @@ const notes = [
       "Prompt caching"
     ],
     "slug": "kv-cache",
-    "detail": "In causal transformer decoding, each attention layer creates key and value vectors for processed tokens. The KV cache stores these vectors so later tokens can reuse them. It saves repeated computation, but it is runtime state rather than long-term knowledge or an answer cache."
+    "detail": "In causal transformer decoding, each attention layer creates key and value vectors for processed tokens. The KV cache stores these vectors so later tokens can reuse them. It saves repeated computation, but it is runtime state rather than long-term knowledge or an answer cache. Prompt caching builds on it by keeping this state across separate requests, not only within one generation."
   },
   {
     "title": "LangChain",
@@ -1127,7 +1131,7 @@ const notes = [
       "Reflection and Reflexion"
     ],
     "slug": "loop-engineering",
-    "detail": "An agent loop turns one model response into part of a continuing process. Designing it means deciding what the agent sees, which actions it can request, and what evidence allows it to continue or stop. This is an engineering pattern rather than a standardized algorithm."
+    "detail": "An agent loop turns one model response into part of a continuing process. Designing it means deciding what the agent sees, which actions it can request, and what evidence allows it to continue or stop. This is an engineering pattern rather than a standardized algorithm. ReAct and agent loops is one specific, well-known loop; Loop engineering is the wider craft of designing any such cycle."
   },
   {
     "title": "LoRA",
@@ -1259,7 +1263,7 @@ const notes = [
       "BDI architecture"
     ],
     "slug": "memory",
-    "detail": "Agent memory is information retained for later use. Short-term state may cover one task; long-term memory may store preferences, facts, or previous outcomes across sessions. It usually lives in application storage and is distinct from the model parameters learned during training."
+    "detail": "Agent memory is information retained for later use. Short-term state may cover one task; long-term memory may store preferences, facts, or previous outcomes across sessions. It usually lives in application storage and is distinct from the model parameters learned during training. Memory is the general idea of retained information. Agent memory types splits it into working, episodic, semantic, and procedural kinds."
   },
   {
     "title": "Mixture of experts",
@@ -1408,7 +1412,7 @@ const notes = [
       "Computer-use agents"
     ],
     "slug": "multimodal-models",
-    "detail": "A modality is a type of information, such as text, image, audio, or video. Multimodal models connect two or more modalities in their inputs or outputs. A model that reads images and produces text is multimodal even if it cannot generate images."
+    "detail": "A modality is a type of information, such as text, image, audio, or video. Multimodal models connect two or more modalities in their inputs or outputs. A model that reads images and produces text is multimodal even if it cannot generate images. This term is about the model's capability. Multimodal applications covers the product decisions around using it, such as preprocessing, cost, and latency."
   },
   {
     "title": "n8n workflows",
@@ -1603,7 +1607,7 @@ const notes = [
       "Approval vs authorization"
     ],
     "slug": "permissions-controls",
-    "detail": "Permissions determine which capabilities a principal may use and on which resources. In agent systems, the model requests an action while application code enforces access. A prompt telling an agent to be careful is guidance, not an enforceable security boundary."
+    "detail": "Permissions determine which capabilities a principal may use and on which resources. In agent systems, the model requests an action while application code enforces access. A prompt telling an agent to be careful is guidance, not an enforceable security boundary. This is the general term. Least privilege is the design principle, a tool allow list limits which tools exist, and IAM applies it to cloud credentials."
   },
   {
     "title": "Pi",
@@ -1663,7 +1667,8 @@ const notes = [
       "Reinforcement learning",
       "Evals",
       "Fine-tuning types",
-      "Post-training"
+      "Post-training",
+      "Fine-tuning"
     ],
     "slug": "preference-optimization",
     "detail": "Preference optimization learns which outputs should be favored relative to alternatives. A dataset often contains a prompt, a chosen response, and a rejected response. Labels express a preference criterion, which may concern helpfulness, correctness, style, or another property."
@@ -1756,7 +1761,7 @@ const notes = [
       "Security evals and red teaming"
     ],
     "slug": "prompt-injection",
-    "detail": "Prompt injection occurs when attacker-controlled text tries to alter an AI system’s instructions or actions. It can be direct, in a user message, or indirect, inside a web page, document, or tool result. The risk comes from mixing untrusted data with instruction-following behavior."
+    "detail": "Prompt injection occurs when attacker-controlled text tries to alter an AI system’s instructions or actions. It can be direct, in a user message, or indirect, inside a web page, document, or tool result. The risk comes from mixing untrusted data with instruction-following behavior. Indirect prompt injection is the subtype in which the attacker plants the instructions in content the agent reads, instead of typing them to the agent directly."
   },
   {
     "title": "PyTorch",
@@ -2179,7 +2184,7 @@ const notes = [
     "slug": "structured-outputs",
     "category": "agents",
     "what": "Model responses constrained or validated against a machine-readable output schema.",
-    "detail": "A schema defines an output contract: fields, types, required values, and supported constraints. Structured outputs make responses easier for application code to consume. Asking for JSON, producing syntactically valid JSON, and enforcing a schema provide different levels of assurance.",
+    "detail": "A schema defines an output contract: fields, types, required values, and supported constraints. Structured outputs make responses easier for application code to consume. Asking for JSON, producing syntactically valid JSON, and enforcing a schema provide different levels of assurance. Structured outputs shape what a model returns. Structured extraction is a security pattern that uses such outputs to pull fields out of untrusted text.",
     "how": "Define a schema and use a model interface that supports it, often through constrained generation. Check the provider’s supported schema subset. Parse and validate results in application code, including business rules the schema cannot express. Handle refusal, truncation, and transport errors separately from successful responses.\n\nWhen it matters: Use them for extraction, classification, and model outputs that feed databases or workflows rather than being read only by a person.",
     "example": "A ticket extractor returns `{\"category\":\"billing\",\"order_id\":null}` with a category enum and a nullable order ID. Explicit null means evidence was missing. A schema-valid but invented order ID would still fail the application’s factual checks.\n\nHow to measure it: Track parse success, schema compliance among completed responses, and valid usable outputs per total request. Report refusals and truncations separately. Measure field accuracy against reviewed labels, and count downstream validation failures and repair attempts.",
     "watch": "A valid structure does not establish truth, authorization, or completeness. A stricter schema can force misleading guesses unless missing information has an explicit representation.",
@@ -2456,10 +2461,11 @@ const notes = [
       "Machine learning",
       "PyTorch",
       "Supervised fine-tuning (SFT)",
-      "TensorFlow"
+      "TensorFlow",
+      "Post-training"
     ],
     "slug": "training",
-    "detail": "Training adjusts a model using examples and a measurable objective. For neural networks, a loss function measures prediction error and gradients describe how parameter changes affect that loss. An optimizer uses these gradients to update weights; other model families can use different fitting procedures."
+    "detail": "Training adjusts a model using examples and a measurable objective. For neural networks, a loss function measures prediction error and gradients describe how parameter changes affect that loss. An optimizer uses these gradients to update weights; other model families can use different fitting procedures. Pre-training, post-training, and fine-tuning are stages of training that differ in data and goal: general learning, behavior shaping, and narrow adaptation."
   },
   {
     "title": "Transformers",
@@ -2767,7 +2773,7 @@ const notes = [
       "Context minimization"
     ],
     "slug": "context-engineering",
-    "detail": "The context window is a limited resource. Context engineering decides what to include (instructions, history, retrieved documents, tool results), what to summarize or drop, and in what order. It extends prompt writing to the whole information flow of an application."
+    "detail": "The context window is a limited resource. Context engineering decides what to include (instructions, history, retrieved documents, tool results), what to summarize or drop, and in what order. It extends prompt writing to the whole information flow of an application. Context minimization is the narrower security case: deciding what not to include so sensitive data cannot leak."
   },
   {
     "title": "Prompt caching",
@@ -2786,7 +2792,7 @@ const notes = [
       "Time to First Token (TTFT)"
     ],
     "slug": "prompt-caching",
-    "detail": "When many requests start with the same long prefix (system prompt, tools, documents), the provider can store its processed state and reuse it. Cached tokens usually cost less and respond faster. Cache hits require an identical prefix, so ordering matters."
+    "detail": "When many requests start with the same long prefix (system prompt, tools, documents), the provider can store its processed state and reuse it. Cached tokens usually cost less and respond faster. Cache hits require an identical prefix, so ordering matters. It works one level above the KV cache: the provider keeps the KV cache for a repeated prefix so later requests can skip recomputing it."
   },
   {
     "title": "ReAct and agent loops",
@@ -2812,7 +2818,7 @@ const notes = [
       "Cognitive architecture for language agents (CoALA)"
     ],
     "slug": "react-agent-loop",
-    "detail": "ReAct combines reasoning steps with actions: think about what is needed, call a tool, read the observation, and repeat until done. This loop is the core of many agents. Control comes from stop conditions, turn budgets, and recovery paths."
+    "detail": "ReAct combines reasoning steps with actions: think about what is needed, call a tool, read the observation, and repeat until done. This loop is the core of many agents. Control comes from stop conditions, turn budgets, and recovery paths. This describes one named pattern. Loop engineering covers how to design, bound, and stop any agent loop."
   },
   {
     "title": "LangGraph",
@@ -2858,7 +2864,7 @@ const notes = [
       "Excessive agency"
     ],
     "slug": "human-in-the-loop",
-    "detail": "Approval gates place human judgment before risky or irreversible steps such as payments, deletions, or external messages. A good gate shows exactly what will happen, accepts approve, edit, or reject, and lets execution resume safely."
+    "detail": "Approval gates place human judgment before risky or irreversible steps such as payments, deletions, or external messages. A good gate shows exactly what will happen, accepts approve, edit, or reject, and lets execution resume safely. A gate only helps if the approver is also authorized and sees the exact action; Approval vs authorization covers those two checks."
   },
   {
     "title": "Workflow vs. agent",
@@ -2915,7 +2921,7 @@ const notes = [
       "Agent-to-agent protocol (A2A)"
     ],
     "slug": "multi-agent-patterns",
-    "detail": "Patterns include a supervisor that delegates and merges results, a router that sends requests to a specialist, specialists with narrow tools, and handoffs that pass control and context between agents. Each agent can keep an isolated context."
+    "detail": "Patterns include a supervisor that delegates and merges results, a router that sends requests to a specialist, specialists with narrow tools, and handoffs that pass control and context between agents. Each agent can keep an isolated context. This is the overview of coordination patterns. Supervisor architecture, Orchestrator–workers, and Hierarchical agents each cover one in depth."
   },
   {
     "title": "Golden datasets and regression testing",
@@ -2936,7 +2942,7 @@ const notes = [
       "Security evals and red teaming"
     ],
     "slug": "golden-datasets",
-    "detail": "A golden dataset holds representative inputs with trusted expected outputs or scoring rubrics. Running it after each change to prompts, models, retrieval, or tools gives a baseline and reveals regressions that ordinary unit tests miss."
+    "detail": "A golden dataset holds representative inputs with trusted expected outputs or scoring rubrics. Running it after each change to prompts, models, retrieval, or tools gives a baseline and reveals regressions that ordinary unit tests miss. This is one kind of eval: a fixed, reviewed set used to catch changes over time. Evals also covers one-off and exploratory measurement."
   },
   {
     "title": "Confused deputy",
@@ -3112,10 +3118,11 @@ const notes = [
       "LLM gateway and AI governance",
       "Confused deputy",
       "Sandbox",
-      "Least privilege"
+      "Least privilege",
+      "Tool allow list"
     ],
     "slug": "secrets-and-iam",
-    "detail": "Secrets such as API keys must live in a secret manager or runtime configuration, not in source control or images. Identity and access management (IAM) assigns roles; least privilege means each service gets only the permissions its job requires, such as invoking one model."
+    "detail": "Secrets such as API keys must live in a secret manager or runtime configuration, not in source control or images. Identity and access management (IAM) assigns roles; least privilege means each service gets only the permissions its job requires, such as invoking one model. This is the infrastructure side of least privilege: cloud roles and credential storage. For limiting what an agent's tools and data can reach, see Least privilege and Tool allow list."
   },
   {
     "title": "Provider adapters",
@@ -3176,7 +3183,7 @@ const notes = [
       "Inference"
     ],
     "slug": "multimodal-applications",
-    "detail": "A multimodal application combines input types, for example a photo plus a question, or speech converted to text before an answer. Design choices include which modalities to accept, how to preprocess them, and how to handle quality, latency, and cost."
+    "detail": "A multimodal application combines input types, for example a photo plus a question, or speech converted to text before an answer. Design choices include which modalities to accept, how to preprocess them, and how to handle quality, latency, and cost. This term is about building products around multimodal models; for what such models can do, see Multimodal models."
   },
   {
     "title": "Prompt chaining",
@@ -3261,10 +3268,11 @@ const notes = [
       "Parallelization (sectioning and voting)",
       "Multi-agent patterns",
       "Agent teams",
-      "Deep research agents"
+      "Deep research agents",
+      "Hierarchical agents"
     ],
     "slug": "orchestrator-workers",
-    "detail": "Unlike parallelization, the subtasks are not known in advance: the orchestrator decides them from the input. Workers get narrow instructions and return concise results. It suits tasks such as changing an unknown number of files or researching an open question."
+    "detail": "Unlike parallelization, the subtasks are not known in advance: the orchestrator decides them from the input. Workers get narrow instructions and return concise results. It suits tasks such as changing an unknown number of files or researching an open question. Compared with a supervisor, which routes to a fixed set of specialists, the orchestrator creates the subtasks itself for each input."
   },
   {
     "title": "Evaluator–optimizer",
@@ -3433,10 +3441,11 @@ const notes = [
       "Handoffs and swarm",
       "Orchestrator–workers",
       "Router pattern",
-      "Magentic orchestration"
+      "Magentic orchestration",
+      "Agent teams"
     ],
     "slug": "supervisor-architecture",
-    "detail": "The supervisor owns control flow and the user conversation; specialists own narrow tool sets. All communication passes through the supervisor, which makes behavior easier to observe and constrain than free-form peer messaging."
+    "detail": "The supervisor owns control flow and the user conversation; specialists own narrow tool sets. All communication passes through the supervisor, which makes behavior easier to observe and constrain than free-form peer messaging. A supervisor routes tasks to fixed specialists. In Orchestrator–workers the orchestrator invents the subtasks per request, and Hierarchical agents add layers of supervisors."
   },
   {
     "title": "Hierarchical agents",
@@ -3454,10 +3463,11 @@ const notes = [
       "Agent teams",
       "Subagents",
       "Multi-agent patterns",
-      "Observability"
+      "Observability",
+      "Orchestrator–workers"
     ],
     "slug": "hierarchical-agents",
-    "detail": "Hierarchy limits how many agents any one manager must track and lets each layer work at a different level of abstraction. It mirrors an organization chart and extends the supervisor pattern to larger systems."
+    "detail": "Hierarchy limits how many agents any one manager must track and lets each layer work at a different level of abstraction. It mirrors an organization chart and extends the supervisor pattern to larger systems. It is a supervisor architecture repeated across layers. Orchestrator–workers has only one level of delegation."
   },
   {
     "title": "Agents as tools",
@@ -3797,7 +3807,7 @@ const notes = [
       "Self-improving agents and skill libraries"
     ],
     "slug": "agent-memory-types",
-    "detail": "Working memory is the current context. Episodic memory records past events and attempts, semantic memory stores facts, and procedural memory stores how to do things, such as instructions or learned skills. Generative Agents added a memory stream with retrieval and reflection; MemGPT manages memory tiers like an operating system."
+    "detail": "Working memory is the current context. Episodic memory records past events and attempts, semantic memory stores facts, and procedural memory stores how to do things, such as instructions or learned skills. Generative Agents added a memory stream with retrieval and reflection; MemGPT manages memory tiers like an operating system. Use this as the classification; Memory covers the basics of storing and retrieving information."
   },
   {
     "title": "Cognitive architecture for language agents (CoALA)",
@@ -3857,7 +3867,7 @@ const notes = [
       "Reinforcement learning"
     ],
     "slug": "classical-agent-types",
-    "detail": "These categories come from classical AI. Reflex agents map the current percept to an action; model-based agents keep internal state; goal-based agents plan toward goals; utility-based agents trade off preferences; learning agents improve from experience. LLM agents can be viewed through these types."
+    "detail": "These categories come from classical AI. Reflex agents map the current percept to an action; model-based agents keep internal state; goal-based agents plan toward goals; utility-based agents trade off preferences; learning agents improve from experience. LLM agents can be viewed through these types. This is a historical classification. For how LLM-based agents are built today, start with Agents."
   },
   {
     "title": "BDI architecture",
@@ -3920,10 +3930,11 @@ const notes = [
       "Three-layer AI security framework",
       "Context minimization",
       "Data egress control",
-      "Approval vs authorization"
+      "Approval vs authorization",
+      "Tool allow list"
     ],
     "slug": "least-privilege",
-    "detail": "Least privilege applies at two levels in AI applications. First, restrict the agent's own credentials to the data and tools its job requires. Second, enforce the permissions of the person using it, so an agent never has more access than the user who asked."
+    "detail": "Least privilege applies at two levels in AI applications. First, restrict the agent's own credentials to the data and tools its job requires. Second, enforce the permissions of the person using it, so an agent never has more access than the user who asked. Compare Secrets and least-privilege IAM, which applies the same principle to cloud credentials; this term covers the agent's data and tool access."
   },
   {
     "title": "Context minimization",
@@ -3940,10 +3951,11 @@ const notes = [
       "Data leakage",
       "Least privilege",
       "Data egress control",
-      "Permission-aware retrieval"
+      "Permission-aware retrieval",
+      "Context"
     ],
     "slug": "context-minimization",
-    "detail": "Being allowed to read a record does not mean the entire record belongs in the model's context. Every extra field is more sensitive data that could be echoed, logged, or exfiltrated by a manipulated model."
+    "detail": "Being allowed to read a record does not mean the entire record belongs in the model's context. Every extra field is more sensitive data that could be echoed, logged, or exfiltrated by a manipulated model. It is context engineering applied for security. The aim is less exposure, not better answers."
   },
   {
     "title": "Data egress control",
@@ -3987,7 +3999,7 @@ const notes = [
       "Data egress control"
     ],
     "slug": "indirect-prompt-injection",
-    "detail": "In indirect prompt injection the attacker never talks to the agent. They plant instructions in external data the agent will read anyway, and a model that mistakes data for commands may act on them. Real examples include the 2025 EchoLeak vulnerability in Microsoft 365 Copilot, where a crafted email could cause data to leak without the user clicking anything; it was patched with no known exploitation in the wild."
+    "detail": "In indirect prompt injection the attacker never talks to the agent. They plant instructions in external data the agent will read anyway, and a model that mistakes data for commands may act on them. Real examples include the 2025 EchoLeak vulnerability in Microsoft 365 Copilot, where a crafted email could cause data to leak without the user clicking anything; it was patched with no known exploitation in the wild. It is a subtype of prompt injection: the same weakness, but delivered through data instead of a user message."
   },
   {
     "title": "Untrusted content separation",
@@ -4027,7 +4039,7 @@ const notes = [
       "Guardrails"
     ],
     "slug": "structured-extraction",
-    "detail": "Instead of handing a whole web page to an agent that also holds internal data and email tools, a separate extractor reads the page and returns only predefined fields. The main workflow then consumes those fields, not arbitrary text."
+    "detail": "Instead of handing a whole web page to an agent that also holds internal data and email tools, a separate extractor reads the page and returns only predefined fields. The main workflow then consumes those fields, not arbitrary text. The technique is the same as structured outputs, but the purpose differs: here the fixed format keeps untrusted text away from the main agent, rather than just making output easy to parse."
   },
   {
     "title": "Excessive agency",
@@ -4070,10 +4082,12 @@ const notes = [
       "Tools",
       "Permissions / controls",
       "Data egress control",
-      "Narrow tools and argument validation"
+      "Narrow tools and argument validation",
+      "Least privilege",
+      "Secrets and least-privilege IAM"
     ],
     "slug": "tool-allow-list",
-    "detail": "Connecting an MCP server that exposes twenty tools to an agent that needs three adds risk for no benefit. A tool allow list makes the application define exactly which tools are available."
+    "detail": "Connecting an MCP server that exposes twenty tools to an agent that needs three adds risk for no benefit. A tool allow list makes the application define exactly which tools are available. It narrows which tools exist for a task. Permissions / controls decide what each allowed tool may do, and Least privilege sets the credentials behind it."
   },
   {
     "title": "Narrow tools and argument validation",
@@ -4114,7 +4128,7 @@ const notes = [
       "Narrow tools and argument validation"
     ],
     "slug": "approval-vs-authorization",
-    "detail": "Human-in-the-loop pauses risky actions for review, but two checks are still needed: the approver must have the permission to approve, and the approval must be bound to the exact action shown."
+    "detail": "Human-in-the-loop pauses risky actions for review, but two checks are still needed: the approver must have the permission to approve, and the approval must be bound to the exact action shown. This is the check that makes a human-in-the-loop approval gate trustworthy, not a separate kind of gate."
   },
   {
     "title": "Security evals and red teaming",
@@ -4136,7 +4150,7 @@ const notes = [
       "Excessive agency"
     ],
     "slug": "security-evals-red-teaming",
-    "detail": "Before production, deliberately try to break the boundaries: craft prompts and poisoned content that attempt unauthorized access or actions. Judge outcomes by what tools were called, what data was retrieved, and whether anything unauthorized succeeded, not only by what the model said."
+    "detail": "Before production, deliberately try to break the boundaries: craft prompts and poisoned content that attempt unauthorized access or actions. Judge outcomes by what tools were called, what data was retrieved, and whether anything unauthorized succeeded, not only by what the model said. This is the adversarial branch of evals: it measures whether controls resist attack, while golden datasets measure whether answers stay good."
   }
 ];
 const sources = {
