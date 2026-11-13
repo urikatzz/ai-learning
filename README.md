@@ -45,7 +45,7 @@ For visual checks, serve with `python3 -m http.server 8765 --bind 127.0.0.1`, th
 
 ## Animated diagrams
 
-Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, and KV cache render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
+Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
 
 #### Scenario: Diagram animates on first view
 
