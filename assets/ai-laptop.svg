@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 460" fill="none">
+<defs>
+<linearGradient id="rim" x1="250" y1="70" x2="650" y2="420" gradientUnits="userSpaceOnUse"><stop stop-color="#6674ff"/><stop offset=".45" stop-color="#b1adf4"/><stop offset=".7" stop-color="#3e38a3"/><stop offset="1" stop-color="#8694ff"/></linearGradient>
+<linearGradient id="screen" x1="300" y1="80" x2="530" y2="380" gradientUnits="userSpaceOnUse"><stop stop-color="#111125"/><stop offset="1" stop-color="#1d1644"/></linearGradient>
+<linearGradient id="base"><stop stop-color="#8d94ff"/><stop offset=".3" stop-color="#343b98"/><stop offset=".65" stop-color="#727be3"/><stop offset="1" stop-color="#272559"/></linearGradient>
+<linearGradient id="neon" x1="380" y1="300" x2="490" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#547eff"/><stop offset=".5" stop-color="#8b67ff"/><stop offset="1" stop-color="#d579ff"/></linearGradient>
+<radialGradient id="halo"><stop stop-color="#743bff" stop-opacity=".4"/><stop offset="1" stop-color="#542aff" stop-opacity="0"/></radialGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
+<g id="brain" stroke="url(#neon)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M448 158c-7-25-38-26-48-5-19-5-36 6-39 24-21 1-34 18-31 36-20 13-20 35-7 49-7 24 11 43 30 43 5 22 27 31 47 22l13 26v23m40-218c10-28 41-27 51-7 23-3 39 11 39 29 20 4 33 24 26 43 18 18 15 39-1 52 2 24-18 39-39 36-12 19-33 19-49 10l-10 28v27M448 158l-7 36m-41-41 5 23-12 14m-32-13 10 22-12 13m-29 1 18 15-5 17m-20 17 22-5 12 12m-4 36 13-17 18 3m16 36 8-22m96-154-13 22 10 14m42-7-19 11 5 19m40 13-24 5-2 17m25 30-24-8-13 12m-2 32-11-23-15 1m-22 14-6-19"/></g>
+</defs>
+<ellipse cx="434" cy="286" rx="315" ry="177" fill="url(#halo)"/>
+<ellipse cx="401" cy="414" rx="300" ry="17" fill="#050511" opacity=".8" filter="url(#shadow)"/>
+<path d="m248 87 450-42q26-2 21 26l-49 297q-3 21-26 22l-457-23Z" fill="#27254b" stroke="url(#rim)" stroke-width="3"/>
+<path d="m245 88 450-42q20-2 16 22l-50 291q-3 17-21 18l-455-18 50-250q2-18 10-21Z" fill="#0a0b1b" stroke="#5d60d7" stroke-width="2"/>
+<path d="m249 111 443-41-48 281-443-18Z" fill="url(#screen)"/>
+<circle cx="468" cy="80" r="2" fill="#39365c"/>
+<g stroke="#7770ff" stroke-width="4" opacity=".45"><path d="m267 145 87-6m-91 20 31-2m7-1 19-1m-61 19 60-4m-64 19 44-2m-48 19 77-4m-82 23 32-1m-36 22 62-2m-66 19 22-1m-27 21 77 1m-81 16 53 2"/><path d="m573 128 92-6m-96 20 78-4m-82 17 91-4m-96 18 54-2m-42 78 68 2m-74 15 37 1m-41 16 69 3m-73 15 52 2m-57 16 64 3" opacity=".4"/></g>
+<use href="#brain" filter="url(#glow)" stroke-width="9"/>
+<use href="#brain"/>
+<text x="383" y="273" font-family="Arial,sans-serif" font-weight="bold" font-style="italic" font-size="76" fill="#af8bff" filter="url(#glow)">AI</text>
+<text x="383" y="273" font-family="Arial,sans-serif" font-weight="bold" font-style="italic" font-size="76" fill="#ebe0ff">AI</text>
+<path d="m187 359 468 22-107 36-495-33Z" fill="url(#base)" stroke="#8c89e9" stroke-width="1.5"/>
+<path d="m53 384 495 33 107-36-2 10-103 36L56 395q-6-2-3-11Z" fill="url(#base)" stroke="#6f70cc"/>
+<path d="m214 365 394 20-67 20-397-24Z" fill="#12132e" stroke="#4d53af"/>
+<g stroke="#5d63c5" opacity=".7"><path d="m207 370 376 20m-398-14 377 20m-394-14 376 20M239 366l-53 17m82-15-53 17m82-16-53 18m82-16-54 17m83-16-54 18m83-16-54 18m84-16-54 17m84-16-54 18m84-16-54 18m84-16-54 17m83-15-54 17m84-16-54 17"/></g>
+<path d="m284 393 108 6-20 8-112-7Z" fill="#9499f5" opacity=".6"/>
+<path d="m582 408 30-10" stroke="#111329" stroke-width="5"/>
+</svg>

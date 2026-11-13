@@ -1,12 +1,12 @@
 # AI Learning — Uri Katz
 
-A single-file, responsive AI glossary with 98 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
+A single-file, responsive AI glossary with 113 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
 
 ## Read the glossary
 
-Open `index.html` in a browser. Click any term to open its page. Each explained term has a definition, mechanics, practical example, key distinction, related terms, and source links. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
+Open `index.html` in a browser. Click any term to open its page. Each explained term has a short index definition, a deeper introduction, mechanics, a worked example, common pitfalls, related terms, and source links. Five guided learning paths cover foundations, retrieval, agents, model adaptation/serving, and production AI engineering. Twenty-one responsive diagrams and fifteen expandable self-checks reinforce the core concepts. Search includes the full explanations and related-term names. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
 
-91 entries have explanations. JEV, Hermes, Orca, Gool, Herder, Pi, and Omp need a precise reference before a project-specific description can be written. The Karpathy wiki / second brain entry describes the general pattern and notes that its exact project reference needs confirmation.
+All 113 entries have explanations. JEV, Hermes, Orca, Herdr, Pi, Omp, and Karpathy’s LLM Wiki are identified using their official references. Gool was removed. Herdr retains the original `#term/herder` route so existing bookmarks continue to work.
 
 ## GitHub Pages
 
@@ -19,10 +19,26 @@ The workflow follows the portfolio's GitHub Pages setup and publishes only `inde
 
 For the `urikatzz` account, the expected published address is `https://urikatzz.github.io/ai-learning/` after deployment succeeds. Nothing has been published by this package itself.
 
+The new foundations and production entries include explicit “When it matters” guidance and “How to measure it” examples within their mechanics and practical-example sections.
+
 ## Edit content
 
-The `notes` array inside `index.html` contains the term data. Fields include `title`, `slug`, `category`, `what`, `how`, `example`, `watch`, `related`, and `sources`. Source keys resolve to the `sources` dictionary. Use unique slugs, existing titles for related links, and the six existing category keys. Set `pending: true` when the intended reference is ambiguous.
+The `notes` array inside `index.html` contains the term data. Fields include `title`, `slug`, `category`, `what` (short summary), `detail` (deeper introduction), `how`, `example`, `watch`, `related`, and `sources`. Backtick-delimited text in article paragraphs renders as inline code; content is inserted as text, not HTML. Source keys resolve to the `sources` dictionary. Use unique slugs, existing titles for related links, and the six existing category keys. Set `pending: true` when the intended reference is ambiguous.
 
-Descriptions were prepared with primary documentation and research sources on 11 November 2026. Sources are linked from the relevant entry. Product capabilities and documentation can change.
+Descriptions were reviewed and expanded on 11 November 2026, with additional entries added through 12 November 2026. The 127 learning-resource links include official documentation, practical tutorials, original papers, and creator-authored visual lessons and video courses. Resources are linked from the relevant entry. Product capabilities and documentation can change. The Karpathy wiki entry links to his original LLM Wiki proposal; his video course remains a separate learning resource.
 
 Fonts load from Google Fonts when available and fall back to installed fonts. All content, navigation, and styling are contained in the HTML file.
+
+## Diagrams and learning paths
+
+The `diagrams` dictionary contains accessible HTML figures with explanatory captions. Mark independent branches or alternatives with `parallel: true`; sequential diagrams use ordered steps and arrows. The temperature illustration is an inline SVG with an accessible text description. These figures work offline and adapt to light/dark themes and narrow screens.
+
+The `learningPaths` array lists ordered term slugs. The `studyQuestions` dictionary maps slugs to a question and an answer, rendered with native expandable details. Keep all references synchronized when renaming terms.
+
+## Validate changes
+
+Run `python3 scripts/check-glossary.py` to check unique identifiers, required content, related terms, source references, learning paths, and JavaScript syntax. This requires Python 3 and Node.js; there are no package dependencies.
+
+Run `python3 scripts/check-glossary.py --links --report /tmp/ai-learning-links.json` to also check all learning-resource URLs using curl. The report records status, redirect destination, and page title. HTTP success establishes reachability, not factual accuracy or future availability; inspect page content for relevance and soft error pages.
+
+For visual checks, serve with `python3 -m http.server 8765 --bind 127.0.0.1`, then open `http://127.0.0.1:8765`. Check learning-path links, search, filters, term sections, self-checks, Back/Forward navigation, both themes, and narrow-screen diagrams.
