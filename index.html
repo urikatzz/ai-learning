@@ -891,10 +891,29 @@ const notes = [
     "related": [
       "Evals",
       "Guardrails",
+      "Interaction as a judge",
       "Opik"
     ],
     "slug": "llm-as-a-judge",
     "detail": "A model judge applies evaluation criteria to candidate outputs. It is useful for qualities that are hard to express as exact string comparisons, such as relevance or clarity. Its scores are measurements from a fallible evaluator, not ground truth."
+  },
+  {
+    "title": "Interaction as a judge",
+    "category": "agents",
+    "what": "Judging an app or game by letting a computer-use agent play with it, then grading the recorded session.",
+    "how": "A computer-use agent clicks through the running application and records screenshots, actions, and its reasoning as an interaction trace. A judge model or a trained reward model then grades that trace, either for pairwise preference or for whether a specific requirement works. Agents range from iterative (re-queried after every state, costly but reactive) to one-shot (plans every action up front, cheaper but cannot react) to heuristic (random or rule-based, nearly free). Cap the number of steps so comparisons stay consistent, and swap answer order when comparing two sides.",
+    "example": "Two Minecraft-style clones have nearly identical camera and block-breaking code, and both look right in a screenshot. Playing them shows that one lets you break blocks while in the other clicks do nothing and the camera behaves oddly. In one reported study, a judge that read only code agreed with human votes 65.6% of the time; adding full computer-use traces raised that to 69.1%.",
+    "watch": "Interaction costs more than reading code, and the gain depends on the app: it was largest for games and simulations and smaller for mostly static sites. Agents can miss bugs they never trigger, so a pass is not proof, and an agent given only a few steps may never reach the broken feature.",
+    "sources": [
+      "eval"
+    ],
+    "related": [
+      "LLM as a judge",
+      "Evals",
+      "Agents"
+    ],
+    "slug": "interaction-as-a-judge",
+    "detail": "Interaction as a judge extends LLM-as-a-judge from static artifacts, such as code and screenshots, to behavior. Strong models rarely make obvious coding mistakes and screenshots all look plausible, so the differences that matter, like a click that does nothing, only show up when someone uses the app. A computer-use agent plays that role at scale, producing traces that a judge or reward model can score. The same signal can drive inference-time repair loops and reinforcement learning, and because it needs only a running app and not source code, it can reach software whose code you do not have."
   },
   {
     "title": "LLMs",
@@ -5158,6 +5177,7 @@ const intuitions = {
  "context-engineering": "Packing the desk before the model sits down: choosing which instructions, documents, and history deserve the limited space.",
  "confused-deputy": "A helpful clerk with a master key who is tricked by a stranger into opening a door the stranger couldn't open alone.",
  "subagents": "Delegating one errand to an assistant who comes back with a short report, so the main agent's desk doesn't fill up with side details.",
+ "interaction-as-a-judge": "Reviewing a restaurant by reading the menu versus eating there. A bot that actually clicks through the app finds the broken button that the code and screenshots hid.",
  "workflow-vs-agent": "A recipe versus a chef. A workflow follows steps you wrote; an agent decides its own next move, which is flexible but less predictable.",
  "three-layer-ai-security": "Three locks on one door: what it can see, whom it believes, and what it may do. Any single lock can be picked, so you want all three.",
  "least-privilege": "Give the intern a key to the one room they work in, not the master key, and check the requester's badge too.",

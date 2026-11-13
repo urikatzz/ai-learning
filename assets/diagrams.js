@@ -813,6 +813,32 @@
     return figure;
   };
 
+  builders['interaction-as-a-judge'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Play it first, then grade the session',
+      alt: 'A running app is played by a computer-use agent, which records an interaction trace of screenshots, actions, and reasoning. A judge or reward model scores the trace as a preference or a requirement check. Three agent styles trade cost for reactivity.',
+      caption: 'The agent records what happened, and the judge grades that record instead of only code or a screenshot. Iterative agents react but cost more; one-shot and heuristic agents are cheaper but less adaptive. Layout is illustrative.',
+      height: 214
+    });
+    box(svg, { x: 12, y: 30, w: 100, label: 'Running app', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 112, y1: 52, x2: 138, y2: 52, tone: 'blue', index: 1 });
+    box(svg, { x: 140, y: 30, w: 100, label: 'Agent plays', tone: 'teal', index: 2 });
+    arrow(svg, { x1: 240, y1: 52, x2: 266, y2: 52, tone: 'teal', index: 3 });
+    box(svg, { x: 268, y: 30, w: 90, label: 'Trace', tone: 'purple', index: 4 });
+    arrow(svg, { x1: 358, y1: 52, x2: 380, y2: 52, tone: 'purple', index: 5 });
+    box(svg, { x: 382, y: 30, w: 86, label: 'Judge', tone: 'orange', index: 6, solid: true });
+    svgNode(svg, 'path', { d: 'M190 74V92H62V76', class: 'dg-dash dg-flow dg-teal dg-pop', style: '--i:7' });
+    note(svg, 126, 108, 'act, observe, repeat', 7);
+    note(svg, 313, 82, 'screenshots · actions · reasoning', 5);
+    note(svg, 425, 82, 'preference or check', 7);
+    ['Iterative: reacts each step', 'One-shot: plans up front', 'Heuristic: random, nearly free'].forEach((label, i) => {
+      box(svg, { x: 12 + i * 155, y: 138, w: 146, h: 40, label, tone: ['teal', 'blue', 'orange'][i], index: 8 + i });
+    });
+    note(svg, 240, 202, 'cost falls left to right; so does adaptivity', 11);
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M62 52H425')" });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }

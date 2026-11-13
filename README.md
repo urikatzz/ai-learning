@@ -49,7 +49,7 @@ The `intuitions` dictionary in `index.html` maps a slug to a one-or-two-sentence
 
 ## Animated diagrams
 
-Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval, ReAct agent loops, HNSW, reciprocal rank fusion, human-in-the-loop gates, golden datasets, LLM as a judge, training, backpropagation, prefill and decode, MCP, precision and recall, grounding, caching, and fine-tuning types render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
+Term pages for RAG, temperature, transformers (attention), tokenization, embedding models, agents, context, KV cache, quantization, LoRA, mixture of experts, prompt injection, hallucinations, RAG vs GraphRAG, reranking, vector databases, tool calling, chunking, and hybrid retrieval, ReAct agent loops, HNSW, reciprocal rank fusion, human-in-the-loop gates, golden datasets, LLM as a judge, interaction as a judge, training, backpropagation, prefill and decode, MCP, precision and recall, grounding, caching, and fine-tuning types render animated SVG diagrams from `assets/diagrams.js`, styled by `assets/diagrams.css`. Other terms keep the plain figure from the `diagrams` data in `index.html`.
 
 #### Scenario: Diagram animates on first view
 
