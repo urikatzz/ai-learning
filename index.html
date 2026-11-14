@@ -4151,9 +4151,154 @@ const notes = [
     ],
     "slug": "security-evals-red-teaming",
     "detail": "Before production, deliberately try to break the boundaries: craft prompts and poisoned content that attempt unauthorized access or actions. Judge outcomes by what tools were called, what data was retrieved, and whether anything unauthorized succeeded, not only by what the model said. This is the adversarial branch of evals: it measures whether controls resist attack, while golden datasets measure whether answers stay good."
+  },
+  {
+    "title": "Tool-based escalation (ask an expert)",
+    "category": "agents",
+    "what": "A fast, cheap model runs the main loop and calls a tool backed by a stronger model when it needs help.",
+    "how": "Describe in the tool definition when to escalate: ambiguous design choices, repeated failures, or irreversible steps. Pass the expert only the question and the minimum context it needs, and ask for a short, actionable answer. Add a per-task cap on expert calls. How to measure it: compare task success and total cost against all-small and all-frontier runs, and track how often escalation was needed and how often it helped.",
+    "example": "A small coding agent is migrating a database schema. It reads files and edits code itself, but before choosing between two migration strategies it calls `consult_architect` with the two options and the constraints. The expert replies with a recommendation and a risk. The small model resumes and implements it.",
+    "watch": "The small model may not realize it is stuck and never escalate, or may escalate on everything and erase the savings. Test both failure modes, and cap expert calls.",
+    "sources": [
+      "agent",
+      "react"
+    ],
+    "related": [
+      "Router pattern",
+      "Orchestrator–workers",
+      "Subagents",
+      "Tool calling",
+      "Confidence cascading",
+      "Asymmetric planner–executor",
+      "Small language models (SLMs)"
+    ],
+    "slug": "tool-based-escalation",
+    "detail": "The small model stays in charge of the task and owns the conversation. The expert is just another tool, for example `consult_architect(question)`, implemented as a call to a frontier model. This differs from routing, which picks one model before the work starts, and from a cascade, which retries after a failure: here the small model decides mid-task that it is stuck and asks a targeted question. The expert returns a short answer, not the finished work."
+  },
+  {
+    "title": "Confidence cascading",
+    "category": "agents",
+    "what": "Try a cheap model first and automatically retry with a stronger one when its answer looks unreliable.",
+    "how": "Choose the acceptance signal first. Deterministic validators are the most reliable. Token log probabilities and self-reported confidence are weaker signals and need calibration on labelled data. Set the threshold from a labelled set, cap the number of tiers, and log which tier answered. How to measure it: plot quality against cost for several thresholds and compare with always using the strong model.",
+    "example": "An extraction service asks a small model for JSON invoice fields. If the output fails schema validation or the total does not match the line items, the same request goes to a larger model. Most invoices pass on the first attempt, so only the awkward ones pay the higher price.",
+    "watch": "Model confidence is often poorly calibrated: a wrong answer can look confident. A failed cheap attempt also adds latency, so a cascade that escalates too often can cost more than going straight to the strong model.",
+    "sources": [
+      "frugalgpt",
+      "routellm"
+    ],
+    "related": [
+      "Predictive routing",
+      "Router pattern",
+      "Tool-based escalation (ask an expert)",
+      "Evals",
+      "Structured outputs",
+      "LLM as a judge",
+      "Retries"
+    ],
+    "slug": "confidence-cascading",
+    "detail": "A cascade orders models from cheap to expensive. After each attempt a check decides whether to accept the answer or escalate. The check can be a validator such as a schema or unit test, a judge model, or the model's own token probabilities. Cascades work well when most requests are easy. Unlike a router, they pay for the failed cheap attempt before escalating."
+  },
+  {
+    "title": "Predictive routing",
+    "category": "agents",
+    "what": "A lightweight classifier inspects a request before any model runs and sends it to a small or a frontier model.",
+    "how": "Collect labelled requests with the quality each model achieves. Train or tune the router to send a request to the cheaper model only when quality is expected to be acceptable, and keep a safe default route for uncertain cases. Log every decision. How to measure it: routing accuracy, the share sent to the cheap model, and quality and cost compared with always using the strong model.",
+    "example": "A support assistant embeds each incoming question and compares it with labelled examples. FAQ-style questions go to a small model; multi-step billing disputes go to a frontier model. Questions that match neither well use the stronger model.",
+    "watch": "A misroute is silent: a hard request on a weak model yields a fluent wrong answer. Monitor route distribution over time, because user traffic drifts.",
+    "sources": [
+      "routellm",
+      "frugalgpt"
+    ],
+    "related": [
+      "Router pattern",
+      "Confidence cascading",
+      "Routing and batching",
+      "OpenRouter",
+      "LLM gateway and AI governance",
+      "Small language models (SLMs)",
+      "Model effort"
+    ],
+    "slug": "predictive-routing",
+    "detail": "This is the router pattern applied to model choice. The router can be a rule set, an embedding-similarity match against example queries, or a small classifier trained on preference data about when a stronger model is needed. It decides once, up front, so there is no wasted first attempt as in a cascade. The cost is that it must predict difficulty without seeing the answer."
+  },
+  {
+    "title": "Asymmetric planner–executor",
+    "category": "agents",
+    "what": "A frontier model writes the plan, and cheaper models carry out the individual steps.",
+    "how": "Have the planner output a structured plan with each step's inputs, expected output, and dependencies. Give each executor only its step and the data it needs, and validate its result against the expected shape. Re-plan, with the strong model, when a step fails. How to measure it: step success rate, number of re-plans, and cost against an all-frontier run.",
+    "example": "Asked to compare three vendors, a frontier model plans: collect pricing for each, extract limits, build a table, and recommend. Small models run the three lookups in parallel and fill the table. The frontier model reviews the table and writes the recommendation.",
+    "watch": "A plan written before any observations can go stale, and a weak executor can quietly misread a step. Validate step outputs and allow a limited number of re-plans.",
+    "sources": [
+      "planSolve",
+      "rewoo",
+      "agent"
+    ],
+    "related": [
+      "Plan-and-execute",
+      "ReWOO",
+      "LLMCompiler",
+      "Orchestrator–workers",
+      "Tool-based escalation (ask an expert)",
+      "Small language models (SLMs)",
+      "Subagents"
+    ],
+    "slug": "asymmetric-planner-executor",
+    "detail": "Planning is a small amount of high-value reasoning, while execution is many repetitive steps such as fetching data, extracting fields, or formatting. Splitting them lets the expensive model run once and the cheap models run many times. It is plan-and-execute with different models in each role. The plan can be an ordered list or a dependency graph, which also allows independent steps to run in parallel."
+  },
+  {
+    "title": "Speculative decoding",
+    "category": "agents",
+    "what": "A small draft model proposes several tokens ahead and the large model verifies them in one pass.",
+    "how": "Pair a target model with a much smaller draft model that predicts similar text, often from the same family. Choose how many tokens to draft per step; more drafts help only when the acceptance rate is high. Use a serving stack that supports it. How to measure it: acceptance rate, tokens per second, and end-to-end latency against normal decoding at your real batch size.",
+    "example": "A draft model proposes five tokens. The target model checks them in one pass and accepts the first three, then replaces the fourth with its own token. One target-model pass produced four tokens instead of one.",
+    "watch": "Speedups depend on how often the draft agrees with the target, and on batch size and hardware. A poor draft model can make generation no faster, or slower.",
+    "sources": [
+      "specDec",
+      "specDecChen"
+    ],
+    "related": [
+      "Prefill and decode",
+      "KV cache",
+      "Inference",
+      "Inter-token Latency (ITL)",
+      "Small language models (SLMs)",
+      "Model distillation",
+      "Quantization"
+    ],
+    "slug": "speculative-decoding",
+    "detail": "Generating each token with a large model needs a full forward pass. A small draft model guesses the next few tokens cheaply. The large target model then scores all of them in a single parallel pass, accepts the longest prefix it agrees with, and supplies its own token at the first disagreement. With the standard acceptance rule the output distribution matches the target model, so quality is preserved while latency drops. This is a serving technique inside inference, unlike the other patterns here, which coordinate separate calls."
+  },
+  {
+    "title": "Best-of-N with a verifier",
+    "category": "agents",
+    "what": "Generate several candidate answers in parallel and keep the one a verifier scores highest.",
+    "how": "Choose N from your quality and cost targets, since cost grows with it. Sample at a temperature high enough to give diverse candidates. Run the verifier on every candidate and return the highest scorer, or a fallback if none passes. How to measure it: pass rate as N increases, and the cost per solved task.",
+    "example": "For a coding task the agent generates five patches in parallel. Each runs against the test suite. Two pass; the system returns the smaller diff of the two.",
+    "watch": "A weak or gameable verifier lets a bad answer win. Candidates that share one blind spot make extra samples add cost without adding accuracy.",
+    "sources": [
+      "verifiers",
+      "testTimeCompute"
+    ],
+    "related": [
+      "Parallelization (sectioning and voting)",
+      "LLM as a judge",
+      "Evaluator–optimizer",
+      "Mixture of agents",
+      "Temperature",
+      "Evals",
+      "Reinforcement learning"
+    ],
+    "slug": "best-of-n",
+    "detail": "Sampling the same prompt several times at a non-zero temperature gives different candidates, and some are better than others. A verifier picks among them. The best verifier is deterministic, such as unit tests, a compiler, or a math checker. Where no exact check exists, a reward model or judge can score candidates. This spends more compute at inference time instead of training a bigger model."
   }
 ];
 const sources = {
+  "frugalgpt": ["FrugalGPT: Using LLMs While Reducing Cost (paper)", "https://arxiv.org/abs/2305.05176"],
+  "routellm": ["RouteLLM: Learning to Route LLMs with Preference Data (paper)", "https://arxiv.org/abs/2406.18665"],
+  "specDec": ["Fast Inference from Transformers via Speculative Decoding (paper)", "https://arxiv.org/abs/2211.17192"],
+  "specDecChen": ["Accelerating LLM Decoding with Speculative Sampling (paper)", "https://arxiv.org/abs/2302.01318"],
+  "verifiers": ["Training Verifiers to Solve Math Word Problems (paper)", "https://arxiv.org/abs/2110.14168"],
+  "testTimeCompute": ["Scaling LLM Test-Time Compute Optimally (paper)", "https://arxiv.org/abs/2408.03314"],
   "agent": [
     "Building effective agents",
     "https://www.anthropic.com/research/building-effective-agents"
@@ -5481,10 +5626,15 @@ const learningPaths = [
     "terms": [
       "prompt-chaining",
       "router-pattern",
+      "predictive-routing",
+      "confidence-cascading",
+      "tool-based-escalation",
       "parallelization-pattern",
+      "best-of-n",
       "orchestrator-workers",
       "evaluator-optimizer",
       "plan-and-execute",
+      "asymmetric-planner-executor",
       "rewoo",
       "llm-compiler",
       "reflection-reflexion",
@@ -5501,6 +5651,7 @@ const learningPaths = [
       "role-playing-agent-societies",
       "magentic-orchestration",
       "agentic-rag",
+      "speculative-decoding",
       "codeact",
       "computer-use-agents",
       "coding-agent-architecture",
@@ -5624,7 +5775,13 @@ const intuitions = {
  "tool-allow-list": "A toolbox packed for this one job instead of the whole workshop.",
  "narrow-tools": "A vending-machine button rather than the key to the stockroom: it can only do one thing.",
  "approval-vs-authorization": "Someone signs the form, but the clerk still checks they are allowed to sign it, and that the form wasn't swapped afterward.",
- "security-evals-red-teaming": "A fire drill with a pretend arsonist: you find out whether the exits really work before the real fire."
+ "security-evals-red-teaming": "A fire drill with a pretend arsonist: you find out whether the exits really work before the real fire.",
+ "tool-based-escalation": "A junior engineer who keeps the task but phones the senior architect for one hard decision, then carries on.",
+ "confidence-cascading": "Ask the junior first; only if their answer fails the checks does the question go up to the expert.",
+ "predictive-routing": "A receptionist who reads your request and sends you to the right desk before anyone starts work.",
+ "asymmetric-planner-executor": "An architect draws the plan once; a crew of cheaper builders carries out each step.",
+ "speculative-decoding": "A quick assistant guesses the next few words and the expert glances over them all at once, correcting only the first mistake.",
+ "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
   "rag": [
@@ -5866,6 +6023,30 @@ const studyQuestions = {
   "security-evals-red-teaming": [
     "What do you check besides the model's text?",
     "Which tools were called, what data was retrieved, and whether anything unauthorized succeeded."
+  ],
+  "tool-based-escalation": [
+    "How does tool-based escalation differ from routing?",
+    "A router picks a model before the work starts. In escalation the small model owns the task and decides mid-way to ask the expert a targeted question."
+  ],
+  "confidence-cascading": [
+    "Why is token confidence a risky escalation signal?",
+    "Confidence is often poorly calibrated, so wrong answers can look sure. Prefer deterministic validators and calibrate any threshold on labelled data."
+  ],
+  "predictive-routing": [
+    "What is the main risk of routing before running a model?",
+    "The router must predict difficulty without seeing the answer, so a misroute gives a confident wrong answer. Keep a safe default and monitor route distribution."
+  ],
+  "asymmetric-planner-executor": [
+    "Why use a stronger model for the plan but cheaper ones for steps?",
+    "Planning is little, high-value reasoning; execution is many repetitive steps. The expensive model runs once and the cheap ones run many times."
+  ],
+  "speculative-decoding": [
+    "Does speculative decoding change the output quality?",
+    "With the standard acceptance rule the output distribution matches the target model. The gain is latency, and it depends on how often the draft is accepted."
+  ],
+  "best-of-n": [
+    "When does best-of-N stop helping?",
+    "When the verifier is weak or the candidates share the same blind spot. Prefer deterministic checks such as tests, and watch cost as N grows."
   ]
 };
 

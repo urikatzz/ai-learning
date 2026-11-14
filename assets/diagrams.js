@@ -839,6 +839,266 @@
     return figure;
   };
 
+  builders['tool-based-escalation'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A small model asks an expert, then resumes',
+      alt: 'A small model runs the task loop. When stuck it calls a consult tool with a targeted question. A frontier model returns a short answer and the small model resumes the task.',
+      caption: 'The small model keeps control of the task. The expert is just a tool that answers one question. Cap how often it can be called. Layout is illustrative.',
+      height: 190
+    });
+    box(svg, { x: 14, y: 62, w: 130, h: 56, label: 'Small model', tone: 'blue', index: 0, solid: true });
+    box(svg, { x: 336, y: 62, w: 130, h: 56, label: 'Frontier expert', tone: 'purple', index: 1, solid: true });
+    arrow(svg, { x1: 146, y1: 78, x2: 334, y2: 78, tone: 'orange', index: 2 });
+    arrow(svg, { x1: 334, y1: 104, x2: 146, y2: 104, tone: 'teal', index: 3 });
+    svgNode(svg, 'text', { x: 240, y: 68, 'text-anchor': 'middle', class: 'dg-small' }, 'consult_architect(question)');
+    svgNode(svg, 'text', { x: 240, y: 124, 'text-anchor': 'middle', class: 'dg-small' }, 'short answer');
+    svgNode(svg, 'text', { x: 80, y: 148, 'text-anchor': 'middle', class: 'dg-small' }, 'resumes the task');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M146 78H334')" });
+    return figure;
+  };
+
+  builders['confidence-cascading'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Try the cheap model, escalate only on failure',
+      alt: 'A small model answers first. A check looks at a validator result or confidence. If it passes, the answer is returned. If it fails, the request is retried with a stronger model, whose answer is returned.',
+      caption: 'Most requests stop at the first tier. Failed attempts still cost time, so measure how often the cascade escalates. Layout is illustrative.',
+      height: 200
+    });
+    box(svg, { x: 10, y: 40, w: 110, h: 46, label: 'Small model', tone: 'blue', index: 0 });
+    box(svg, { x: 170, y: 40, w: 120, h: 46, label: 'Check', tone: 'orange', index: 1, solid: true });
+    box(svg, { x: 350, y: 40, w: 120, h: 46, label: 'Return answer', tone: 'teal', index: 2 });
+    box(svg, { x: 170, y: 126, w: 120, h: 46, label: 'Stronger model', tone: 'purple', index: 3 });
+    arrow(svg, { x1: 122, y1: 63, x2: 168, y2: 63, tone: 'blue', index: 3 });
+    arrow(svg, { x1: 292, y1: 63, x2: 348, y2: 63, tone: 'teal', index: 4 });
+    arrow(svg, { x1: 230, y1: 88, x2: 230, y2: 124, tone: 'orange', index: 5 });
+    arrow(svg, { x1: 292, y1: 149, x2: 410, y2: 88, tone: 'purple', index: 6 });
+    svgNode(svg, 'text', { x: 320, y: 34, 'text-anchor': 'middle', class: 'dg-small' }, 'pass');
+    svgNode(svg, 'text', { x: 262, y: 112, class: 'dg-small' }, 'fail');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-teal dg-travel', style: "offset-path:path('M66 63H348')" });
+    return figure;
+  };
+
+  builders['speculative-decoding'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Draft cheaply, verify in one pass',
+      alt: 'A small draft model proposes four tokens. The large model checks all four in a single pass, accepts the first three and replaces the fourth with its own token.',
+      caption: 'One large-model pass yields several tokens when the draft agrees. If the draft is often wrong, the speedup disappears. Layout is illustrative.',
+      height: 200
+    });
+    svgNode(svg, 'text', { x: 14, y: 22, class: 'dg-small' }, 'Draft model proposes');
+    ['the', 'cat', 'sat', 'down'].forEach((label, i) => box(svg, { x: 14 + i * 84, y: 30, w: 72, h: 38, label, tone: 'blue', index: i }));
+    arrow(svg, { x1: 240, y1: 70, x2: 240, y2: 108, tone: 'purple', index: 4 });
+    svgNode(svg, 'text', { x: 252, y: 94, class: 'dg-small' }, 'verify all at once');
+    svgNode(svg, 'text', { x: 14, y: 126, class: 'dg-small' }, 'Large model result');
+    ['the', 'cat', 'sat'].forEach((label, i) => box(svg, { x: 14 + i * 84, y: 134, w: 72, h: 38, label, tone: 'teal', index: 5 + i }));
+    box(svg, { x: 266, y: 134, w: 72, h: 38, label: 'up', tone: 'orange', index: 8, solid: true });
+    svgNode(svg, 'text', { x: 410, y: 158, 'text-anchor': 'middle', class: 'dg-small' }, '3 accepted, 1 fixed');
+    return figure;
+  };
+
+  builders['best-of-n'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Sample several answers, keep the verified best',
+      alt: 'One prompt produces three candidate answers in parallel. A verifier such as tests or a reward model scores them. The highest scoring candidate is returned.',
+      caption: 'Cost grows with the number of candidates, so the gain depends on a trustworthy verifier. Layout is illustrative.',
+      height: 190
+    });
+    box(svg, { x: 10, y: 74, w: 80, h: 42, label: 'Prompt', tone: 'blue', index: 0 });
+    ['Candidate A', 'Candidate B', 'Candidate C'].forEach((label, i) => {
+      const y = 22 + i * 56;
+      box(svg, { x: 130, y, w: 100, h: 34, label, tone: 'purple', index: 1 + i });
+      arrow(svg, { x1: 90, y1: 95, x2: 128, y2: y + 17, tone: 'blue', index: 1 });
+      arrow(svg, { x1: 232, y1: y + 17, x2: 278, y2: 95, tone: 'purple', index: 4 });
+    });
+    box(svg, { x: 280, y: 72, w: 90, h: 46, label: 'Verifier', tone: 'orange', index: 5, solid: true });
+    arrow(svg, { x1: 372, y1: 95, x2: 398, y2: 95, tone: 'teal', index: 6 });
+    box(svg, { x: 400, y: 74, w: 70, h: 42, label: 'Best', tone: 'teal', index: 7 });
+    svgNode(svg, 'text', { x: 325, y: 140, 'text-anchor': 'middle', class: 'dg-small' }, 'tests or reward model');
+    return figure;
+  };
+
+  // Orchestration diagrams: small helpers keep each topology to a few lines.
+  const labelAt = (svg, x, y, text, anchor = 'middle') => svgNode(svg, 'text', { x, y, 'text-anchor': anchor, class: 'dg-small' }, text);
+
+  builders['predictive-routing'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Decide the model before any model runs',
+      alt: 'A request goes to a lightweight router. Easy requests go to a small model and hard requests go to a frontier model. The router decides once, before generation.',
+      caption: 'The router predicts difficulty from the request alone, so a misroute is silent. Keep a safe default route and monitor the split. Layout is illustrative.',
+      height: 190
+    });
+    box(svg, { x: 10, y: 74, w: 90, h: 42, label: 'Request', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 100, y1: 95, x2: 138, y2: 95, tone: 'blue', index: 1 });
+    box(svg, { x: 140, y: 68, w: 110, h: 54, label: 'Router', tone: 'orange', index: 2, solid: true });
+    arrow(svg, { x1: 250, y1: 84, x2: 308, y2: 46, tone: 'teal', index: 3 });
+    arrow(svg, { x1: 250, y1: 106, x2: 308, y2: 144, tone: 'purple', index: 3 });
+    box(svg, { x: 310, y: 26, w: 160, h: 40, label: 'Small model', tone: 'teal', index: 4 });
+    box(svg, { x: 310, y: 124, w: 160, h: 40, label: 'Frontier model', tone: 'purple', index: 4 });
+    labelAt(svg, 292, 78, 'easy');
+    labelAt(svg, 292, 124, 'hard');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M55 95H195L308 46')" });
+    return figure;
+  };
+
+  builders['asymmetric-planner-executor'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Plan once with the strong model, execute many times cheaply',
+      alt: 'A frontier planner writes a plan with three steps. Three small executor models each carry out one step, and their results come back to the planner for review.',
+      caption: 'Planning is little, high-value reasoning; execution is many repetitive steps. Validate each step result and allow a limited number of re-plans. Layout is illustrative.',
+      height: 200
+    });
+    box(svg, { x: 170, y: 14, w: 140, h: 46, label: 'Frontier planner', tone: 'purple', index: 0, solid: true });
+    [20, 170, 320].forEach((x, i) => {
+      arrow(svg, { x1: 240, y1: 62, x2: x + 70, y2: 108, tone: 'purple', index: 1 });
+      box(svg, { x, y: 110, w: 140, h: 40, label: `Small executor ${i + 1}`, tone: 'blue', index: 2 + i });
+    });
+    labelAt(svg, 240, 84, 'plan: step 1, 2, 3');
+    labelAt(svg, 240, 184, 'results return to the planner for review');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-purple dg-travel', style: "offset-path:path('M240 60L90 110')" });
+    return figure;
+  };
+
+  builders['prompt-chaining'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Each call hands its output to the next',
+      alt: 'Four steps in a row: outline, draft, check, final. Each model call has a narrow job and passes its output to the next. A check between steps can stop the chain.',
+      caption: 'The order is ordinary code, so it is predictable and easy to test. It trades latency for accuracy. Layout is illustrative.',
+      height: 150
+    });
+    ['Outline', 'Draft', 'Check', 'Final'].forEach((label, i) => {
+      box(svg, { x: 10 + i * 120, y: 50, w: 96, h: 46, label, tone: ['blue', 'purple', 'orange', 'teal'][i], index: i });
+      if (i < 3) arrow(svg, { x1: 108 + i * 120, y1: 73, x2: 128 + i * 120, y2: 73, tone: 'blue', index: i + 1 });
+    });
+    labelAt(svg, 240, 128, 'fixed order, one narrow job per call');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-blue dg-travel', style: "offset-path:path('M58 73H418')" });
+    return figure;
+  };
+
+  builders['router-pattern'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Classify the input, then pick a path',
+      alt: 'An input goes to a router that classifies it. Billing questions go to a retrieval path, bug reports go to a ticket path, and everything else, or low confidence, goes to a general path or a person.',
+      caption: 'A closed set of routes plus a fallback. Log every decision and send low-confidence cases to the fallback. Layout is illustrative.',
+      height: 200
+    });
+    box(svg, { x: 10, y: 78, w: 80, h: 42, label: 'Input', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 90, y1: 99, x2: 128, y2: 99, tone: 'blue', index: 1 });
+    box(svg, { x: 130, y: 72, w: 100, h: 54, label: 'Router', tone: 'orange', index: 2, solid: true });
+    [['Billing path', 20, 'teal'], ['Bug ticket path', 80, 'purple'], ['General / human', 140, 'blue']].forEach(([label, y, tone], i) => {
+      arrow(svg, { x1: 230, y1: 99, x2: 298, y2: y + 20, tone, index: 3 });
+      box(svg, { x: 300, y, w: 170, h: 40, label, tone, index: 4 + i });
+    });
+    labelAt(svg, 264, 184, 'fallback for unknown or low confidence', 'middle');
+    return figure;
+  };
+
+  builders['parallelization-pattern'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Run independent calls at the same time',
+      alt: 'A task is split into three independent branches that run in parallel: security, style, and tests. An aggregation step merges the findings or takes a vote.',
+      caption: 'Sectioning splits a task to cut latency; voting repeats it to raise confidence. Cost grows with the number of branches. Layout is illustrative.',
+      height: 190
+    });
+    box(svg, { x: 10, y: 74, w: 80, h: 42, label: 'Task', tone: 'blue', index: 0 });
+    ['Security', 'Style', 'Tests'].forEach((label, i) => {
+      const y = 22 + i * 56;
+      arrow(svg, { x1: 90, y1: 95, x2: 148, y2: y + 17, tone: 'blue', index: 1 });
+      box(svg, { x: 150, y, w: 110, h: 34, label, tone: 'purple', index: 2 });
+      arrow(svg, { x1: 262, y1: y + 17, x2: 318, y2: 95, tone: 'purple', index: 3 });
+    });
+    box(svg, { x: 320, y: 70, w: 150, h: 50, label: 'Merge or vote', tone: 'orange', index: 4, solid: true });
+    labelAt(svg, 205, 182, 'all branches start together');
+    return figure;
+  };
+
+  builders['orchestrator-workers'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'The orchestrator splits work at run time',
+      alt: 'An orchestrator model decides the subtasks while running, sends each to a worker, then collects the results and synthesizes one answer.',
+      caption: 'Unlike parallelization, the subtasks are not fixed in advance; the orchestrator chooses them. Give workers only the context they need. Layout is illustrative.',
+      height: 210
+    });
+    box(svg, { x: 170, y: 12, w: 140, h: 46, label: 'Orchestrator', tone: 'purple', index: 0, solid: true });
+    [['Worker: module A', 20], ['Worker: module B', 170], ['Worker: module C', 320]].forEach(([label, x], i) => {
+      arrow(svg, { x1: 225 + i * 15, y1: 60, x2: x + 55 + i * 10, y2: 118, tone: 'orange', index: 1 });
+      box(svg, { x, y: 120, w: 140, h: 40, label, tone: 'blue', index: 2 + i });
+    });
+    labelAt(svg, 90, 90, 'subtasks chosen on the fly');
+    labelAt(svg, 240, 190, 'results come back; the orchestrator merges and checks coverage');
+    return figure;
+  };
+
+  builders['supervisor-architecture'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'One supervisor delegates, inspects, and retries',
+      alt: 'A central supervisor sends tasks to a researcher, a coder, and a reviewer. Each returns output to the supervisor, which inspects it and can send a task back for another attempt.',
+      caption: 'All traffic passes through the supervisor, which makes control easy to trace but creates a bottleneck. Layout is illustrative.',
+      height: 210
+    });
+    box(svg, { x: 170, y: 14, w: 140, h: 48, label: 'Supervisor', tone: 'purple', index: 0, solid: true });
+    [['Researcher', 20], ['Coder', 170], ['Reviewer', 320]].forEach(([label, x], i) => {
+      arrow(svg, { x1: 215 + i * 25, y1: 64, x2: x + 50 + i * 20, y2: 124, tone: 'orange', index: 1 });
+      arrow(svg, { x1: x + 90 + i * 20, y1: 124, x2: 265 + i * 25 - 10, y2: 64, tone: 'teal', index: 2 });
+      box(svg, { x, y: 126, w: 140, h: 40, label, tone: 'blue', index: 3 + i });
+    });
+    labelAt(svg, 240, 196, 'delegate, inspect output, retry if needed');
+    return figure;
+  };
+
+  builders['hierarchical-agents'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Supervisors manage sub-team supervisors',
+      alt: 'A top manager delegates to two team leads. Each team lead manages two workers. Work flows down the tree and results flow back up.',
+      caption: 'Each level sees a summary of the level below, so contexts stay small. More levels mean more latency and more places to lose detail. Layout is illustrative.',
+      height: 240
+    });
+    box(svg, { x: 180, y: 10, w: 120, h: 40, label: 'Manager', tone: 'purple', index: 0, solid: true });
+    [['Team lead A', 60], ['Team lead B', 300]].forEach(([label, x], i) => {
+      arrow(svg, { x1: 240, y1: 52, x2: x + 60, y2: 88, tone: 'purple', index: 1 });
+      box(svg, { x, y: 90, w: 120, h: 40, label, tone: 'orange', index: 2 + i, solid: true });
+      [x - 30, x + 80].forEach((wxx, k) => {
+        arrow(svg, { x1: x + 60, y1: 132, x2: wxx + 45, y2: 170, tone: 'orange', index: 3 });
+        box(svg, { x: wxx, y: 172, w: 90, h: 38, label: `Worker ${i * 2 + k + 1}`, tone: 'blue', index: 4 });
+      });
+    });
+    labelAt(svg, 240, 232, 'work flows down; results flow up');
+    return figure;
+  };
+
+  builders['handoffs-and-swarm'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Peers pass control directly to each other',
+      alt: 'Three peer agents in a row: triage, billing, and tech support. Triage hands the conversation to billing with a transfer tool, and billing can hand it on to tech support. There is no central boss.',
+      caption: 'Each agent has transfer tools such as transfer_to_billing. Control and state move with the handoff, which is flexible but harder to trace. Layout is illustrative.',
+      height: 170
+    });
+    [['Triage', 10, 'blue'], ['Billing', 180, 'purple'], ['Tech support', 350, 'teal']].forEach(([label, x, tone], i) => box(svg, { x, y: 50, w: 120, h: 46, label, tone, index: i }));
+    arrow(svg, { x1: 132, y1: 66, x2: 178, y2: 66, tone: 'orange', index: 3 });
+    arrow(svg, { x1: 302, y1: 66, x2: 348, y2: 66, tone: 'orange', index: 4 });
+    labelAt(svg, 155, 54, 'transfer_to_billing');
+    labelAt(svg, 325, 54, 'transfer_to_tech');
+    labelAt(svg, 240, 130, 'no central supervisor; the active agent owns the conversation');
+    svgNode(svg, 'circle', { r: 6, class: 'dg-dot dg-orange dg-travel', style: "offset-path:path('M70 73H410')" });
+    return figure;
+  };
+
+  builders['blackboard-architecture'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Agents coordinate through a shared board',
+      alt: 'Three agents read from and write to a shared blackboard in the center. They do not message each other directly; each reacts when relevant data appears on the board.',
+      caption: 'The shared state is the only channel, so agents can be added or removed without rewiring. Guard the board against bad writes. Layout is illustrative.',
+      height: 210
+    });
+    svgNode(svg, 'rect', { x: 150, y: 70, width: 180, height: 70, rx: 14, class: 'dg-dash dg-pop dg-teal', style: '--i:0' });
+    labelAt(svg, 240, 110, 'Shared blackboard');
+    [['Agent A', 14, 82, 'blue'], ['Agent B', 366, 82, 'purple'], ['Agent C', 190, 12, 'orange']].forEach(([label, x, y, tone], i) => box(svg, { x, y, w: 100, h: 44, label, tone, index: 1 + i }));
+    arrow(svg, { x1: 114, y1: 100, x2: 148, y2: 100, tone: 'blue', index: 4 });
+    arrow(svg, { x1: 366, y1: 110, x2: 332, y2: 110, tone: 'purple', index: 4 });
+    arrow(svg, { x1: 240, y1: 58, x2: 240, y2: 68, tone: 'orange', index: 4 });
+    labelAt(svg, 240, 176, 'read and write shared state; no direct messages');
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
