@@ -437,7 +437,7 @@ const notes = [
     "what": "Repeatable assessments of a model or application's behavior.",
     "how": "Build a representative dataset with ordinary, difficult, and failure cases. Separate development cases from a held-out set. Record model and prompt versions, repeat stochastic cases when necessary, and compare quality alongside latency and cost. Inspect failures by category instead of relying only on an average score.",
     "example": "For a policy assistant, test answerable questions, ambiguous questions, and questions with no supporting source. Score factual correctness, citation support, and appropriate abstention separately. A system that always answers can look helpful while failing the unsupported-question cases.",
-    "watch": "A benchmark is useful only to the extent that its cases and grading reflect the real task.",
+    "watch": "A benchmark is useful only to the extent that its cases and grading reflect the real task. Good test data is costly to build and needs ongoing maintenance as the product and failure modes change.",
     "sources": [
       "eval"
     ],
@@ -483,7 +483,7 @@ const notes = [
       "Agent evals"
     ],
     "slug": "evals",
-    "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment. Evals is the umbrella term. Golden datasets and regression testing is the practice of re-running a fixed case set after each change, and Security evals and red teaming tests attacks instead of quality."
+    "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment. Evals measure how well a system performs, in contrast to guardrails (control what it may do) and observability (explain what happened). Evals is the umbrella term. Golden datasets and regression testing is the practice of re-running a fixed case set after each change, and Security evals and red teaming tests attacks instead of quality."
   },
   {
     "title": "Fine-tuning",
@@ -641,8 +641,8 @@ const notes = [
     "category": "agents",
     "what": "Checks and controls that constrain an AI application's inputs, actions, or outputs.",
     "how": "Validate inputs before processing, check tool arguments before execution, and validate outputs before downstream use. Deterministic checks suit exact rules; classifiers or model judges can assess softer criteria but introduce false positives and negatives. Design reject, retry, repair, and escalation paths deliberately.",
-    "example": "Before creating a refund, validate the amount, verify that the user owns the order, and enforce the maximum refundable balance in backend code. A JSON schema catches a missing amount field; it cannot prove that the refund is authorized or factually justified.",
-    "watch": "A content filter is not a substitute for authorization or isolation.",
+    "example": "Before creating a refund, validate the amount, verify that the user owns the order, and enforce the maximum refundable balance in backend code. A JSON schema catches a missing amount field; it cannot prove that the refund is authorized or factually justified. A data-protection guardrail might likewise block a request or reply that exposes PII or credentials.",
+    "watch": "A content filter is not a substitute for authorization or isolation. Trade-off: guardrails make behavior safer and more predictable, but they add complexity and can block valid requests, so measure false positives as well as misses.",
     "sources": [
       "guardrails",
       "perm"
@@ -664,7 +664,7 @@ const notes = [
       "Narrow tools and argument validation"
     ],
     "slug": "guardrails",
-    "detail": "Guardrails are application controls designed to catch or prevent specific failure modes. Some inspect content, while others constrain allowed actions or enforce a schema. Their usefulness depends on where they run, what they detect, and what happens after a failure."
+    "detail": "Guardrails are application controls designed to catch or prevent specific failure modes. Some inspect content, while others constrain allowed actions or enforce a schema. Their usefulness depends on where they run, what they detect, and what happens after a failure. In short: guardrails control what the system may do, evals measure how well it performs, and observability explains what happened."
   },
   {
     "title": "Guardrails AI",
@@ -1462,10 +1462,10 @@ const notes = [
     "slug": "observability",
     "category": "systems",
     "what": "The ability to understand an application’s behavior from telemetry such as traces, metrics, and logs.",
-    "detail": "Observability helps explain what happened across a request. A trace follows one execution, spans describe its operations, metrics aggregate numerical measurements, and logs record events. AI applications also benefit from recording model, prompt, retrieval, and tool versions needed to interpret behavior.",
+    "detail": "Observability helps explain what happened across a request. A trace follows one execution, spans describe its operations, metrics aggregate numerical measurements, and logs record events. AI applications also benefit from recording model, prompt, retrieval, and tool versions needed to interpret behavior. It explains what happened, in contrast to guardrails (control what the system may do) and evals (measure how well it performs).",
     "how": "Propagate a correlation ID through retrieval, model calls, and tools. Record timing, errors, token usage, retry attempts, and relevant versions. Attach quality evaluations where available. Choose sampling, redaction, access, and retention policies; logging every prompt is neither necessary nor always appropriate.\n\nWhen it matters: Use it to investigate slow requests, answer-quality regressions, unexpected tool behavior, and changing serving cost.",
-    "example": "A request takes six seconds. Its trace shows one second in retrieval, four in queued model work, and one in generation. This suggests a different fix from optimizing retrieval. Concurrent spans may overlap, so summing all span durations can exceed total elapsed time.\n\nHow to measure it: Track p50 and p95 latency, error rate, cost per successful task, trace coverage, and telemetry loss. Check whether sampled traces represent important failures. Pair operational signals with quality evals; a fast HTTP 200 response can still contain a wrong answer.",
-    "watch": "Telemetry records execution, not correctness. Missing correlation IDs or biased sampling can hide the actual failing path, while unrestricted logs can expose user data.",
+    "example": "A request takes six seconds. Its trace shows one second in retrieval, four in queued model work, and one in generation. This suggests a different fix from optimizing retrieval. Concurrent spans may overlap, so summing all span durations can exceed total elapsed time. For a failed agent task, the full trace shows the plan, each tool call with its inputs and outputs, and the step where the error occurred.\n\nHow to measure it: Track p50 and p95 latency, error rate, cost per successful task, trace coverage, and telemetry loss. Check whether sampled traces represent important failures. Pair operational signals with quality evals; a fast HTTP 200 response can still contain a wrong answer.",
+    "watch": "Telemetry records execution, not correctness. Missing correlation IDs or biased sampling can hide the actual failing path, while unrestricted logs can expose user data. Instrumentation, storage, and operating the tooling add setup and ongoing overhead.",
     "related": [
       "Langfuse",
       "Opik",
@@ -2209,7 +2209,8 @@ const notes = [
       "Multimodal applications",
       "Prompt chaining",
       "Structured extraction",
-      "Narrow tools and argument validation"
+      "Narrow tools and argument validation",
+      "Reliable JSON output"
     ],
     "sources": [
       "structuredDocs",
@@ -4406,6 +4407,28 @@ const notes = [
     ],
     "slug": "agent-evals",
     "detail": "An agent answer is only part of the result: it also chooses tools, fills arguments and takes a path of steps. Agent evals check the outcome first, then use tool and trajectory checks to explain failures."
+  },
+  {
+    "title": "Reliable JSON output",
+    "slug": "reliable-json-output",
+    "category": "agents",
+    "what": "Layered techniques that make an LLM's reply parse as JSON and match the shape your code expects.",
+    "detail": "Asking a model to \"reply in JSON\" is a request, not a guarantee. Reliability comes from stacking layers: a clear prompt, a forced tool call or provider-enforced schema, validation with a library such as Pydantic, and a bounded retry. Each layer catches failures the previous one misses.",
+    "how": "1) Prompt for the format and show one example. 2) Prefer a forced tool call whose input schema is your output shape, or a provider's native structured-output mode, so the reply is data rather than text to scrape. 3) Always validate in application code: define a Pydantic model, call `Model.model_validate_json(raw)`, and add validators for rules a schema cannot express. 4) On a validation error, send the error text back once or twice, then fail explicitly instead of passing bad data downstream.\n\nWhen it matters: Use all layers when the output feeds a database, API call, or workflow. A human-read summary needs far less.",
+    "example": "An invoice extractor defines `class Invoice(BaseModel)` with `total: Decimal` and `lines: list[Line]`, and a validator that checks the total equals the sum of line amounts. The model is forced to call an `extract_invoice` tool built from `Invoice.model_json_schema()`. If validation fails, the error message goes back to the model for one retry; a second failure raises an error.\n\nHow to measure it: Track first-attempt parse rate, post-retry success rate, and average retries per request. Report refusals and truncated outputs separately.",
+    "watch": "Valid JSON is not true JSON: a schema-valid answer can still contain invented values. Truncation at the token limit can cut JSON mid-object, so check the stop reason before parsing. Retries add latency and cost, so cap them.",
+    "related": [
+      "Structured outputs",
+      "Tool calling",
+      "FastAPI and Pydantic",
+      "Guardrails",
+      "Evals"
+    ],
+    "sources": [
+      "structuredDocs",
+      "toolCallingDocs",
+      "pydantic"
+    ]
   }
 ];
 const sources = {
@@ -5691,6 +5714,7 @@ const learningPaths = [
     "description": "Define contracts, manage capacity, and measure quality in production.",
     "terms": [
       "structured-outputs",
+      "reliable-json-output",
       "tool-calling",
       "hallucinations",
       "grounding",
@@ -5883,6 +5907,7 @@ const intuitions = {
  "human-in-the-loop": "A manager's signature before something risky goes out. The workflow pauses, shows its plan, and continues only after a person approves, edits, or rejects.",
  "react-agent-loop": "Think out loud, take one step, look at what happened, then think again. Small steps with feedback beat one big blind leap.",
  "guardrails": "Lane markers and a rumble strip. They don't drive the car, but they catch it when it drifts out of what you allowed.",
+ "reliable-json-output": "Like airport security: the sign says 'no liquids' (the prompt), but you still have a scanner (schema) and a person checking the bag (Pydantic), and you send people back to repack (retry).",
  "structured-outputs": "Asking for a filled-in form instead of an essay, so your code can read the answer without guessing.",
  "observability": "Flight recorder for your AI app. When an answer goes wrong you can replay what the model saw, which tools ran, and where it went off course.",
  "prefill-and-decode": "Reading the question, then writing the answer. Prefill reads the whole prompt in one go; decode writes one word at a time, which is why long answers take longer.",
@@ -6066,6 +6091,10 @@ const studyQuestions = {
   "llm-gateway": [
     "Name two benefits and one risk of a gateway.",
     "Central budgets and auditing; it can become a single point of failure and add latency."
+  ],
+  "reliable-json-output": [
+    "Why validate with Pydantic even when the API enforces a JSON schema?",
+    "Schemas cannot express every rule, such as a total matching its line items, and valid structure does not make values true."
   ],
   "fastapi-pydantic": [
     "What does Pydantic validation not guarantee?",
