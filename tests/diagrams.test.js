@@ -1,7 +1,7 @@
 // tests/diagrams.test.js
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { softmax, arcPath, staggerDelay } = require('../assets/diagrams.js');
+const { softmax, arcPath, staggerDelay, pairwiseVerdict, has } = require('../assets/diagrams.js');
 
 test('softmax at T=1 for logits 2,1 gives 73% / 27%', () => {
   const [a, b] = softmax([2, 1], 1);
@@ -24,4 +24,14 @@ test('staggerDelay scales by index', () => {
   assert.equal(staggerDelay(0), '0s');
   assert.equal(staggerDelay(3), '0.36s');
   assert.equal(staggerDelay(2, 0.5), '1s');
+});
+
+test('pairwiseVerdict keeps a winner only when both orders agree', () => {
+  assert.equal(pairwiseVerdict('A', 'A'), 'A');
+  assert.equal(pairwiseVerdict('B', 'B'), 'B');
+  assert.equal(pairwiseVerdict('A', 'B'), 'tie');
+});
+
+test('judge-biases diagram is registered', () => {
+  assert.ok(has('judge-biases'));
 });

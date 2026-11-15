@@ -475,7 +475,12 @@ const notes = [
       "Provider adapters",
       "Evaluator–optimizer",
       "Reflection and Reflexion",
-      "Security evals and red teaming"
+      "Security evals and red teaming",
+      "Eval scorers",
+      "Judge biases",
+      "Judge calibration",
+      "Offline vs online evals",
+      "Agent evals"
     ],
     "slug": "evals",
     "detail": "Evaluations turn quality claims into repeatable measurements. A test case includes an input and a way to judge the result, such as an expected value, reference document, or rubric. Agent evaluations may also inspect tool actions and the final state of an environment. Evals is the umbrella term. Golden datasets and regression testing is the practice of re-running a fixed case set after each change, and Security evals and red teaming tests attacks instead of quality."
@@ -1044,7 +1049,10 @@ const notes = [
       "Hallucinations",
       "Golden datasets and regression testing",
       "Evaluator–optimizer",
-      "Multi-agent debate"
+      "Multi-agent debate",
+      "Judge biases",
+      "Judge calibration",
+      "Eval scorers"
     ],
     "slug": "llm-as-a-judge",
     "detail": "A model judge applies evaluation criteria to candidate outputs. It is useful for qualities that are hard to express as exact string comparisons, such as relevance or clarity. Its scores are measurements from a fallible evaluator, not ground truth."
@@ -2939,7 +2947,8 @@ const notes = [
       "Observability",
       "RAG diagnostics",
       "Precision / recall",
-      "Security evals and red teaming"
+      "Security evals and red teaming",
+      "Offline vs online evals"
     ],
     "slug": "golden-datasets",
     "detail": "A golden dataset holds representative inputs with trusted expected outputs or scoring rubrics. Running it after each change to prompts, models, retrieval, or tools gives a baseline and reveals regressions that ordinary unit tests miss. This is one kind of eval: a fixed, reviewed set used to catch changes over time. Evals also covers one-off and exploratory measurement."
@@ -4290,6 +4299,113 @@ const notes = [
     ],
     "slug": "best-of-n",
     "detail": "Sampling the same prompt several times at a non-zero temperature gives different candidates, and some are better than others. A verifier picks among them. The best verifier is deterministic, such as unit tests, a compiler, or a math checker. Where no exact check exists, a reward model or judge can score candidates. This spends more compute at inference time instead of training a bigger model."
+  },
+  {
+    "title": "Eval scorers",
+    "category": "systems",
+    "what": "The grading methods an eval uses to turn an output into a score: code checks, reference-based metrics, or an LLM judge.",
+    "how": "Code scorers are deterministic: schema validity, exact match, or F1 when a question has one right answer. Reference-based metrics compare against a gold answer: BLEU and ROUGE count shared n-grams, while BERTScore compares embeddings so paraphrases can still match. Judge scorers handle open-ended quality. G-Eval turns a criterion into evaluation steps and averages score tokens weighted by probability, which gives finer resolution than a single pick. QAG has the judge answer yes/no questions about each claim, then code computes the share of supported claims.",
+    "example": "The reference answer is \"30-day refund window\" and the assistant says \"Customers can return items within a month.\" BLEU and ROUGE score it low because few words overlap, BERTScore scores it high, and a judge with a rubric marks it correct. For the same assistant, a code check that the reply parses as the required JSON runs for free on every case.",
+    "watch": "Overlap metrics punish correct paraphrases and reward copying. Embedding similarity still needs a reference. Any model-based scorer needs checking against human labels before you trust its numbers.",
+    "sources": [
+      "mlmEval"
+    ],
+    "related": [
+      "Evals",
+      "LLM as a judge",
+      "Judge calibration",
+      "Precision / recall",
+      "Structured outputs",
+      "Golden datasets and regression testing",
+      "Hallucinations"
+    ],
+    "slug": "eval-scorers",
+    "detail": "Every eval pairs a dataset of inputs with a scorer that grades each output. Scorers differ in cost, determinism and how much they understand meaning. Choose the simplest one that fits the question, and move to a judge only when code and reference matching cannot capture the quality you care about."
+  },
+  {
+    "title": "Judge biases",
+    "category": "agents",
+    "what": "Systematic preferences that make a model judge pick an answer for reasons other than quality.",
+    "how": "Position bias favors an answer because of its slot, verbosity bias favors the longer answer, and self-preference favors outputs from the judge's own model family. To counter position bias, run each pairwise comparison twice with the order swapped and keep only verdicts that hold in both orders. The tie rate, the share of comparisons where the order flipped the verdict, shows how hard the outputs are to separate. For verbosity and self-preference, write rubrics that do not reward length, consider a judge from a different family, and compare results with human labels.",
+    "example": "A judge compares answer A and answer B. With A first it picks A. With B first it picks B, so the slot decided the result and the pair is a tie. A comparison where the same answer wins in both orders is a real win.",
+    "watch": "Swapping order doubles judge calls. A high tie rate can mean the outputs are close or the rubric is vague, not necessarily that the judge is broken. Bias checks reduce errors but do not replace human labels.",
+    "sources": [
+      "mlmEval"
+    ],
+    "related": [
+      "LLM as a judge",
+      "Judge calibration",
+      "Eval scorers",
+      "Evals",
+      "Interaction as a judge",
+      "Multi-agent debate"
+    ],
+    "slug": "judge-biases",
+    "detail": "A model judge can be steady and still be wrong in a consistent direction. Three well-known biases are position bias, verbosity bias and self-preference. They matter most in pairwise comparisons, where small preferences decide the winner."
+  },
+  {
+    "title": "Judge calibration",
+    "category": "agents",
+    "what": "Checking a model judge against human labels to learn where and how much it disagrees.",
+    "how": "Have people label a small sample, for example 30 to 50 outputs, then run the judge on the same items. Measure agreement corrected for chance with Cohen's kappa, available as scikit-learn's cohen_kappa_score, because raw agreement looks high when most answers pass. Read the disagreements to find what the judge misreads and tighten the rubric. Reduce noise with temperature 0 and majority voting over an odd number of runs, and ask for reasoning before the verdict in a strict JSON format. Repeat the check when the judge model or rubric changes.",
+    "example": "Forty labeled answers: humans pass 28, the judge passes 36. Raw agreement looks decent because both pass most answers, but kappa is much lower. The disagreements are all long answers with a wrong detail, so the rubric adds \"check each stated figure against the source\".",
+    "watch": "A small sample gives a noisy kappa. Agreement on one task or rubric does not transfer to another. The human labels are themselves imperfect, so look at where people disagree too.",
+    "sources": [
+      "mlmEval"
+    ],
+    "related": [
+      "LLM as a judge",
+      "Judge biases",
+      "Eval scorers",
+      "Evals",
+      "Golden datasets and regression testing",
+      "Hallucinations"
+    ],
+    "slug": "judge-calibration",
+    "detail": "A judge is a measuring instrument, so it needs calibrating before its scores drive decisions. Calibration compares the judge with people on the same outputs and uses the disagreements to fix the rubric."
+  },
+  {
+    "title": "Offline vs online evals",
+    "category": "systems",
+    "what": "Evals run on fixed cases before release versus evals run on live traffic after release.",
+    "how": "Offline: run a versioned golden set and a held-out set on every change, and block release when scores fall below agreed gates. Evaluation measures relative quality, while testing is a binary release gate, so both are useful. Online: score a sample of production traffic with reference-free metrics such as faithfulness and answer relevance, since live requests have no gold answer, and track latency and cost beside quality. Turn the failures you find into new golden cases.",
+    "example": "A support bot passes its offline suite. Online faithfulness drops for questions about a newly launched product that the golden set never covered. The team adds those questions to the golden set, fixes retrieval, and the offline gate now protects that case.",
+    "watch": "Scoring all traffic is costly and may touch private data, so sample and apply access controls. Reference-free scores depend on the judge, so calibrate them. A passing offline suite says nothing about inputs it does not contain.",
+    "sources": [
+      "mlmEval"
+    ],
+    "related": [
+      "Evals",
+      "Golden datasets and regression testing",
+      "Observability",
+      "RAG diagnostics",
+      "Judge calibration",
+      "Eval scorers"
+    ],
+    "slug": "offline-vs-online-evals",
+    "detail": "Offline evals catch regressions before users see them, using curated cases. Online evals watch real behavior, where inputs are messier and labels are missing. Together they form a loop: production failures become new offline cases."
+  },
+  {
+    "title": "Agent evals",
+    "category": "systems",
+    "what": "Measuring whether an agent achieved the goal, then diagnosing how it got there.",
+    "how": "Start with task completion: was the user's goal actually achieved, ideally checked against the final state. When a run fails, diagnose it. Tool correctness asks whether the agent chose the expected tool, usually by exact match. Argument correctness asks whether parameters are well formed and sensible. Trajectory asks whether the path avoided redundant calls and loops. Track latency and cost alongside these. For conversations, score individual turns and the whole exchange.",
+    "example": "A booking agent fails the task. It chose the right search tool but passed the date in the wrong format, so tool correctness passes, argument correctness fails, and the trace shows two retries. The fix is argument validation, not a new prompt.",
+    "watch": "Several different trajectories can be valid, so exact tool matching can be too strict. Grade the outcome before the path, or you will reward agents that look tidy but fail the goal.",
+    "sources": [
+      "mlmEval"
+    ],
+    "related": [
+      "Evals",
+      "Agents",
+      "Tool calling",
+      "Observability",
+      "LLM as a judge",
+      "Interaction as a judge",
+      "Eval scorers"
+    ],
+    "slug": "agent-evals",
+    "detail": "An agent answer is only part of the result: it also chooses tools, fills arguments and takes a path of steps. Agent evals check the outcome first, then use tool and trajectory checks to explain failures."
   }
 ];
 const sources = {
@@ -5033,7 +5149,8 @@ const sources = {
   ],
   "echoleak": ["Paper · EchoLeak zero-click vulnerability in Microsoft 365 Copilot", "https://arxiv.org/abs/2509.10540"],
   "agentdojo": ["Project · AgentDojo prompt-injection benchmark for agents", "https://github.com/ethz-spylab/agentdojo"],
-  "garak": ["Project · NVIDIA garak LLM vulnerability scanner", "https://github.com/NVIDIA/garak"]
+  "garak": ["Project · NVIDIA garak LLM vulnerability scanner", "https://github.com/NVIDIA/garak"],
+  "mlmEval": ["The Complete Guide to LLM Evaluation (Machine Learning Mastery)", "https://machinelearningmastery.com/the-complete-guide-to-llm-evaluation/"]
 };
 const diagrams = {
   "agents": {
@@ -5528,6 +5645,7 @@ const learningPaths = [
       "hybrid-retrieval",
       "reranking",
       "evals",
+      "eval-scorers",
       "grounding",
       "hallucinations",
       "precision-recall"
@@ -5548,7 +5666,8 @@ const learningPaths = [
       "prompt-injection",
       "jailbreak",
       "durable-agents",
-      "deepagents"
+      "deepagents",
+      "agent-evals"
     ]
   },
   {
@@ -5606,6 +5725,9 @@ const learningPaths = [
       "human-in-the-loop",
       "multi-agent-patterns",
       "golden-datasets",
+      "offline-vs-online-evals",
+      "judge-biases",
+      "judge-calibration",
       "confused-deputy",
       "permission-aware-retrieval",
       "llm-gateway",
@@ -5750,6 +5872,11 @@ const intuitions = {
  "mixture-of-experts": "A hospital with specialists. A router sends each token to a few experts, so the model is huge in total but only part of it works on any one token.",
  "evals": "Unit tests for behavior that isn't deterministic. You run a fixed set of questions and compare scores before and after a change.",
  "golden-datasets": "A small exam you never let students study from. Re-running it after every change tells you whether something quietly got worse.",
+ "eval-scorers": "Different ways to mark an exam: a rubric check a computer can do, a comparison to the answer key, or a teacher who reads for meaning. Pick the cheapest marker that still understands the question.",
+ "judge-biases": "A referee who tends to favor whoever stands on the left, whoever talks longest, or their own team. Swapping sides and checking the call again exposes it.",
+ "judge-calibration": "Checking a new scale against known weights before you trust it. You have people grade a few answers, then see where the AI judge disagrees.",
+ "offline-vs-online-evals": "A driving test on a closed course versus watching how people drive on real roads. You need both, and road problems become new test-course cases.",
+ "agent-evals": "Judging a courier: did the parcel arrive, and if not, did they pick the right van, type the right address, and avoid circling the block?",
  "precision-recall": "Precision: when you raised the alarm, how often were you right? Recall: of all real fires, how many did you catch? Chasing one usually costs the other.",
  "caching": "Keep the answer to a question you've already worked out, but only reuse it when nothing that would change the answer has changed.",
  "prompt-caching": "The provider remembers the work it did on the start of your prompt, so a long, unchanging prefix is cheaper and faster the second time.",
@@ -5784,6 +5911,18 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "judge-biases": [
+    "A judge picks A when A is first and B when B is first. Does either answer win?",
+    "No. The slot decided the result, so count it as a tie. Keep a verdict only when the same answer wins in both orders."
+  ],
+  "eval-scorers": [
+    "Why can ROUGE give a correct paraphrase a low score?",
+    "ROUGE counts shared n-grams with the reference. A paraphrase uses different words, so overlap is low even though the meaning matches."
+  ],
+  "offline-vs-online-evals": [
+    "Why score live traffic with reference-free metrics?",
+    "Production requests have no gold answer. Metrics such as faithfulness and answer relevance work from the question, answer and retrieved context, so they can run on live samples."
+  ],
   "rag": [
     "Can retrieval guarantee a correct answer?",
     "No. The correct evidence may be missing, stale, or misinterpreted. Check retrieval coverage, answer correctness, and citation support separately."

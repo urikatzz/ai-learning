@@ -16,6 +16,12 @@
     return `${+(index * step).toFixed(2)}s`;
   }
 
+  // A pairwise verdict is trustworthy only if the same answer wins in both orders.
+  // `first` and `second` name the winning answer ('A' or 'B') from the two runs.
+  function pairwiseVerdict(first, second) {
+    return first === second ? first : 'tie';
+  }
+
   // --- DOM helpers (browser only) ---
   const NS = 'http://www.w3.org/2000/svg';
 
@@ -1099,11 +1105,33 @@
     return figure;
   };
 
+  builders['judge-biases'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Swap the order to expose position bias',
+      alt: 'The same two answers are judged twice. With A in slot 1 the judge picks A. With B in slot 1 the judge picks B. Because the winner follows the slot, the result counts as a tie.',
+      caption: 'Run each pairwise comparison in both orders and keep only verdicts that hold. If the slot decides the winner, record a tie. Layout is illustrative.',
+      height: 220
+    });
+    const runs = [
+      { y: 20, slots: [['A', 'blue'], ['B', 'orange']], pick: 'Picks slot 1: A' },
+      { y: 90, slots: [['B', 'orange'], ['A', 'blue']], pick: 'Picks slot 1: B' }
+    ];
+    runs.forEach((run, r) => {
+      run.slots.forEach(([label, tone], i) => box(svg, { x: 10 + i * 96, y: run.y, w: 88, label: `Slot ${i + 1}: ${label}`, tone, index: r * 3 + i }));
+      arrow(svg, { x1: 200, y1: run.y + 22, x2: 238, y2: run.y + 22, tone: 'purple', index: r * 3 + 2 });
+      box(svg, { x: 240, y: run.y, w: 70, label: 'Judge', tone: 'purple', index: r * 3 + 2 });
+      arrow(svg, { x1: 312, y1: run.y + 22, x2: 340, y2: run.y + 22, tone: 'teal', index: r * 3 + 3 });
+      box(svg, { x: 342, y: run.y, w: 128, label: run.pick, tone: 'teal', index: r * 3 + 3 });
+    });
+    box(svg, { x: 120, y: 160, w: 240, label: `Verdict: ${pairwiseVerdict('A', 'B')} (slot decided it)`, tone: 'orange', index: 7, solid: true });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
 
-  const api = { softmax, arcPath, staggerDelay, has, build, builders };
+  const api = { softmax, arcPath, staggerDelay, pairwiseVerdict, has, build, builders };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Diagrams = api;
 })(typeof window !== 'undefined' ? window : globalThis);
