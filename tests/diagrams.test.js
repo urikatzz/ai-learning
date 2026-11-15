@@ -35,3 +35,7 @@ test('pairwiseVerdict keeps a winner only when both orders agree', () => {
 test('judge-biases diagram is registered', () => {
   assert.ok(has('judge-biases'));
 });
+
+test('reliable-json-output diagram is registered', () => {
+  assert.ok(has('reliable-json-output'));
+});

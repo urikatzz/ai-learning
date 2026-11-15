@@ -1127,6 +1127,30 @@
     return figure;
   };
 
+  builders['reliable-json-output'] = ({ makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Each layer catches what the one before it missed',
+      alt: 'A prompt with a schema goes to the model, which returns a raw reply. Pydantic validates the reply. A valid reply becomes a typed object. An invalid reply goes back to the model with the error text for a retry. If retries run out, the application raises an error.',
+      caption: 'Validate every reply, send the error back a limited number of times, then fail explicitly instead of passing bad data downstream. Layout is illustrative.',
+      height: 230
+    });
+    box(svg, { x: 10, y: 20, w: 100, label: 'Prompt + schema', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 112, y1: 42, x2: 138, y2: 42, tone: 'blue', index: 1 });
+    box(svg, { x: 140, y: 20, w: 70, label: 'Model', tone: 'purple', index: 1 });
+    arrow(svg, { x1: 212, y1: 42, x2: 238, y2: 42, tone: 'purple', index: 2 });
+    box(svg, { x: 240, y: 20, w: 100, label: 'Raw reply', tone: 'orange', index: 2 });
+    arrow(svg, { x1: 342, y1: 42, x2: 368, y2: 42, tone: 'orange', index: 3 });
+    box(svg, { x: 370, y: 20, w: 100, label: 'Pydantic check', tone: 'teal', index: 3 });
+    arrow(svg, { x1: 420, y1: 66, x2: 420, y2: 98, tone: 'teal', index: 4 });
+    box(svg, { x: 370, y: 100, w: 100, label: 'Typed object', tone: 'teal', index: 4, solid: true });
+    arrow(svg, { x1: 385, y1: 66, x2: 282, y2: 98, tone: 'orange', index: 5 });
+    box(svg, { x: 140, y: 100, w: 140, label: 'Retry with error', tone: 'orange', index: 5 });
+    arrow(svg, { x1: 175, y1: 98, x2: 175, y2: 66, tone: 'orange', index: 6 });
+    arrow(svg, { x1: 210, y1: 146, x2: 210, y2: 172, tone: 'orange', index: 7 });
+    box(svg, { x: 120, y: 174, w: 180, label: 'Out of retries: raise', tone: 'orange', index: 7, solid: true });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }
