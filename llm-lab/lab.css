@@ -17,3 +17,19 @@ body{background:radial-gradient(ellipse at 69% 22%,#1a1040 0,transparent 43%),#0
 .transformer-stack{width:250px;height:auto;flex:0 1 250px;overflow:visible;filter:drop-shadow(0 0 9px #773cff77)}
 @media(max-width:900px){.transformer-stack{width:170px;flex-basis:170px}}
 @media(max-width:700px){.transformer-stack{width:145px;flex-basis:145px}}
+/* Keep every training metric inside its panel on phones. */
+@media(max-width:700px){
+ .mainpanels{width:100%;min-width:0}
+ .metrics{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:12px;margin-bottom:12px}
+ .metrics>b{grid-column:1/-1;padding:0 2px 10px;border-bottom:1px solid var(--line)}
+ .metrics>div{min-width:0;padding:10px 4px;text-align:center;font-size:12px}
+ .metrics>div+div{padding-left:4px;border-left:1px solid #4b426d}
+ .metrics>div:nth-child(5){border-left:0}
+ .metrics>div:nth-child(n+5){border-top:1px solid #393153}
+ .metrics strong{font-size:19px;overflow-wrap:anywhere}
+ .grid>.panel{min-width:0}
+ .code pre{overflow-wrap:anywhere}
+}
+.mini-dial{cursor:grab;touch-action:none}.mini-dial:active{cursor:grabbing}.mini-dial:after{transform:rotate(var(--mini-angle,-135deg))}.mini-dial input{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}.mini-dial:has(input:focus-visible){outline:2px solid #fff;outline-offset:6px}
+@media(max-width:1200px){.mini-dial:after{height:16px;transform-origin:50% 22px}}
+@media(max-width:700px){.mini-dial:after{height:12px;transform-origin:50% 17px}}
