@@ -50,3 +50,10 @@ body{background:radial-gradient(ellipse at 69% 22%,#1a1040 0,transparent 43%),#0
 .grid{align-items:stretch}
 .matrices,.code{min-height:0}
 @media(max-width:700px){.sampling{gap:8px 8px;font-size:11px}.sampling input[type=range]{width:56px}.sampling output{white-space:nowrap}}
+
+/* Tensor picker grouped by stage */
+#tensor-cards{display:block}.tensor-section+.tensor-section{margin-top:14px}.tensor-section h4{font:700 14px Manrope,sans-serif;margin:0;color:#d5b9ff}.tensor-section>p{font-size:12px;color:var(--muted);margin:2px 0 8px;line-height:1.4}
+.tensor-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tensor-row .tensor-card{height:auto;min-height:64px;position:relative}.tensor-row .tensor-card span{white-space:normal;overflow:visible;font-size:11px;line-height:1.3;margin-top:4px}.tensor-card em{position:absolute;top:8px;right:9px;font:600 10px ui-monospace,monospace;font-style:normal;color:var(--muted)}.tensor-card.active em,.tensor-card.active span{color:#fff}
+.tensor-explain{margin:12px 2px 0;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.45;color:var(--ink)}
+@media(max-width:900px){.tensor-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
