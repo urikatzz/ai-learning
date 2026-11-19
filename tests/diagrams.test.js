@@ -61,3 +61,7 @@ test('gptq and awq diagrams are registered', () => {
   assert.ok(has('gptq'));
   assert.ok(has('awq'));
 });
+
+test('model pruning diagram is registered', () => {
+  assert.ok(has('model-pruning'));
+});

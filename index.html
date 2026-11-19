@@ -1408,6 +1408,7 @@ const notes = [
       "Fine-tuning",
       "Small language models (SLMs)",
       "Quantization",
+      "Model pruning",
       "Loss functions",
       "Data leakage"
     ],
@@ -1878,6 +1879,7 @@ const notes = [
       "Small language models (SLMs)",
       "LoRA",
       "Model distillation",
+      "Model pruning",
       "GPTQ",
       "AWQ"
     ],
@@ -1923,6 +1925,26 @@ const notes = [
     ],
     "slug": "awq",
     "detail": "AWQ is activation-aware: which weights matter depends on the activations they multiply, not on the weights alone. Scaling the salient channels reduces their quantization error without keeping them in higher precision, so the whole tensor stays low-bit."
+  },
+  {
+    "title": "Model pruning",
+    "category": "models",
+    "what": "Removing weights or whole structures from a model that contribute little, to make it smaller or cheaper to run.",
+    "how": "Pruning scores parts of a trained model by importance, for example by weight magnitude, and removes the lowest-scoring ones. Unstructured pruning zeroes individual weights, which gives sparse matrices. Structured pruning removes whole neurons, attention heads, or layers, which gives a smaller dense model. The pruned model is usually fine-tuned briefly to recover quality.",
+    "example": "Zero out the 50% smallest-magnitude weights in each layer of a model, then fine-tune for a short time and compare task quality with the original. Or drop a few attention heads that evaluation shows the model barely uses.",
+    "watch": "Unstructured sparsity only speeds things up if the hardware and kernels exploit it; a half-zero matrix can run just as slowly as a full one. Measure latency and memory, not just the fraction of weights removed.",
+    "sources": [
+      "pruning"
+    ],
+    "related": [
+      "Quantization",
+      "Model distillation",
+      "Weights",
+      "Fine-tuning",
+      "Small language models (SLMs)"
+    ],
+    "slug": "model-pruning",
+    "detail": "Pruning changes the model's structure, while quantization changes the precision of its numbers and distillation trains a new student. They can be combined. Pruned weights are removed or zeroed permanently, so capabilities that depended on them can degrade, and evaluation should cover more than average accuracy."
   },
   {
     "title": "Query rewriting",
@@ -4760,6 +4782,10 @@ const sources = {
     "Quantization methods",
     "https://huggingface.co/docs/transformers/quantization/overview"
   ],
+  "pruning": [
+    "Paper · Learning both Weights and Connections for Efficient Neural Networks",
+    "https://arxiv.org/abs/1506.02626"
+  ],
   "gptq": [
     "GPTQ paper",
     "https://arxiv.org/abs/2210.17323"
@@ -5900,6 +5926,7 @@ const learningPaths = [
       "lora",
       "preference-optimization",
       "model-distillation",
+      "model-pruning",
       "quantization",
       "gptq",
       "awq",
@@ -6096,6 +6123,7 @@ const intuitions = {
  "vllm": "A busy restaurant kitchen: it juggles many orders at once and uses every burner so no table waits long.",
  "ollama": "A friendly front desk for local models: it fetches the model, starts the engine, and hands you an API.",
  "quantization": "Rounding the model's numbers to fewer decimal places. It gets smaller and faster, at the risk of losing a little precision.",
+ "model-pruning": "Trimming a hedge: cut the branches that add the least, and the plant stays healthy while getting lighter.",
  "gptq": "Rounding one number at a time, then nudging its neighbors so the mistake cancels out instead of piling up.",
  "awq": "Before squeezing, enlarge the few numbers that matter most so the rounding barely hurts them.",
  "lora": "Instead of rewriting the whole textbook, you clip a thin set of corrections on top. The original stays frozen and the add-on is tiny.",
@@ -6149,6 +6177,10 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "model-pruning": [
+    "Why might a 50%-sparse pruned model not run faster?",
+    "Unstructured pruning only zeroes individual weights; unless hardware and kernels exploit that sparsity, the matrices are the same size. Structured pruning removes whole units for a real speedup."
+  ],
   "gptq": [
     "How does GPTQ differ from plain rounding?",
     "It quantizes weights one at a time and adjusts the not-yet-quantized weights to cancel each rounding error, using calibration data."

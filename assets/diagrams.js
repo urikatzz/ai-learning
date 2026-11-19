@@ -336,6 +336,29 @@
     return figure;
   };
 
+  builders['model-pruning'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Prune the weak connections',
+      alt: 'Two layers of four neurons fully connected by lines. Weak connections are dashed and removed in the pruned network, leaving only the strong ones.',
+      caption: 'Pruning removes low-importance connections, then the model is usually fine-tuned to recover quality. Which connections are weak here is illustrative.',
+      height: 200
+    });
+    const ys = [40, 80, 120, 160];
+    const keep = new Set(['0-0', '0-1', '1-1', '2-2', '2-3', '3-3', '1-2']);
+    ys.forEach((y1, a) => ys.forEach((y2, b) => {
+      const kept = keep.has(`${a}-${b}`);
+      svgNode(svg, 'line', { x1: 150, y1, x2: 330, y2, class: kept ? 'dg-stroke dg-blue' : 'dg-stroke', 'stroke-dasharray': kept ? '' : '4 4', opacity: kept ? 1 : 0.35 });
+    }));
+    ys.forEach((y, i) => {
+      [150, 330].forEach((x) => {
+        const g = svgNode(svg, 'g', { class: 'dg-teal' });
+        svgNode(g, 'circle', { cx: x, cy: y, r: 12, class: 'dg-fill dg-pop', style: `--i:${i}` });
+      });
+    });
+    svgNode(svg, 'text', { x: 240, y: 192, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:5' }, 'dashed = pruned away, solid = kept');
+    return figure;
+  };
+
   builders.lora = ({ svgNode, makeFigure, box, arrow }) => {
     const { figure, svg } = makeFigure({
       title: 'Train a small adapter, keep W frozen',
