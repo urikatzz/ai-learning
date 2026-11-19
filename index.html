@@ -872,6 +872,29 @@ const notes = [
     "detail": "Inference applies a trained model to inputs. A classifier returns scores or labels, an embedding model returns vectors, and a generative model produces a sequence or other content. Its ordinary forward computations use existing weights without learning from the request."
   },
   {
+    "title": "Inference engine",
+    "category": "models",
+    "what": "The software that loads a trained model and runs it to produce outputs.",
+    "how": "An inference engine loads the weights, tokenizes the input, runs the forward pass on the available hardware, manages memory such as the KV cache, and samples each next token. Many engines also expose an API, schedule concurrent requests, and support quantized model formats.",
+    "example": "Ollama, llama.cpp, LM Studio, and vLLM are inference engines or tools built on one. The same model file can run at different speeds in different engines because kernels, batching, and memory handling differ.",
+    "watch": "An engine is not the model. Check which model, quantization, and hardware backend are used before comparing speed or quality across engines.",
+    "sources": [
+      "pytorch",
+      "torchInference"
+    ],
+    "related": [
+      "Inference",
+      "Ollama",
+      "llama.cpp",
+      "vLLM",
+      "LM Studio",
+      "KV cache",
+      "Quantization"
+    ],
+    "slug": "inference-engine",
+    "detail": "The model holds learned weights; the inference engine is the program that turns those weights and an input into output. Low-level engines such as llama.cpp focus on efficient compute on local hardware. Wrappers such as Ollama add model downloads and a local server. Serving engines such as vLLM focus on throughput for many simultaneous users on GPUs."
+  },
+  {
     "title": "Inter-token Latency (ITL)",
     "category": "models",
     "what": "The time between successive generated output tokens.",
@@ -1077,6 +1100,26 @@ const notes = [
     "detail": "Interaction as a judge extends LLM-as-a-judge from static artifacts, such as code and screenshots, to behavior. Strong models rarely make obvious coding mistakes and screenshots all look plausible, so the differences that matter, like a click that does nothing, only show up when someone uses the app. A computer-use agent plays that role at scale, producing traces that a judge or reward model can score. The same signal can drive inference-time repair loops and reinforcement learning, and because it needs only a running app and not source code, it can reach software whose code you do not have."
   },
   {
+    "title": "llama.cpp",
+    "category": "platforms",
+    "what": "A C/C++ inference engine for running quantized language models on local hardware.",
+    "how": "Load a model in GGUF format, choose a quantization level that fits memory, and run it from a CLI or its built-in HTTP server. It supports CPU and GPU backends such as Metal, CUDA, and Vulkan, and offloads layers to the GPU when memory allows.",
+    "example": "Convert or download a GGUF model, start llama-server, and send chat requests to its OpenAI-compatible endpoint. Tools such as Ollama and LM Studio build on this engine or use it as a reference.",
+    "watch": "It offers maximum control but less convenience: you manage model files, flags, and context size yourself.",
+    "sources": [
+      "llamacpp"
+    ],
+    "related": [
+      "Ollama",
+      "LM Studio",
+      "Inference engine",
+      "Quantization",
+      "vLLM"
+    ],
+    "slug": "llama-cpp",
+    "detail": "llama.cpp is a widely used low-level engine for local inference. Its GGUF format and quantization options make large models fit on consumer machines. It prioritizes portability and control over multi-user throughput."
+  },
+  {
     "title": "LLMs",
     "category": "models",
     "what": "Large language models: learned systems that model and generate language.",
@@ -1114,6 +1157,7 @@ const notes = [
     "related": [
       "Ollama",
       "Inference",
+      "Inference engine",
       "MLX vs. PyTorch"
     ],
     "slug": "lm-studio",
@@ -1520,7 +1564,10 @@ const notes = [
     ],
     "related": [
       "LM Studio",
-      "Models"
+      "Models",
+      "Inference engine",
+      "llama.cpp",
+      "vLLM"
     ],
     "slug": "ollama",
     "detail": "Ollama helps download, configure, and serve supported models through command-line and API interfaces. It can be a convenient local inference backend. The selected model and deployment determine whether computation occurs locally or through a cloud service."
@@ -2604,6 +2651,27 @@ const notes = [
     ],
     "slug": "vector-databases",
     "detail": "A vector database stores embeddings and finds vectors close to a query according to a similarity metric. Many support metadata filters and ordinary payload fields as well. Vector search is a retrieval component; it does not generate answers or prove that retrieved content is correct."
+  },
+  {
+    "title": "vLLM",
+    "category": "platforms",
+    "what": "An inference engine built for high-throughput serving of language models on GPUs.",
+    "how": "vLLM manages the KV cache in pages (PagedAttention) and batches requests continuously, so many users share a GPU efficiently. It serves an OpenAI-compatible API and targets production workloads.",
+    "example": "A team serving a chat product to many users runs vLLM on GPU servers and routes requests to it. Throughput and latency under load are the main reasons to choose it over a single-user local tool.",
+    "watch": "It is aimed at GPU servers; for a single user on a laptop, Ollama or llama.cpp is usually simpler.",
+    "sources": [
+      "vllm"
+    ],
+    "related": [
+      "Inference engine",
+      "KV cache",
+      "Routing and batching",
+      "Ollama",
+      "llama.cpp",
+      "Prefill and decode"
+    ],
+    "slug": "vllm",
+    "detail": "vLLM improves serving efficiency by treating the KV cache like paged memory and by continuously batching requests. This raises throughput when many users share hardware, at the cost of more setup than a desktop tool."
   },
   {
     "title": "Weights",
@@ -4690,6 +4758,14 @@ const sources = {
     "LangChain overview",
     "https://docs.langchain.com/oss/python/langchain/overview"
   ],
+  "llamacpp": [
+    "Project · llama.cpp",
+    "https://github.com/ggml-org/llama.cpp"
+  ],
+  "vllm": [
+    "vLLM documentation",
+    "https://docs.vllm.ai/"
+  ],
   "lmstudio": [
     "LM Studio developer documentation",
     "https://lmstudio.ai/docs/developer"
@@ -5720,6 +5796,7 @@ const learningPaths = [
       "backpropagation",
       "training",
       "inference",
+      "inference-engine",
       "tokenization",
       "transformers",
       "multi-head-attention",
@@ -5774,6 +5851,10 @@ const learningPaths = [
       "preference-optimization",
       "model-distillation",
       "quantization",
+      "inference-engine",
+      "ollama",
+      "llama-cpp",
+      "vllm",
       "kv-cache",
       "prefill-and-decode",
       "time-to-first-token-ttft",
@@ -5958,6 +6039,10 @@ const intuitions = {
  "hallucinations": "A confident guess presented as fact. The model is built to produce fluent text, and fluent is not the same as true.",
  "grounding": "Making the answer point at its evidence, like footnotes. It is not enough that a source exists; the source must actually say what the answer claims.",
  "kv-cache": "Sticky notes of what the model already worked out about earlier words, so each new word doesn't force it to re-read the whole conversation.",
+ "inference-engine": "The model is the recipe book; the inference engine is the kitchen that actually cooks from it. Different kitchens, same recipe, different speed.",
+ "llama-cpp": "A small, tough engine that runs big models on ordinary machines by squeezing the numbers and using whatever hardware you have.",
+ "vllm": "A busy restaurant kitchen: it juggles many orders at once and uses every burner so no table waits long.",
+ "ollama": "A friendly front desk for local models: it fetches the model, starts the engine, and hands you an API.",
  "quantization": "Rounding the model's numbers to fewer decimal places. It gets smaller and faster, at the risk of losing a little precision.",
  "lora": "Instead of rewriting the whole textbook, you clip a thin set of corrections on top. The original stays frozen and the add-on is tiny.",
  "pre-training": "Years of general schooling: reading enormous amounts of text to learn how language, code, and the world fit together, before any specific job.",
@@ -6010,6 +6095,14 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "inference-engine": [
+    "Is Ollama a model or an inference engine?",
+    "It runs models, so it is an inference engine layer: it downloads models, serves an API, and uses llama.cpp or its own engine for the compute."
+  ],
+  "vllm": [
+    "Why choose vLLM over a local tool such as Ollama?",
+    "vLLM batches many concurrent requests and manages KV cache memory efficiently on GPUs, so it suits multi-user serving. Ollama is simpler for one user."
+  ],
   "multi-head-attention": [
     "Why use several smaller heads instead of one big attention head?",
     "One head yields a single weighted mix of tokens. Several heads can weigh tokens differently in parallel, at similar total cost, and their outputs are concatenated and projected back."

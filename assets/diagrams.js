@@ -1215,6 +1215,28 @@
     return figure;
   };
 
+  builders.ollama = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'The local inference stack behind Ollama',
+      alt: 'A stack from top to bottom: your app calls Ollama, which runs an inference engine such as llama.cpp, which loads model weights and computes on hardware such as Metal, CUDA, or CPU.',
+      caption: 'Ollama manages models and serves the API; the inference engine does the compute. Layers are simplified.',
+      height: 250
+    });
+    const layers = [
+      ['Your app (HTTP request)', 'blue'],
+      ['Ollama: model manager + server', 'purple'],
+      ['Inference engine (llama.cpp)', 'orange'],
+      ['Model weights (GGUF, quantized)', 'teal'],
+      ['Hardware: Metal / CUDA / CPU', 'teal']
+    ];
+    layers.forEach(([label, tone], i) => {
+      const y = 8 + i * 48;
+      box(svg, { x: 90, y, w: 300, h: 34, label, tone, index: i, solid: i === 1 || i === 2 });
+      if (i < layers.length - 1) arrow(svg, { x1: 240, y1: y + 36, x2: 240, y2: y + 46, tone, index: i + 1 });
+    });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }

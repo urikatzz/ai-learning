@@ -48,3 +48,7 @@ test('multi-head attention and feed-forward diagrams are registered', () => {
   assert.ok(has('multi-head-attention'));
   assert.ok(has('feed-forward-network-mlp'));
 });
+
+test('ollama diagram is registered', () => {
+  assert.ok(has('ollama'));
+});
