@@ -40,6 +40,7 @@ class TinyDecoder {
  }
  loss(ids){const {logits}=this.forward(ids),losses=[];for(let t=0;t<ids.length-1;t++){const probs=softmax(logits[t]);losses.push(probs[ids[t+1]].log().mul(-1))}return sum(losses).div(losses.length)}
  predict(ids,temperature=1){const last=this.forward(ids),log=last.logits.at(-1).map(v=>asValue(v.data/temperature));return softmax(log).map(x=>x.data)}
+ predictDetail(ids,temperature=1){const logits=this.forward(ids).logits.at(-1).map(v=>v.data),scaled=logits.map(v=>asValue(v/temperature));return {logits,probs:softmax(scaled).map(x=>x.data)}}
  inspect(ids){return this.forward(ids,{snapshot:true})}
  tensors(){const result=[],add=(id,label,group,rows)=>result.push({id,label,group,shape:rows.shape,values:rows.values.flat()});const matrix=(id,label,group,rows)=>add(id,label,group,{shape:[rows.length,rows[0]?.length||0],values:rows});const vector=(id,label,group,values)=>add(id,label,group,{shape:[values.length],values:[values]});
   matrix('token-embeddings','Token embeddings','Embeddings',this.emb);matrix('position-embeddings','Position embeddings','Embeddings',this.pos);

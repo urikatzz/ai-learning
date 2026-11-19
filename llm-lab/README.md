@@ -26,6 +26,10 @@ node --test llm-lab/tests/engine.test.js
 
 They check causal attention normalization and future-token isolation, finite-difference gradients through Q and FFN weights, seeded corpus loss reduction, tensor shapes and parameter count, and live weight edits and freezing.
 
+## Teaching aids
+
+The prediction panel shows raw logits beside softmax probabilities, flags unseen words (mapped to the untrained `<UNK>`), and has a Generate button that samples token by token until `<EOS>`. The attention view hatches causally masked cells. The metrics panel reports the best accuracy and loss achievable on the current data, since identical contexts with different next words make 100% unreachable. The hero strip mirrors the live prompt and prediction.
+
 ## Current scope
 
 The live matrix selector shows Q, K, V, or attention for the latest Transformer layer. Weight Surgery lets learners browse tensors, select a scalar from its heatmap, edit it, and freeze it during Adam updates. Architecture changes rebuild the model. The lab does not yet include multi-head configurations, worker-based training, full operation-by-operation debug stepping, per-cell derivation views, checkpoint comparisons or persistent checkpoints, Python export, or missions. Training currently runs on the browser main thread. The Python panel is illustrative; parameter edits apply to the live JavaScript model and are not sent to a PyTorch process.

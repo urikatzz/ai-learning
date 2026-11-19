@@ -71,3 +71,13 @@ test('manually edited weights affect predictions and frozen scalars survive Adam
  assert.equal(outputBias.data,frozenValue,'frozen parameter must not move');
  assert.notEqual(model.params[trainableIndex].data,trainableValue,'other parameters should still train');
 });
+
+test('predictDetail returns raw logits and softmax probabilities that match predict',()=>{
+ const model=new TinyDecoder(tokens,{layers:1,width:8,seed:7}),input=[ids['<BOS>'],ids.the,ids.cat];
+ const {logits,probs}=model.predictDetail(input,1);
+ assert.equal(logits.length,tokens.length);
+ assert.ok(Math.abs(probs.reduce((a,b)=>a+b,0)-1)<1e-9);
+ assert.deepEqual(probs,model.predict(input,1));
+ const argmax=a=>a.indexOf(Math.max(...a));
+ assert.equal(argmax(logits),argmax(probs));
+});
