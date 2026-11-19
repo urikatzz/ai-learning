@@ -38,3 +38,10 @@ body{background:radial-gradient(ellipse at 69% 22%,#1a1040 0,transparent 43%),#0
 .prediction .row{grid-template-columns:60px 1fr 110px}
 .cell.masked{background:repeating-linear-gradient(45deg,#2a2748 0 3px,#14132a 3px 6px);opacity:1}
 .generate{display:flex;gap:10px;align-items:center;margin:8px 4px}.generate button{border:1px solid #534876;background:#25223e;color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}.generate output{font-size:13px;color:var(--ink)}
+
+/* Sampling controls, captions and attention hover linking */
+.sampling{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:8px 4px;font-size:12px;color:var(--muted)}.sampling select{background:#25223e;color:var(--ink);border:1px solid #534876;border-radius:6px;padding:4px 6px}.sampling input[type=range]{width:110px;vertical-align:middle;accent-color:var(--purple)}.sampling input:disabled{opacity:.4}.sampling output{color:var(--ink);font-variant-numeric:tabular-nums}
+.prediction .row.cut{opacity:.5}.prediction .row.cut span:first-child{text-decoration:line-through}.prediction .row.cut .bar i{background:#6b6790}
+.caption{font-size:12px;line-height:1.45;color:var(--muted);margin:10px 4px 2px;padding-top:8px;border-top:1px dashed var(--line)}
+.token-strip{display:flex;flex-wrap:wrap;gap:6px;margin:6px 4px 8px}.chip{font:12px ui-monospace,monospace;color:var(--ink);background:#25223e;border:1px solid #534876;border-radius:6px;padding:3px 8px;cursor:pointer}.chip.hl{background:var(--purple);border-color:#fff}.chip.attended{border-color:var(--pink);box-shadow:0 0 0 2px #d466ff66}
+.heatmap .cell.hl{outline:2px solid #fff;outline-offset:-2px}.heatmap .cell.attended{outline:2px solid var(--pink);outline-offset:-2px}.hover-readout{min-height:34px;font-size:12px;color:#d5b9ff}
