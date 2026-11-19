@@ -1877,10 +1877,52 @@ const notes = [
       "Inference",
       "Small language models (SLMs)",
       "LoRA",
-      "Model distillation"
+      "Model distillation",
+      "GPTQ",
+      "AWQ"
     ],
     "slug": "quantization",
     "detail": "Quantization stores or computes selected numerical values with a reduced representation, often using integers or compact floating-point formats. It can reduce model memory and memory-transfer cost. Weight quantization, activation quantization, and KV-cache quantization are separate choices."
+  },
+  {
+    "title": "GPTQ",
+    "category": "models",
+    "what": "A post-training method that quantizes weights layer by layer while compensating for the rounding error.",
+    "how": "GPTQ quantizes a layer's weights one at a time. After rounding each weight, it adjusts the weights not yet quantized to cancel the error, using a small calibration set to estimate which adjustments matter. It typically targets 3-4 bit weights stored in groups that share a scale.",
+    "example": "Take a 7B model in 16-bit, run GPTQ with a few hundred calibration samples to produce 4-bit weights, and load the result in a GPU inference engine. It takes minutes to hours but needs no retraining.",
+    "watch": "Quality depends on the calibration data; data unlike your real use can hurt accuracy. Check the results on your own task.",
+    "sources": [
+      "gptq"
+    ],
+    "related": [
+      "Quantization",
+      "AWQ",
+      "Weights",
+      "Inference engine",
+      "vLLM"
+    ],
+    "slug": "gptq",
+    "detail": "Plain rounding treats each weight independently, so errors add up. GPTQ spreads each error onto the remaining weights of the same layer, which keeps the layer's output close to the original. It is a post-training method: it needs calibration data but no gradient-based training."
+  },
+  {
+    "title": "AWQ",
+    "category": "models",
+    "what": "A post-training method that protects the most important weights by scaling them before quantizing.",
+    "how": "AWQ runs a small calibration set through the model and finds the weight channels that see large activations. Those salient channels are scaled up before rounding, so they lose less relative precision, and the scale is folded back in afterward. Only a small fraction of channels needs this protection.",
+    "example": "Quantize a 7B model to 4-bit with AWQ, then serve it with an engine that has AWQ kernels. It usually needs less calibration data than GPTQ and does not rewrite weights by reconstruction.",
+    "watch": "Speed and support depend on the engine and its kernels, so confirm your runtime supports the format.",
+    "sources": [
+      "awq"
+    ],
+    "related": [
+      "Quantization",
+      "GPTQ",
+      "Weights",
+      "Inference engine",
+      "vLLM"
+    ],
+    "slug": "awq",
+    "detail": "AWQ is activation-aware: which weights matter depends on the activations they multiply, not on the weights alone. Scaling the salient channels reduces their quantization error without keeping them in higher precision, so the whole tensor stays low-bit."
   },
   {
     "title": "Query rewriting",
@@ -4718,6 +4760,14 @@ const sources = {
     "Quantization methods",
     "https://huggingface.co/docs/transformers/quantization/overview"
   ],
+  "gptq": [
+    "GPTQ paper",
+    "https://arxiv.org/abs/2210.17323"
+  ],
+  "awq": [
+    "AWQ paper",
+    "https://arxiv.org/abs/2306.00978"
+  ],
   "generate": [
     "Text generation parameters",
     "https://huggingface.co/docs/transformers/main_classes/text_generation"
@@ -5851,6 +5901,8 @@ const learningPaths = [
       "preference-optimization",
       "model-distillation",
       "quantization",
+      "gptq",
+      "awq",
       "inference-engine",
       "ollama",
       "llama-cpp",
@@ -6044,6 +6096,8 @@ const intuitions = {
  "vllm": "A busy restaurant kitchen: it juggles many orders at once and uses every burner so no table waits long.",
  "ollama": "A friendly front desk for local models: it fetches the model, starts the engine, and hands you an API.",
  "quantization": "Rounding the model's numbers to fewer decimal places. It gets smaller and faster, at the risk of losing a little precision.",
+ "gptq": "Rounding one number at a time, then nudging its neighbors so the mistake cancels out instead of piling up.",
+ "awq": "Before squeezing, enlarge the few numbers that matter most so the rounding barely hurts them.",
  "lora": "Instead of rewriting the whole textbook, you clip a thin set of corrections on top. The original stays frozen and the add-on is tiny.",
  "pre-training": "Years of general schooling: reading enormous amounts of text to learn how language, code, and the world fit together, before any specific job.",
  "post-training": "Job training after school. The graduate already knows a lot; this stage teaches them to follow instructions, keep a good tone, and avoid harmful answers.",
@@ -6095,6 +6149,14 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "gptq": [
+    "How does GPTQ differ from plain rounding?",
+    "It quantizes weights one at a time and adjusts the not-yet-quantized weights to cancel each rounding error, using calibration data."
+  ],
+  "awq": [
+    "What makes AWQ activation-aware?",
+    "It picks the salient weight channels by looking at activation magnitudes on calibration data, then scales those channels up before rounding to protect them."
+  ],
   "inference-engine": [
     "Is Ollama a model or an inference engine?",
     "It runs models, so it is an inference engine layer: it downloads models, serves an API, and uses llama.cpp or its own engine for the compute."
