@@ -52,3 +52,12 @@ test('multi-head attention and feed-forward diagrams are registered', () => {
 test('ollama diagram is registered', () => {
   assert.ok(has('ollama'));
 });
+
+test('model distillation diagram is registered', () => {
+  assert.ok(has('model-distillation'));
+});
+
+test('gptq and awq diagrams are registered', () => {
+  assert.ok(has('gptq'));
+  assert.ok(has('awq'));
+});

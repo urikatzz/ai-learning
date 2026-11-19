@@ -300,6 +300,42 @@
     return figure;
   };
 
+  builders.gptq = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'GPTQ: round one, fix the rest',
+      alt: 'Weight 1 is rounded to a low-bit value. The rounding error is sent forward and used to adjust the remaining, not yet quantized weights, then the next weight is rounded.',
+      caption: 'GPTQ quantizes a layer one weight at a time and spreads each rounding error over the weights not yet quantized. Calibration data guides the adjustments; the layout here is simplified.',
+      height: 190
+    });
+    box(svg, { x: 12, y: 40, w: 108, label: 'Weight 1', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 120, y1: 62, x2: 160, y2: 62, tone: 'blue', index: 1 });
+    box(svg, { x: 164, y: 40, w: 120, label: 'Round to 4-bit', tone: 'teal', index: 2, solid: true });
+    svgNode(svg, 'path', { d: 'M224 86V128H400V86', pathLength: 1, class: 'dg-stroke dg-draw dg-orange', style: '--i:3' });
+    svgNode(svg, 'text', { x: 232, y: 120, class: 'dg-small dg-pop', style: '--i:4' }, 'rounding error');
+    box(svg, { x: 330, y: 40, w: 138, label: 'Weights 2..n', tone: 'blue', index: 4 });
+    svgNode(svg, 'text', { x: 240, y: 168, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:6' }, 'adjusted to cancel the error, then repeat');
+    return figure;
+  };
+
+  builders.awq = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'AWQ: protect the salient channels',
+      alt: 'Six weight channels as bars. Two channels that see large activations are orange and are scaled up before 4-bit rounding; the other four stay blue. The scale is folded back afterward.',
+      caption: 'AWQ finds the few channels whose activations are large and scales them up before rounding so they lose less precision. The scale is compensated elsewhere, so the model output is unchanged apart from rounding. Heights are illustrative.',
+      height: 210
+    });
+    const salient = [false, true, false, false, true, false];
+    salient.forEach((on, i) => {
+      const h = on ? 84 : 52;
+      const g = svgNode(svg, 'g', { class: on ? 'dg-orange' : 'dg-blue' });
+      svgNode(g, 'rect', { x: 28 + i * 72, y: 150 - h, width: 44, height: h, rx: 5, class: 'dg-fill dg-grow', style: `--i:${i}` });
+      svgNode(svg, 'text', { x: 50 + i * 72, y: 170, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: `--i:${i}` }, `ch ${i + 1}`);
+    });
+    svgNode(svg, 'text', { x: 240, y: 32, 'text-anchor': 'middle', class: 'dg-pop', style: '--i:7' }, 'scale up salient channels, then round to 4-bit');
+    svgNode(svg, 'text', { x: 240, y: 196, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:8' }, 'orange = large activations (found by calibration)');
+    return figure;
+  };
+
   builders.lora = ({ svgNode, makeFigure, box, arrow }) => {
     const { figure, svg } = makeFigure({
       title: 'Train a small adapter, keep W frozen',
@@ -1234,6 +1270,34 @@
       box(svg, { x: 90, y, w: 300, h: 34, label, tone, index: i, solid: i === 1 || i === 2 });
       if (i < layers.length - 1) arrow(svg, { x1: 240, y1: y + 36, x2: 240, y2: y + 46, tone, index: i + 1 });
     });
+    return figure;
+  };
+
+  builders['model-distillation'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'A teacher trains a smaller student',
+      alt: 'A prompt goes to a large teacher model, which produces soft probability targets. A smaller student model is trained to match those targets, optionally alongside ordinary labeled data.',
+      caption: 'The student learns from the teacher\u2019s outputs, so its weights change. Teacher probabilities shown are illustrative; the student can inherit the teacher\u2019s mistakes.',
+      height: 240
+    });
+    box(svg, { x: 16, y: 36, w: 84, label: 'Prompt', tone: 'teal', index: 0 });
+    arrow(svg, { x1: 100, y1: 58, x2: 124, y2: 58, tone: 'teal', index: 1 });
+    box(svg, { x: 124, y: 36, w: 120, label: 'Teacher (large)', tone: 'purple', index: 2, solid: true });
+    arrow(svg, { x1: 244, y1: 58, x2: 272, y2: 58, tone: 'purple', index: 3 });
+    // Soft targets: the teacher's full probability spread, not just its top answer.
+    const base = 96;
+    softmax([3, 2, 1, 0.5], 2).forEach((p, i) => {
+      const height = Math.max(p * 110, 3);
+      const g = svgNode(svg, 'g', { class: 'dg-purple' });
+      svgNode(g, 'rect', { x: 284 + i * 40, y: base - height, width: 28, height, rx: 4, class: 'dg-fill dg-grow', style: `--i:${4 + i}` });
+    });
+    svgNode(svg, 'line', { x1: 276, y1: base, x2: 448, y2: base, stroke: 'var(--line)', 'stroke-width': 2 });
+    svgNode(svg, 'text', { x: 362, y: 116, 'text-anchor': 'middle', class: 'dg-small' }, 'soft targets');
+    arrow(svg, { x1: 362, y1: 124, x2: 362, y2: 150, tone: 'purple', index: 8 });
+    box(svg, { x: 16, y: 154, w: 120, label: 'Labeled data', tone: 'teal', index: 7 });
+    arrow(svg, { x1: 136, y1: 176, x2: 264, y2: 176, tone: 'teal', index: 9 });
+    box(svg, { x: 268, y: 154, w: 190, label: 'Student (smaller)', tone: 'blue', index: 10, solid: true });
+    svgNode(svg, 'text', { x: 240, y: 226, 'text-anchor': 'middle', class: 'dg-small' }, 'loss: match the teacher (and the labels)');
     return figure;
   };
 
