@@ -39,3 +39,12 @@ test('judge-biases diagram is registered', () => {
 test('reliable-json-output diagram is registered', () => {
   assert.ok(has('reliable-json-output'));
 });
+
+test('utcp diagram is registered', () => {
+  assert.ok(has('utcp'));
+});
+
+test('multi-head attention and feed-forward diagrams are registered', () => {
+  assert.ok(has('multi-head-attention'));
+  assert.ok(has('feed-forward-network-mlp'));
+});

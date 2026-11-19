@@ -1151,6 +1151,70 @@
     return figure;
   };
 
+  builders['multi-head-attention'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Several heads look at the same tokens differently',
+      alt: 'The same token vectors go into three attention heads in parallel. Each head has its own projections and produces its own output. The outputs are concatenated and an output projection mixes them back to the model width.',
+      caption: 'Each head uses its own learned query, key and value projections in a smaller dimension. Head roles emerge in training and are illustrative here.',
+      height: 220
+    });
+    box(svg, { x: 8, y: 88, w: 80, label: 'Tokens', tone: 'blue', index: 0 });
+    [['Head 1', 'purple'], ['Head 2', 'orange'], ['Head 3', 'teal']].forEach(([label, tone], i) => {
+      const y = 20 + i * 68;
+      svgNode(svg, 'path', { d: `M88 110L150 ${y + 22}`, pathLength: 1, class: `dg-stroke dg-draw dg-${tone}`, style: `--i:${1 + i}` });
+      box(svg, { x: 150, y, w: 110, label, tone, index: 1 + i });
+      svgNode(svg, 'path', { d: `M260 ${y + 22}L316 110`, pathLength: 1, class: `dg-stroke dg-draw dg-${tone}`, style: `--i:${4 + i}` });
+    });
+    box(svg, { x: 316, y: 88, w: 78, label: 'Concat', tone: 'blue', index: 5 });
+    arrow(svg, { x1: 396, y1: 110, x2: 412, y2: 110, tone: 'blue', index: 6 });
+    box(svg, { x: 414, y: 88, w: 62, label: 'Mix', tone: 'teal', index: 6, solid: true });
+    return figure;
+  };
+
+  builders['feed-forward-network-mlp'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Expand, apply a nonlinearity, shrink back',
+      alt: 'A token vector of model width goes through a linear layer that expands it to a wider hidden vector, then a nonlinearity, then a linear layer that projects it back to model width. A residual path adds the original vector to the result.',
+      caption: 'The same network runs on every token separately; tokens do not exchange information here. The hidden width is often about four times the model width.',
+      height: 200
+    });
+    box(svg, { x: 6, y: 50, w: 70, label: 'Vector d', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 78, y1: 72, x2: 96, y2: 72, tone: 'blue', index: 1 });
+    box(svg, { x: 98, y: 38, w: 92, h: 68, label: 'Expand 4d', tone: 'purple', index: 1 });
+    arrow(svg, { x1: 192, y1: 72, x2: 210, y2: 72, tone: 'purple', index: 2 });
+    box(svg, { x: 212, y: 50, w: 82, label: 'GELU', tone: 'orange', index: 2, solid: true });
+    arrow(svg, { x1: 296, y1: 72, x2: 314, y2: 72, tone: 'orange', index: 3 });
+    box(svg, { x: 316, y: 50, w: 74, label: 'Shrink d', tone: 'purple', index: 3 });
+    arrow(svg, { x1: 392, y1: 72, x2: 408, y2: 72, tone: 'purple', index: 4 });
+    box(svg, { x: 410, y: 50, w: 66, label: '+ Output', tone: 'teal', index: 4, solid: true });
+    svgNode(svg, 'path', { d: 'M41 94V150H443V96', pathLength: 1, class: 'dg-dash dg-blue dg-pop', style: '--i:5' });
+    svgNode(svg, 'text', { x: 242, y: 172, 'text-anchor': 'middle', class: 'dg-small' }, 'residual: add the input back');
+    return figure;
+  };
+
+  builders.utcp = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'MCP adds a server layer; UTCP calls the tool directly',
+      alt: 'Top: with MCP, an agent talks to an MCP server, which talks to tools and resources. Bottom: with UTCP, an agent reads tool manuals and calls an HTTP API, a CLI tool, or a WebSocket or gRPC service directly, with no server in between.',
+      caption: 'MCP standardizes the connection through a server; UTCP standardizes the description and uses each tool\'s native protocol. Layout is illustrative.',
+      height: 250
+    });
+    svgNode(svg, 'text', { x: 10, y: 16, class: 'dg-small' }, 'MCP: one standard layer in the middle');
+    box(svg, { x: 10, y: 28, w: 90, h: 40, label: 'AI agent', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 102, y1: 48, x2: 148, y2: 48, tone: 'blue', index: 1 });
+    box(svg, { x: 150, y: 28, w: 130, h: 40, label: 'MCP server', tone: 'purple', index: 1, solid: true });
+    arrow(svg, { x1: 282, y1: 48, x2: 328, y2: 48, tone: 'purple', index: 2 });
+    box(svg, { x: 330, y: 28, w: 140, h: 40, label: 'Tools / resources', tone: 'teal', index: 2 });
+    svgNode(svg, 'text', { x: 10, y: 108, class: 'dg-small' }, 'UTCP: read the manual, then call directly');
+    box(svg, { x: 10, y: 150, w: 90, h: 40, label: 'AI agent', tone: 'blue', index: 3 });
+    const targets = [['HTTP / REST API', 120], ['CLI / local tool', 160], ['WebSocket / gRPC', 200]];
+    targets.forEach(([label, y], i) => {
+      arrow(svg, { x1: 102, y1: 170, x2: 218, y2: y + 15, tone: 'orange', index: 4 + i });
+      box(svg, { x: 220, y, w: 150, h: 30, label, tone: 'teal', index: 4 + i });
+    });
+    return figure;
+  };
+
   const h = { svgNode, makeFigure, box, arrow, ring };
   function has(slug) { return Object.prototype.hasOwnProperty.call(builders, slug); }
   function build(slug) { return builders[slug](h); }

@@ -1224,10 +1224,30 @@ const notes = [
       "Omp",
       "stdin / stdout",
       "Tool calling",
-      "Tool allow list"
+      "Tool allow list",
+      "UTCP"
     ],
     "slug": "mcp",
-    "detail": "Model Context Protocol defines a common way for AI applications to access capabilities from servers. The host is the user-facing application; clients handle communication with servers. Servers can offer tools for actions, resources for data, and prompts for reusable interaction templates."
+    "detail": "Model Context Protocol defines a common way for AI applications to access capabilities from servers. The host is the user-facing application; clients handle communication with servers. Servers can offer tools for actions, resources for data, and prompts for reusable interaction templates. UTCP is an alternative approach that skips the server layer and lets agents call tools through their native protocols."
+  },
+  {
+    "title": "UTCP",
+    "category": "agents",
+    "what": "Universal Tool Calling Protocol: a way for agents to discover tools and call them directly over their native protocols.",
+    "how": "A provider publishes a manual describing its tools and how to reach them, such as an HTTP endpoint, a CLI command, WebSocket, or gRPC. The agent's client reads the manual, then calls the tool itself with no intermediary server in the path. Because calls go straight to the tool, the tool's own authentication, rate limits, and logging apply. Check the current specification, since the protocol is young and still changing.",
+    "example": "A weather service already has a REST API. Its UTCP manual lists a get_forecast tool with its URL, method, and input schema. The agent client reads the manual and sends the HTTP request itself. With MCP, the same service would first be wrapped in an MCP server that the agent talks to instead.",
+    "watch": "No proxy means no central place to enforce permissions or audit calls; you must add those yourself. Ecosystem and client support is much smaller than MCP's.",
+    "sources": [
+      "utcp"
+    ],
+    "related": [
+      "MCP",
+      "Tools",
+      "Tool calling",
+      "Tool allow list"
+    ],
+    "slug": "utcp",
+    "detail": "UTCP and MCP both help agents use tools, but they put the standard in different places. MCP standardizes the connection: tools are exposed through MCP servers using one interface. UTCP standardizes the description: a manual tells the agent how to call each tool through the protocol it already speaks. MCP gives uniformity and a single control point at the cost of an extra layer to run. UTCP has less overhead and reuses existing APIs, but leaves cross-cutting concerns to each tool."
   },
   {
     "title": "MCP Apps",
@@ -2493,10 +2513,53 @@ const notes = [
       "LLMs",
       "KV cache",
       "GPT — Generative Pre-trained Transformer",
-      "Deep learning"
+      "Deep learning",
+      "Multi-head attention",
+      "Feed-forward network (MLP)"
     ],
     "slug": "transformers",
     "detail": "Transformers build contextual representations using attention and feed-forward layers. Attention lets one position combine information from other positions according to learned relevance scores. Positional information is needed because attention alone does not encode sequence order."
+  },
+  {
+    "title": "Multi-head attention",
+    "category": "models",
+    "what": "Running several attention operations in parallel so each can focus on a different kind of relationship.",
+    "how": "The model dimension is split across h heads. Each head has its own learned projections for queries, keys and values, so it computes its own attention weights over the same tokens. The head outputs are concatenated and mixed by one output projection back to the model dimension. Cost is similar to a single large head because each head works in a smaller dimension.",
+    "example": "In “The animal did not cross the road because it was tired”, one head may link “it” to “animal” while another tracks the nearby verb. In practice heads are not cleanly labeled like this; many are redundant or hard to interpret.",
+    "watch": "Heads are not assigned roles by design; any specialization emerges in training. Variants such as multi-query and grouped-query attention share keys and values across heads to shrink the KV cache.",
+    "sources": [
+      "attention",
+      "attentionVisual"
+    ],
+    "related": [
+      "Transformers",
+      "Feed-forward network (MLP)",
+      "KV cache",
+      "Deep learning"
+    ],
+    "slug": "multi-head-attention",
+    "detail": "One attention pass produces a single weighted mix of the other tokens, which forces it to blend every kind of relationship into one pattern. Multi-head attention gives the layer several independent passes. Each head looks at the same sequence through its own learned projections, so it can weigh tokens differently. The results are concatenated and projected back to the model width, then handed to the feed-forward network."
+  },
+  {
+    "title": "Feed-forward network (MLP)",
+    "category": "models",
+    "what": "The per-token neural network inside each transformer layer; the feed-forward network (FFN) and the multilayer perceptron (MLP) are the same thing.",
+    "how": "Each token's vector is processed on its own, with no mixing across positions. A linear layer expands it to a wider hidden size, often about 4 times the model dimension. A nonlinearity such as GELU or SwiGLU is applied, then a second linear layer projects it back to the model dimension. The result is added to the input through a residual connection. Sparse mixture-of-experts models replace this block with several experts and a router.",
+    "example": "After attention has gathered context into the vector for “it”, the FFN transforms that vector alone. Attention moves information between tokens; the FFN processes what each token has gathered. Much of a model's parameters sit in these blocks.",
+    "watch": "Without the nonlinearity, two linear layers collapse into one and add no power. Claims that FFNs store facts are a research hypothesis with supporting evidence, not a settled mechanism.",
+    "sources": [
+      "attention",
+      "neural"
+    ],
+    "related": [
+      "Transformers",
+      "Multi-head attention",
+      "Mixture of experts",
+      "Deep learning",
+      "Weights"
+    ],
+    "slug": "feed-forward-network-mlp",
+    "detail": "A transformer layer alternates two jobs. Attention lets tokens exchange information. The feed-forward network, also called an MLP, then transforms each token's vector independently using the same weights at every position. It widens the vector, applies a nonlinearity, and narrows it again. This is where much of the layer's capacity and parameter count lives."
   },
   {
     "title": "Upstash boxes",
@@ -4491,6 +4554,10 @@ const sources = {
     "MCP architecture",
     "https://modelcontextprotocol.io/docs/learn/architecture"
   ],
+  "utcp": [
+    "UTCP: Universal Tool Calling Protocol",
+    "https://www.utcp.io"
+  ],
   "mcptool": [
     "MCP tools",
     "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
@@ -5655,6 +5722,8 @@ const learningPaths = [
       "inference",
       "tokenization",
       "transformers",
+      "multi-head-attention",
+      "feed-forward-network-mlp",
       "llms"
     ]
   },
@@ -5684,6 +5753,7 @@ const learningPaths = [
       "tools",
       "tool-calling",
       "mcp",
+      "utcp",
       "context",
       "memory",
       "permissions-controls",
@@ -5870,6 +5940,8 @@ const intuitions = {
  "tokenization": "Models can't read letters, so text is chopped into reusable chunks, like Lego bricks for language. Common words are one brick; rare words snap together from several.",
  "embedding-models": "An embedding is a map coordinate for meaning. Sentences that mean similar things land close together, so 'refund policy' ends up near 'money back' even though they share no words.",
  "transformers": "Instead of reading one word at a time, every word looks at all the others and decides which ones matter for its own meaning. That 'who should I pay attention to?' step is attention.",
+ "multi-head-attention": "A panel of readers, each given the same page but told to look for something different: who did it, when, why. Their notes are stapled together.",
+ "feed-forward-network-mlp": "After the meeting (attention), each person goes back to their own desk and thinks it over alone. Same method for everyone, no talking.",
  "context": "The context window is the model's desk. Only what is on the desk right now can be used; anything not placed there, the model simply does not know.",
  "temperature": "A dial between 'safe and predictable' and 'adventurous'. Low picks the likeliest word almost every time; high gives less likely words a real chance.",
  "rag": "An open-book exam. Rather than trusting memory, the model first looks up the relevant pages, then answers with them in front of it.",
@@ -5880,6 +5952,7 @@ const intuitions = {
  "hnsw": "Like finding a street address by zooming from country to city to street. Upper layers make long jumps, lower layers make short ones, so you reach the neighborhood fast.",
  "agents": "A model with hands. It looks at the situation, picks an action, sees what happened, and repeats until the job is done or it is told to stop.",
  "tool-calling": "The model can't press buttons itself; it writes a note saying 'please run this function with these inputs'. Your code runs it and hands back the result.",
+ "utcp": "Instead of a universal adapter, you get a phone book. It tells the agent how to dial each tool directly in the language that tool already speaks.",
  "mcp": "A USB-C port for AI tools. Build a capability once as an MCP server and any compatible app can plug into it.",
  "prompt-injection": "A sticky note hidden in a document that says 'ignore your boss and do this instead'. The model may obey it because it can't always tell data from orders.",
  "hallucinations": "A confident guess presented as fact. The model is built to produce fluent text, and fluent is not the same as true.",
@@ -5937,6 +6010,14 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "multi-head-attention": [
+    "Why use several smaller heads instead of one big attention head?",
+    "One head yields a single weighted mix of tokens. Several heads can weigh tokens differently in parallel, at similar total cost, and their outputs are concatenated and projected back."
+  ],
+  "feed-forward-network-mlp": [
+    "What is the difference between what attention and the feed-forward network do?",
+    "Attention mixes information across tokens. The feed-forward network transforms each token's vector independently, with the same weights at every position."
+  ],
   "judge-biases": [
     "A judge picks A when A is first and B when B is first. Does either answer win?",
     "No. The slot decided the result, so count it as a tie. Keep a verdict only when the same answer wins in both orders."
@@ -5968,6 +6049,10 @@ const studyQuestions = {
   "temperature": [
     "Will temperature zero guarantee factual answers?",
     "No. It usually selects the highest-scoring token, which can still be wrong. Runtime differences can also prevent strict reproducibility."
+  ],
+  "utcp": [
+    "What is the main architectural difference between MCP and UTCP?",
+    "MCP places a standard server layer between agent and tool. UTCP has the agent read a manual and call the tool directly over its native protocol, so there is no intermediary to run or to enforce policy."
   ],
   "mcp": [
     "Does discovering a tool authorize its use?",
