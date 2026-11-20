@@ -65,3 +65,9 @@ test('gptq and awq diagrams are registered', () => {
 test('model pruning diagram is registered', () => {
   assert.ok(has('model-pruning'));
 });
+
+test('serving and parallelism diagrams are registered', () => {
+  assert.ok(has('continuous-batching'));
+  assert.ok(has('tensor-parallelism'));
+  assert.ok(has('pipeline-parallelism'));
+});

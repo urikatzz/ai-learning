@@ -2166,10 +2166,75 @@ const notes = [
       "Multi-agent patterns",
       "LLM gateway and AI governance",
       "Async, queueing and backpressure",
-      "Router pattern"
+      "Router pattern",
+      "Continuous batching"
     ],
     "slug": "routing-and-batching",
     "detail": "Routing chooses where a request should execute; batching groups work so an accelerator can process it efficiently. A router may consider model availability, load, or cache locality. A scheduler decides when and how requests share computation and memory."
+  },
+  {
+    "title": "Continuous batching",
+    "category": "systems",
+    "what": "Scheduling that lets a finished request leave the GPU batch and a waiting one take its slot immediately, instead of waiting for the whole batch to finish.",
+    "how": "The engine schedules at every generation step rather than per request. After each decode iteration it removes sequences that hit their end token and admits queued requests into the free slots, subject to memory limits such as KV cache space. Short requests no longer wait for the longest one in their batch.",
+    "example": "Four chats share a GPU. The second one finishes after 20 tokens, and a queued fifth request starts in its slot on the very next step while the others keep generating. Compare throughput and tail latency against static batching under mixed-length traffic.",
+    "watch": "Admitting too many sequences can exhaust KV cache memory and force evictions or preemption, and long prompts can stall active streams unless prefill is scheduled carefully.",
+    "sources": [
+      "batch",
+      "orca"
+    ],
+    "related": [
+      "Routing and batching",
+      "KV cache",
+      "vLLM",
+      "Inference engine",
+      "Prefill and decode",
+      "Time to First Token (TTFT)",
+      "Inter-token Latency (ITL)"
+    ],
+    "slug": "continuous-batching",
+    "detail": "Static batching holds every slot until the slowest request ends, so the GPU idles whenever lengths differ. Continuous (iteration-level) batching treats each decode step as a scheduling point. It is why engines such as vLLM serve many more users per GPU on the same hardware, at the cost of a more complex scheduler and memory manager."
+  },
+  {
+    "title": "Tensor parallelism",
+    "category": "systems",
+    "what": "Splitting each layer's weight matrices across several GPUs so they compute one layer together.",
+    "how": "Each large matrix is sliced, for example by columns or rows, and every GPU multiplies the input by its own slice. The partial results are combined with a collective operation such as all-reduce before the next step. This lets a model that does not fit on one GPU run, and it cuts per-layer latency.",
+    "example": "Split a layer's weight matrix in half across two GPUs. Each computes half of the output columns on the same input, then they exchange results. Measure tokens per second with 1, 2 and 4 GPUs to see how communication limits the gain.",
+    "watch": "Every layer needs GPU-to-GPU communication, so it works best over fast links such as NVLink. Across slow interconnects the communication can erase the speedup.",
+    "sources": [
+      "megatron"
+    ],
+    "related": [
+      "Pipeline parallelism",
+      "Inference engine",
+      "vLLM",
+      "Weights",
+      "Quantization",
+      "KV cache"
+    ],
+    "slug": "tensor-parallelism",
+    "detail": "Tensor parallelism is intra-layer: all GPUs work on the same layer at the same time. It needs frequent, small communications, so it is normally kept within one machine. It is often combined with pipeline parallelism across machines."
+  },
+  {
+    "title": "Pipeline parallelism",
+    "category": "systems",
+    "what": "Placing different consecutive groups of layers on different GPUs and passing activations from one stage to the next.",
+    "how": "The model's layers are divided into stages, for example layers 1-20 on GPU 1 and layers 21-40 on GPU 2. A batch is split into micro-batches so that while one GPU works on micro-batch 2, the next stage works on micro-batch 1. Only activations at stage boundaries move between GPUs.",
+    "example": "Split an 80-layer model over four GPUs, 20 layers each, and feed four micro-batches through. Once the pipeline is full all four GPUs are busy; compare utilization with a single micro-batch.",
+    "watch": "Pipeline bubbles: at the start and end some stages sit idle, and a single request still passes through every stage in turn, so latency does not drop. Stage sizes should be balanced.",
+    "sources": [
+      "gpipe"
+    ],
+    "related": [
+      "Tensor parallelism",
+      "Inference engine",
+      "vLLM",
+      "Weights",
+      "Time to First Token (TTFT)"
+    ],
+    "slug": "pipeline-parallelism",
+    "detail": "Pipeline parallelism is inter-layer: each GPU holds only its stage's weights and communicates once per boundary, so it tolerates slower links and suits multi-machine setups. It improves throughput and memory fit more than single-request latency."
   },
   {
     "title": "Sandbox",
@@ -4750,6 +4815,18 @@ const sources = {
     "LLM inference metrics",
     "https://docs.nvidia.com/nim/benchmarking/llm/metrics"
   ],
+  "orca": [
+    "Paper · Orca: A Distributed Serving System for Transformer-Based Generative Models",
+    "https://www.usenix.org/conference/osdi22/presentation/yu"
+  ],
+  "megatron": [
+    "Paper · Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+    "https://arxiv.org/abs/1909.08053"
+  ],
+  "gpipe": [
+    "Paper · GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+    "https://arxiv.org/abs/1811.06965"
+  ],
   "batch": [
     "Continuous batching and scheduling",
     "https://nvidia.github.io/TensorRT-LLM/features/paged-attention-ifb-scheduler.html"
@@ -5934,6 +6011,9 @@ const learningPaths = [
       "ollama",
       "llama-cpp",
       "vllm",
+      "continuous-batching",
+      "tensor-parallelism",
+      "pipeline-parallelism",
       "kv-cache",
       "prefill-and-decode",
       "time-to-first-token-ttft",
@@ -6123,6 +6203,9 @@ const intuitions = {
  "vllm": "A busy restaurant kitchen: it juggles many orders at once and uses every burner so no table waits long.",
  "ollama": "A friendly front desk for local models: it fetches the model, starts the engine, and hands you an API.",
  "quantization": "Rounding the model's numbers to fewer decimal places. It gets smaller and faster, at the risk of losing a little precision.",
+ "continuous-batching": "A sushi conveyor with no fixed table sets: the moment one diner leaves, the next person in line sits down.",
+ "tensor-parallelism": "Two people carving one big loaf together: each slices half of every cut, then they combine the pieces.",
+ "pipeline-parallelism": "An assembly line: each worker does one stage and passes the part along, so everyone stays busy once the line is full.",
  "model-pruning": "Trimming a hedge: cut the branches that add the least, and the plant stays healthy while getting lighter.",
  "gptq": "Rounding one number at a time, then nudging its neighbors so the mistake cancels out instead of piling up.",
  "awq": "Before squeezing, enlarge the few numbers that matter most so the rounding barely hurts them.",
@@ -6177,6 +6260,18 @@ const intuitions = {
  "best-of-n": "Write five drafts and let the unit tests, not your own opinion, pick the one that works."
 };
 const studyQuestions = {
+  "continuous-batching": [
+    "Why is continuous batching better than static batching for chat traffic?",
+    "Requests finish at different times. Continuous batching refills a slot at every decode step, so the GPU never waits for the longest request in a batch."
+  ],
+  "tensor-parallelism": [
+    "Why does tensor parallelism need fast GPU interconnects?",
+    "Every layer splits its matrix multiplication and must combine partial results with a collective such as all-reduce, so communication happens many times per token."
+  ],
+  "pipeline-parallelism": [
+    "What is a pipeline bubble and how are bubbles reduced?",
+    "Idle time while stages wait for work at the start and end of a batch. Splitting the batch into micro-batches keeps more stages busy."
+  ],
   "model-pruning": [
     "Why might a 50%-sparse pruned model not run faster?",
     "Unstructured pruning only zeroes individual weights; unless hardware and kernels exploit that sparsity, the matrices are the same size. Structured pruning removes whole units for a real speedup."

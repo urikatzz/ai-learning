@@ -359,6 +359,80 @@
     return figure;
   };
 
+  builders['continuous-batching'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Refill a slot the moment a request ends',
+      alt: 'Four GPU slots each show a request as a bar. When a short request ends, the next queued request starts in that slot immediately instead of waiting for the others.',
+      caption: 'Each bar is one request being generated. Finished requests free their slot at once and a waiting request takes it. Lengths are illustrative.',
+      height: 200
+    });
+    const rows = [
+      [{ w: 300, tone: 'blue' }],
+      [{ w: 120, tone: 'orange' }, { w: 160, tone: 'teal' }],
+      [{ w: 380, tone: 'purple' }],
+      [{ w: 200, tone: 'teal' }, { w: 140, tone: 'orange' }]
+    ];
+    svgNode(svg, 'text', { x: 14, y: 20, class: 'dg-small' }, 'GPU slots over time');
+    rows.forEach((segments, r) => {
+      const y = 32 + r * 36;
+      svgNode(svg, 'text', { x: 14, y: y + 20, class: 'dg-small' }, `#${r + 1}`);
+      let x = 44;
+      segments.forEach((seg, i) => {
+        const g = svgNode(svg, 'g', { class: `dg-${seg.tone}` });
+        svgNode(g, 'rect', { x, y, width: seg.w, height: 26, rx: 5, class: 'dg-fill dg-pop', style: `--i:${r + i}` });
+        x += seg.w + 4;
+      });
+    });
+    svgNode(svg, 'text', { x: 240, y: 192, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: '--i:6' }, 'next request jumps in, no waiting');
+    return figure;
+  };
+
+  builders['tensor-parallelism'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Split every layer across GPUs',
+      alt: 'One layer weight matrix is split into two halves. GPU 0 holds the left columns and GPU 1 holds the right columns. Both compute on the same input and their results are combined.',
+      caption: 'Each GPU holds a slice of every layer and computes its part at the same time. Results are combined after each layer, which needs fast links. Layout is illustrative.',
+      height: 200
+    });
+    box(svg, { x: 180, y: 12, w: 120, h: 34, label: 'same input', tone: 'purple', index: 0 });
+    arrow(svg, { x1: 210, y1: 48, x2: 130, y2: 78, tone: 'blue', index: 1 });
+    arrow(svg, { x1: 270, y1: 48, x2: 350, y2: 78, tone: 'teal', index: 2 });
+    box(svg, { x: 70, y: 80, w: 120, h: 50, label: 'GPU 0 · left columns', tone: 'blue', index: 3 });
+    box(svg, { x: 290, y: 80, w: 120, h: 50, label: 'GPU 1 · right columns', tone: 'teal', index: 4 });
+    arrow(svg, { x1: 130, y1: 132, x2: 210, y2: 160, tone: 'blue', index: 5 });
+    arrow(svg, { x1: 350, y1: 132, x2: 270, y2: 160, tone: 'teal', index: 6 });
+    box(svg, { x: 180, y: 162, w: 120, h: 30, label: 'combine (all-reduce)', tone: 'orange', index: 7 });
+    return figure;
+  };
+
+  builders['pipeline-parallelism'] = ({ svgNode, makeFigure }) => {
+    const { figure, svg } = makeFigure({
+      title: 'Different layers on different GPUs',
+      alt: 'Four GPUs each hold a block of layers. Four micro-batches flow through the stages in a staircase pattern so that all stages are busy once the pipeline fills.',
+      caption: 'Numbers are micro-batches. Each GPU runs its own layers and passes activations on, so after the pipeline fills all stages work at once. Empty cells are idle bubbles.',
+      height: 200
+    });
+    const tones = ['blue', 'teal', 'orange', 'purple'];
+    const labels = ['GPU 1 · L1-20', 'GPU 2 · L21-40', 'GPU 3 · L41-60', 'GPU 4 · L61-80'];
+    labels.forEach((label, stage) => {
+      const y = 22 + stage * 38;
+      svgNode(svg, 'text', { x: 14, y: y + 20, class: 'dg-small' }, label);
+      for (let t = 0; t < 7; t += 1) {
+        const mb = t - stage;
+        const x = 130 + t * 48;
+        if (mb >= 0 && mb < 4) {
+          const g = svgNode(svg, 'g', { class: `dg-${tones[stage]}` });
+          svgNode(g, 'rect', { x, y, width: 42, height: 28, rx: 5, class: 'dg-fill dg-pop', style: `--i:${t + stage}` });
+          svgNode(svg, 'text', { x: x + 21, y: y + 19, 'text-anchor': 'middle', class: 'dg-small dg-pop', style: `--i:${t + stage}` }, String(mb + 1));
+        } else {
+          svgNode(svg, 'rect', { x, y, width: 42, height: 28, rx: 5, class: 'dg-stroke', 'stroke-dasharray': '3 3', fill: 'none', opacity: 0.35 });
+        }
+      }
+    });
+    svgNode(svg, 'text', { x: 130, y: 188, class: 'dg-small' }, 'time \u2192');
+    return figure;
+  };
+
   builders.lora = ({ svgNode, makeFigure, box, arrow }) => {
     const { figure, svg } = makeFigure({
       title: 'Train a small adapter, keep W frozen',
