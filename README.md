@@ -1,12 +1,12 @@
 # AI Learning — Uri Katz
 
-A single-file, responsive AI glossary with 197 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
+A single-file, responsive AI glossary with 210 terms and six categories. Includes a searchable A–Z table, category filters, sort direction, light/dark themes, and dedicated hash-based term pages. No build, framework, or server is required.
 
 ## Read the glossary
 
-Open `index.html` in a browser. Click any term to open its page. Each explained term has a short index definition, a deeper introduction, mechanics, a worked example, common pitfalls, related terms, and source links. Seven guided learning paths cover foundations, retrieval, agents, agent architectures, model adaptation/serving, and production AI engineering. Twenty-two responsive diagrams and fifteen expandable self-checks reinforce the core concepts. Search includes the full explanations and related-term names. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
+Open `index.html` in a browser. Click any term to open its page. Each explained term has a short index definition, a deeper introduction, mechanics, a worked example, common pitfalls, related terms, and source links. Seven guided learning paths cover foundations, retrieval, agents, agent architectures, model adaptation/serving, and production AI engineering. Twenty-four responsive diagrams and 82 expandable self-checks reinforce the core concepts. Search includes the full explanations and related-term names. The examples are illustrative, not claims about Uri's personal experience. Hash links such as `index.html#term/rag` work locally and on GitHub Pages; browser Back and Forward work too.
 
-All 197 entries have explanations. JEV, Hermes, Orca, Herdr, Pi, Omp, and Karpathy’s LLM Wiki are identified using their official references. Gool was removed. Herdr retains the original `#term/herder` route so existing bookmarks continue to work.
+All 210 entries have explanations. JEV, Hermes, Orca, Herdr, Pi, Omp, and Karpathy’s LLM Wiki are identified using their official references. Gool was removed. Herdr retains the original `#term/herder` route so existing bookmarks continue to work.
 
 ## GitHub Pages
 
@@ -114,3 +114,7 @@ Motion lives in `assets/ai-laptop.svg` (hero, CSS inside the SVG), `assets/motio
 - **WHEN** they open learning path 7 or search for "escalation", "cascading", "routing", "speculative", or "best-of-N"
 - **THEN** dedicated entries explain tool-based escalation, confidence cascading, predictive routing, the asymmetric planner–executor, speculative decoding, and best-of-N with a verifier
 - **AND** all six render animated diagrams, as do the core orchestration topologies: chaining, router, parallelization, orchestrator–workers, supervisor, hierarchical, handoffs/swarm, and blackboard
+
+## RAG and maintained knowledge wikis
+
+The retrieval learning path includes **RAG vs maintained knowledge wiki (OKF)** at `index.html#term/rag-vs-knowledge-wiki`, with an index-navigation example, a comparison diagram, and a freshness self-check. It explains the label used in the reference image, retained artifacts in RAG, reusable wiki synthesis, and a combined retrieval workflow. Sources link to the original RAG paper and Karpathy’s LLM Wiki proposal.

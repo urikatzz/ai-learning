@@ -989,7 +989,8 @@ const notes = [
       "RAG",
       "Progressive disclosure",
       "Evals",
-      "Agent memory types"
+      "Agent memory types",
+      "RAG vs maintained knowledge wiki (OKF)"
     ],
     "slug": "karpathy-wiki-second-brain",
     "detail": "The llm-wiki gist proposes an agent-maintained Markdown knowledge base. Summaries and connections accumulate across questions. The user directs research and reviews edits. It is a workflow pattern, not a packaged application."
@@ -1997,7 +1998,8 @@ const notes = [
       "RAG vs. GraphRAG",
       "FAISS",
       "Citations and provenance",
-      "AI system architecture"
+      "AI system architecture",
+      "RAG vs maintained knowledge wiki (OKF)"
     ],
     "slug": "rag",
     "detail": "RAG combines retrieval from external information with model generation. The model receives selected evidence in its input rather than learning that evidence through a weight update. It is useful for changing, private, or specialized knowledge when the application can retrieve relevant sources."
@@ -4690,6 +4692,28 @@ const notes = [
       "toolCallingDocs",
       "pydantic"
     ]
+  },
+  {
+    "title": "RAG vs maintained knowledge wiki (OKF)",
+    "slug": "rag-vs-knowledge-wiki",
+    "category": "rag",
+    "what": "Compare retrieving evidence at question time with preparing linked knowledge pages ahead of time; the image calls the latter OKF.",
+    "detail": "RAG supplies retrieved evidence to a model when it answers. A maintained knowledge wiki also prepares reusable summaries and connections before questions arrive. The screenshot uses OKF for its wiki approach; treat that label as terminology from the image, not a standardized architecture or a verified product name. This comparison describes a design choice about when synthesis happens, and can be combined with Karpathy’s LLM Wiki pattern.",
+    "how": "For retrieval: retain source documents, update a searchable index, retrieve relevant passages, and generate an answer grounded in them. For a wiki: retain originals, prepare concept pages with source links, and maintain an index that guides the agent to relevant pages. A root index can lead to a topic index, then a concept page and its linked references. These filenames and one-page-per-concept organization are conventions, not requirements.\n\nWhen it matters: Consider a maintained wiki for recurring questions about definitions, metrics, or runbooks that have owners who can review updates. Search over source material remains useful for broad collections, new evidence, and details omitted from summaries. A combined workflow reads relevant wiki pages, checks whether they cover the question and are current, then retrieves original evidence for gaps or verification.",
+    "example": "A team repeatedly asks how it defines an active customer. Maintain `metrics/active-customer.md` with the approved definition, owner, effective date, exclusions, and links to the source decision. Navigate `index.md` → `metrics/index.md` → the concept page. For a question about an exception absent from that page, search the original decisions, cite the supporting evidence, and propose a reviewed update. If evidence conflicts or cannot be found, explain the uncertainty.\n\nHow to measure it: Use the same question set for retrieval alone, wiki navigation alone, and a combined workflow. Include recurring questions, missing topics, changed definitions, and conflicting sources. Compare answer correctness, citation support, stale-answer rate, latency, token use, and maintenance effort. Treat any cost or speed advantage as something to measure.",
+    "watch": "The image’s “0 knowledge kept” claim is misleading: RAG can retain documents, embeddings, indexes, caches, and application memory. A wiki makes derived synthesis persistent; it does not train the model or make all pages visible automatically. Linked-page traversal still selects context and needs a reading budget. A wiki can preserve mistakes or become stale, and a page existing does not prove it answers the question. Neither approach guarantees correctness or replaces permissions and source review.",
+    "related": [
+      "RAG",
+      "Karpathy wiki / second brain",
+      "Progressive disclosure",
+      "Grounding",
+      "Memory",
+      "Evals"
+    ],
+    "sources": [
+      "ragPaper",
+      "karpathyWiki"
+    ]
   }
 ];
 const sources = {
@@ -5933,7 +5957,26 @@ const diagrams = {
   },
   "three-layer-ai-security": {"title": "Three security layers around an agent", "steps": [["Information", "Least privilege, minimization, egress control."], ["Instructions", "Separate trusted instructions from untrusted data."], ["Actions", "Allow list, narrow tools, human approval."], ["Test", "Red team and re-run evals after changes."]], "caption": "Each layer assumes another can fail; enforcement happens in code outside the model."},
   "indirect-prompt-injection": {"title": "How a hidden instruction travels", "steps": [["Plant", "Attacker hides text in a page or email."], ["Read", "The agent fetches it as ordinary data."], ["Obey?", "A fooled model proposes a harmful action."], ["Block", "Permission and egress checks deny it."]], "caption": "The attacker never needs access to your systems; controls outside the model stop the last step."},
-  "security-evals-red-teaming": {"title": "Security eval loop", "steps": [["Attack", "Simulate injection and misuse."], ["Observe", "Record tool calls and data touched."], ["Judge", "Did anything unauthorized succeed?"], ["Fix and rerun", "Repeat after model or tool changes."]], "caption": "Run regularly, like regression tests for security."}
+  "security-evals-red-teaming": {"title": "Security eval loop", "steps": [["Attack", "Simulate injection and misuse."], ["Observe", "Record tool calls and data touched."], ["Judge", "Did anything unauthorized succeed?"], ["Fix and rerun", "Repeat after model or tool changes."]], "caption": "Run regularly, like regression tests for security."},
+  "rag-vs-knowledge-wiki": {
+    "title": "Two routes to evidence, with a shared answer step",
+    "parallel": true,
+    "steps": [
+      [
+        "Retrieve at question time",
+        "Question → search retained sources → select supporting passages."
+      ],
+      [
+        "Prepare and navigate a wiki",
+        "Sources → reviewed concept pages; question → index → relevant linked pages."
+      ],
+      [
+        "Combine when useful",
+        "Check coverage and freshness; retrieve originals for gaps, then answer with citations."
+      ]
+    ],
+    "caption": "The first two routes are alternatives that can cooperate. Both retain artifacts and must load relevant evidence into context; wiki maintenance also happens between questions."
+  }
 };
 const learningPaths = [
   {
@@ -5965,6 +6008,7 @@ const learningPaths = [
       "chunking",
       "vector-databases",
       "rag",
+      "rag-vs-knowledge-wiki",
       "hybrid-retrieval",
       "reranking",
       "evals",
@@ -6176,6 +6220,7 @@ function render(){
  $('table-shell').hidden=visible.length===0;$('empty').hidden=visible.length>0;
 }
 const intuitions = {
+ "rag-vs-knowledge-wiki": "RAG is looking up passages in a library for each question. A maintained wiki adds reviewed study notes and an index, while keeping the books available to check details.",
  "llms": "Think of a very well-read autocomplete. It has seen so much text that predicting the next word well forces it to pick up grammar, facts, and reasoning patterns along the way.",
  "tokenization": "Models can't read letters, so text is chopped into reusable chunks, like Lego bricks for language. Common words are one brick; rare words snap together from several.",
  "embedding-models": "An embedding is a map coordinate for meaning. Sentences that mean similar things land close together, so 'refund policy' ends up near 'money back' even though they share no words.",
@@ -6583,6 +6628,10 @@ const studyQuestions = {
   "best-of-n": [
     "When does best-of-N stop helping?",
     "When the verifier is weak or the candidates share the same blind spot. Prefer deterministic checks such as tests, and watch cost as N grows."
+  ],
+  "rag-vs-knowledge-wiki": [
+    "A wiki page exists, but its definition predates a new policy. Should the assistant answer from it immediately?",
+    "No. Page existence is not enough: check freshness and supporting sources. Retrieve the new policy, explain any conflict, and propose a reviewed page update. RAG retains its sources and index too; the wiki’s added value is reusable synthesis, not exclusive ownership of persistent knowledge."
   ]
 };
 
