@@ -144,7 +144,7 @@ const notes = [
     "category": "systems",
     "what": "Reusing stored data or computation when a new request meets defined reuse conditions.",
     "detail": "AI systems can cache documents, embeddings, retrieval results, prompt-prefix computation, or complete responses. These are different layers with different invalidation rules. A KV cache reuses attention state during decoding; provider prompt caching can reuse compatible prefix computation across requests. Neither necessarily reuses a final answer. Caching is the general idea. KV cache stores attention state inside one generation, and Prompt caching lets a provider reuse a repeated prompt prefix across requests.",
-    "how": "Define a cache key containing the inputs, versions, and authorization scope that affect reuse. Choose a time-to-live and explicit invalidation rules. Exact caches require matching keys; semantic caches reuse similar questions and therefore need additional equivalence checks. Prevent many simultaneous misses from duplicating expensive work.\n\nWhen it matters: Cache repeated expensive work when the underlying data is stable enough and an invalidation strategy can keep results appropriate.",
+    "how": "Define a cache key containing the inputs, versions, and authorization scope that affect reuse. Choose a time-to-live and explicit invalidation rules. Exact caches require matching keys; semantic caches reuse similar questions and therefore need additional equivalence checks. Prevent many simultaneous misses from duplicating expensive work.\n\nWhen it matters: Cache repeated expensive work when the underlying data is stable enough and an invalidation strategy can keep results appropriate.\n\nInference engine role: Optimization that can exist inside or outside the engine. When: Reusing attention state, a prompt prefix, or a complete response. Why: KV and prefix caches reduce model computation; an application response cache can bypass the engine entirely.",
     "example": "Cache a document embedding by content hash, embedding-model version, and preprocessing version. A response cache for a policy question also needs the policy version and access scope. Changing the policy should invalidate old answers even when the question text stays identical.\n\nHow to measure it: Report hit rate with a clear denominator, hit/miss latency, net cost including cache writes and storage, and stale or incorrect-hit rates. Benchmark a realistic mixture of cold and warm requests. A high hit rate can coexist with poor answers if reuse conditions are too broad.",
     "watch": "Never let reuse bypass authorization. Prompt caching does not expand the context window, and the cost and lifetime of cached prefixes depend on the provider.",
     "related": [
@@ -152,7 +152,8 @@ const notes = [
       "RAG vs. CAG",
       "Embedding models",
       "Permissions / controls",
-      "Prompt caching"
+      "Prompt caching",
+      "Inference engine"
     ],
     "sources": [
       "promptCacheDocs",
@@ -242,7 +243,7 @@ const notes = [
     "title": "Context",
     "category": "agents",
     "what": "The information available to a model for its current response.",
-    "how": "The application selects and orders material before sending it to the model. Reserve room for output and, where applicable, reasoning tokens according to the model interface. Remove duplicate or stale information and preserve source labels so instructions and reference material are distinguishable.",
+    "how": "The application selects and orders material before sending it to the model. Reserve room for output and, where applicable, reasoning tokens according to the model interface. Remove duplicate or stale information and preserve source labels so instructions and reference material are distinguishable.\n\nInference engine role: Input and capacity constraint managed during inference. When: Assembling a request and extending it during decoding. Why: The engine must account for sequence length and attention memory within the model’s supported context.",
     "example": "To fix a parser bug, include the failing input, error message, parser function, and expected output. Adding the entire repository may hide the relevant evidence. If an earlier design decision is absent from the current input, the model cannot reliably act as though it remembers it.",
     "watch": "More context can add distraction; relevance matters as well as size.",
     "sources": [
@@ -265,7 +266,8 @@ const notes = [
       "Context engineering",
       "Handoffs and swarm",
       "Agent memory types",
-      "Context minimization"
+      "Context minimization",
+      "Inference engine"
     ],
     "slug": "context",
     "detail": "Context is the input the model can consult for one invocation. It can include instructions, conversation history, tool descriptions, retrieved documents, and images. A context window is a capacity limit, usually expressed in tokens; it is not a guarantee that every included detail will be used correctly. Context is what the model sees now. Context engineering is the practice of choosing it, and Context minimization is the security-driven version of leaving data out."
@@ -299,7 +301,7 @@ const notes = [
     "title": "CUDA",
     "category": "platforms",
     "what": "NVIDIA's platform and programming environment for GPU-accelerated computing.",
-    "how": "Frameworks dispatch supported tensor operations to GPU kernels. Tensors must be on a compatible device, and driver, runtime, and package versions must work together. Data transfers and small operations can dominate runtime, so using a GPU does not automatically make every program faster.",
+    "how": "Frameworks dispatch supported tensor operations to GPU kernels. Tensors must be on a compatible device, and driver, runtime, and package versions must work together. Data transfers and small operations can dominate runtime, so using a GPU does not automatically make every program faster.\n\nInference engine role: GPU compute platform used beneath compatible engines. When: Executing supported operations on NVIDIA GPUs. Why: The engine relies on device kernels and memory operations to accelerate model computation.",
     "example": "A PyTorch program moves both its model and training batches to a CUDA device, then runs forward and backward operations there. If the model stays on the CPU while its inputs are on the GPU, operations may fail. An Apple GPU uses a different backend, such as Metal.",
     "watch": "CUDA targets NVIDIA hardware; an Apple-silicon Mac uses other acceleration backends.",
     "sources": [
@@ -308,7 +310,8 @@ const notes = [
     "related": [
       "PyTorch",
       "Training",
-      "MLX vs. PyTorch"
+      "MLX vs. PyTorch",
+      "Inference engine"
     ],
     "slug": "cuda",
     "detail": "CUDA lets programs use NVIDIA GPUs for general-purpose computation. A GPU can perform many similar numerical operations in parallel, which suits neural-network matrix operations. CUDA includes a programming model, development tools, and libraries; it is broader than a single driver or Python package."
@@ -803,7 +806,7 @@ const notes = [
     "title": "Hugging Face",
     "category": "platforms",
     "what": "An ecosystem for sharing and working with models, datasets, and ML tooling.",
-    "how": "Choose a repository, read its intended use and license, and pin a revision for reproducible experiments. Load matching model and tokenizer files with a compatible library. Some repositories include custom executable code, which should be reviewed before enabling it.",
+    "how": "Choose a repository, read its intended use and license, and pin a revision for reproducible experiments. Load matching model and tokenizer files with a compatible library. Some repositories include custom executable code, which should be reviewed before enabling it.\n\nInference engine role: Model distribution and software ecosystem adjacent to the engine. When: Obtaining model weights, tokenizers, configurations, or runtime libraries. Why: These artifacts and libraries support deployment; the Hub itself is not an engine component.",
     "example": "For sentiment classification, select a model card that describes the training language and label meanings, then test on your own support tickets. Record the repository revision and library version. A high download count does not establish that the model fits your domain.",
     "watch": "Review each artifact's model card, license, dependencies, and provenance.",
     "sources": [
@@ -813,7 +816,8 @@ const notes = [
     "related": [
       "Models",
       "PyTorch",
-      "Fine-tuning"
+      "Fine-tuning",
+      "Inference engine"
     ],
     "slug": "hugging-face",
     "detail": "Hugging Face provides a model and dataset Hub alongside libraries and learning resources. The Hub stores versioned artifacts such as model weights, tokenizers, configurations, and model cards. Libraries including Transformers and Datasets help applications use those artifacts."
@@ -846,7 +850,7 @@ const notes = [
     "title": "Inference",
     "category": "models",
     "what": "Using a trained model to compute an output from new input.",
-    "how": "Tokenize or otherwise preprocess the input, run the model, and decode or postprocess the result. Autoregressive generation repeats this process for successive tokens. Runtime memory includes weights, temporary activations, and often an attention cache; performance depends on all of them.",
+    "how": "Tokenize or otherwise preprocess the input, run the model, and decode or postprocess the result. Autoregressive generation repeats this process for successive tokens. Runtime memory includes weights, temporary activations, and often an attention cache; performance depends on all of them.\n\nInference engine role: Execution process performed by the engine. When: A trained model receives inputs. Why: It turns existing weights into predictions without an ordinary training update.",
     "example": "A support message passes through an embedding model to become a vector, then through a retrieval pipeline and a language model to become an answer. Both model calls are inference. Saving the conversation to a database does not by itself train either model.",
     "watch": "Ordinary inference does not update the model's learned weights.",
     "sources": [
@@ -866,7 +870,8 @@ const notes = [
       "Routing and batching",
       "Small language models (SLMs)",
       "Temperature",
-      "Multimodal applications"
+      "Multimodal applications",
+      "Inference engine"
     ],
     "slug": "inference",
     "detail": "Inference applies a trained model to inputs. A classifier returns scores or labels, an embedding model returns vectors, and a generative model produces a sequence or other content. Its ordinary forward computations use existing weights without learning from the request."
@@ -875,7 +880,7 @@ const notes = [
     "title": "Inference engine",
     "category": "models",
     "what": "The software that loads a trained model and runs it to produce outputs.",
-    "how": "An inference engine loads the weights, tokenizes the input, runs the forward pass on the available hardware, manages memory such as the KV cache, and samples each next token. Many engines also expose an API, schedule concurrent requests, and support quantized model formats.",
+    "how": "An inference engine loads the weights, tokenizes the input, runs the forward pass on the available hardware, manages memory such as the KV cache, and samples each next token. Many engines also expose an API, schedule concurrent requests, and support quantized model formats.\n\nScope: For autoregressive language models, the execution path is model loading → tokenization → prefill → repeated decode and token selection → output. Tokenization, sampling, and transport may be implemented in surrounding libraries or serving layers. Batching, quantization, parallelism, constrained decoding, and speculative decoding are optional capabilities, not requirements of every engine.\n\nRelated-term map: The related terms below cover internal operations and state, model artifacts, optional optimizations, execution frameworks and hardware, concrete runtimes, serving integrations, and performance metrics. Their “Inference engine role” paragraphs explain when each participates and why. Application orchestration and offline model preparation are labeled separately from runtime internals.",
     "example": "Ollama, llama.cpp, LM Studio, and vLLM are inference engines or tools built on one. The same model file can run at different speeds in different engines because kernels, batching, and memory handling differ.",
     "watch": "An engine is not the model. Check which model, quantization, and hardware backend are used before comparing speed or quality across engines.",
     "sources": [
@@ -889,7 +894,49 @@ const notes = [
       "vLLM",
       "LM Studio",
       "KV cache",
-      "Quantization"
+      "Quantization",
+      "Models",
+      "LLMs",
+      "Weights",
+      "Tensors",
+      "Tokenization",
+      "Context",
+      "Context engineering",
+      "Transformers",
+      "Multi-head attention",
+      "Feed-forward network (MLP)",
+      "Mixture of experts",
+      "Prefill and decode",
+      "Caching",
+      "Prompt caching",
+      "RAG vs. CAG",
+      "GPTQ",
+      "AWQ",
+      "Model pruning",
+      "LoRA",
+      "Temperature",
+      "Top-p and token budgets",
+      "Speculative decoding",
+      "Structured outputs",
+      "Reliable JSON output",
+      "Routing and batching",
+      "Continuous batching",
+      "Tensor parallelism",
+      "Pipeline parallelism",
+      "CUDA",
+      "MLX vs. PyTorch",
+      "PyTorch",
+      "TensorFlow",
+      "Hugging Face",
+      "Inter-token Latency (ITL)",
+      "Time to First Token (TTFT)",
+      "Streaming responses (SSE)",
+      "Async, queueing and backpressure",
+      "LLM gateway and AI governance",
+      "Provider adapters",
+      "AI system architecture",
+      "Model effort",
+      "Best-of-N with a verifier"
     ],
     "slug": "inference-engine",
     "detail": "The model holds learned weights; the inference engine is the program that turns those weights and an input into output. Low-level engines such as llama.cpp focus on efficient compute on local hardware. Wrappers such as Ollama add model downloads and a local server. Serving engines such as vLLM focus on throughput for many simultaneous users on GPUs."
@@ -898,7 +945,7 @@ const notes = [
     "title": "Inter-token Latency (ITL)",
     "category": "models",
     "what": "The time between successive generated output tokens.",
-    "how": "For token arrival times t₁, t₂, …, measure gaps tᵢ − tᵢ₋₁. Report a distribution, especially slow percentiles. Mean time per output token is often approximated as (last-token time − first-token time)/(output tokens − 1); metric naming varies across systems.",
+    "how": "For token arrival times t₁, t₂, …, measure gaps tᵢ − tᵢ₋₁. Report a distribution, especially slow percentiles. Mean time per output token is often approximated as (last-token time − first-token time)/(output tokens − 1); metric naming varies across systems.\n\nInference engine role: Observed performance metric for inference delivery. When: Measuring gaps between generated tokens. Why: It helps assess decode and scheduling responsiveness, although network buffering also affects client measurements.",
     "example": "Five tokens arrive at 0.80, 0.85, 0.90, 1.10, and 1.15 seconds. TTFT is 0.80 seconds; the four gaps average 87.5 milliseconds, with a 200-millisecond pause. If a transport groups tokens into chunks, client chunk timestamps cannot recover all individual token timings.",
     "watch": "Streaming chunks may contain several tokens; chunk timing and token timing are not always identical.",
     "sources": [
@@ -908,7 +955,8 @@ const notes = [
       "Time to First Token (TTFT)",
       "Prefill and decode",
       "Routing and batching",
-      "Streaming responses (SSE)"
+      "Streaming responses (SSE)",
+      "Inference engine"
     ],
     "slug": "inter-token-latency-itl",
     "detail": "Inter-token latency describes how quickly an already-started answer continues. It matters for the perceived smoothness of streaming output. Report whether measurements come from server generation events or client arrival events because buffering and network delays can change the result."
@@ -999,7 +1047,7 @@ const notes = [
     "title": "KV cache",
     "category": "models",
     "what": "Stored attention keys and values reused during autoregressive generation.",
-    "how": "For each new token, compute its query, key, and value; attend over cached keys and values; append the new key and value. A rough cache size is 2 × layers × tokens × KV heads × head dimension × bytes per value × batch size. Architectures and cache strategies can change this estimate.",
+    "how": "For each new token, compute its query, key, and value; attend over cached keys and values; append the new key and value. A rough cache size is 2 × layers × tokens × KV heads × head dimension × bytes per value × batch size. Architectures and cache strategies can change this estimate.\n\nInference engine role: Runtime attention state managed inside many generation engines. When: Prefill populates it and decode reuses and extends it. Why: Reusing previous keys and values avoids recomputing them for every generated token.",
     "example": "With 32 layers, 8 KV heads, head dimension 128, 4,096 cached tokens, and 2-byte values, one sequence needs roughly 512 MiB of KV data before overhead. A larger batch multiplies this cost. Quantizing model weights does not necessarily quantize its KV cache.",
     "watch": "The cache consumes memory as context grows and is distinct from the model's weights.",
     "sources": [
@@ -1011,7 +1059,8 @@ const notes = [
       "RAG vs. CAG",
       "Caching",
       "Transformers",
-      "Prompt caching"
+      "Prompt caching",
+      "Inference engine"
     ],
     "slug": "kv-cache",
     "detail": "In causal transformer decoding, each attention layer creates key and value vectors for processed tokens. The KV cache stores these vectors so later tokens can reuse them. It saves repeated computation, but it is runtime state rather than long-term knowledge or an answer cache. Prompt caching builds on it by keeping this state across separate requests, not only within one generation."
@@ -1104,7 +1153,7 @@ const notes = [
     "title": "llama.cpp",
     "category": "platforms",
     "what": "A C/C++ inference engine for running quantized language models on local hardware.",
-    "how": "Load a model in GGUF format, choose a quantization level that fits memory, and run it from a CLI or its built-in HTTP server. It supports CPU and GPU backends such as Metal, CUDA, and Vulkan, and offloads layers to the GPU when memory allows.",
+    "how": "Load a model in GGUF format, choose a quantization level that fits memory, and run it from a CLI or its built-in HTTP server. It supports CPU and GPU backends such as Metal, CUDA, and Vulkan, and offloads layers to the GPU when memory allows.\n\nInference engine role: Concrete inference-engine implementation. When: Running a compatible model on supported local or server hardware. Why: It loads model artifacts and implements model execution, memory handling, and generation.",
     "example": "Convert or download a GGUF model, start llama-server, and send chat requests to its OpenAI-compatible endpoint. Tools such as Ollama and LM Studio build on this engine or use it as a reference.",
     "watch": "It offers maximum control but less convenience: you manage model files, flags, and context size yourself.",
     "sources": [
@@ -1124,7 +1173,7 @@ const notes = [
     "title": "LLMs",
     "category": "models",
     "what": "Large language models: learned systems that model and generate language.",
-    "how": "For an autoregressive model, token IDs become vectors, neural layers compute contextual representations, and an output layer assigns scores to possible next tokens. A decoding rule selects a token, and generation repeats. Instructions and retrieved evidence affect the input; they do not directly edit weights.",
+    "how": "For an autoregressive model, token IDs become vectors, neural layers compute contextual representations, and an output layer assigns scores to possible next tokens. A decoding rule selects a token, and generation repeats. Instructions and retrieved evidence affect the input; they do not directly edit weights.\n\nInference engine role: Language-model workload executed by the engine. When: Processing text and generating tokens. Why: The engine implements the model’s forward computations and generation loop.",
     "example": "Ask an LLM to draft a function and it may produce syntactically plausible code. Compilation, tests, and review determine whether that code works. Similarly, a confident answer about a document is not evidence that the model saw or accurately recalled that document.",
     "watch": "Plausible text can be unsupported; use external evidence and verification when needed.",
     "sources": [
@@ -1140,7 +1189,8 @@ const notes = [
       "Multimodal models",
       "Natural language processing (NLP)",
       "Small language models (SLMs)",
-      "Temperature"
+      "Temperature",
+      "Inference engine"
     ],
     "slug": "llms",
     "detail": "Large language models learn statistical patterns in language from substantial training data. Many generative LLMs are transformers trained to predict tokens, then adapted for useful interaction. “Large” has no fixed threshold, and language models differ in architecture, training, and supported tasks."
@@ -1149,7 +1199,7 @@ const notes = [
     "title": "LM Studio",
     "category": "platforms",
     "what": "An application and developer environment for running compatible language models locally.",
-    "how": "Select a compatible model format and runtime, load it within available memory, and configure context and generation settings. Start the server when another application needs access. Compatibility with a familiar API shape does not mean every model or endpoint supports identical features.",
+    "how": "Select a compatible model format and runtime, load it within available memory, and configure context and generation settings. Start the server when another application needs access. Compatibility with a familiar API shape does not mean every model or endpoint supports identical features.\n\nInference engine role: Desktop and server tooling around inference runtimes. When: Loading a compatible model for chat or a local API. Why: It provides the user-facing controls and serving interface around model execution.",
     "example": "Load a small instruction model, test a prompt in the chat interface, and connect a prototype to the local endpoint. Measure memory use, time to first token, and answer quality. Downloads and optional integrations can involve network access even when inference itself is local.",
     "watch": "Model support, speed, and memory use depend on the runtime and hardware.",
     "sources": [
@@ -1191,7 +1241,7 @@ const notes = [
     "title": "LoRA",
     "category": "models",
     "what": "Low-Rank Adaptation: training small parameter updates instead of all base-model weights.",
-    "how": "For a d_out × d_in matrix, full tuning trains d_out × d_in values; LoRA trains roughly r × (d_in + d_out). Optimizer state for trainable parameters is also smaller. The base weights and many activations still consume memory, and adapter compatibility depends on the base checkpoint.",
+    "how": "For a d_out × d_in matrix, full tuning trains d_out × d_in values; LoRA trains roughly r × (d_in + d_out). Optimizer state for trainable parameters is also smaller. The base weights and many activations still consume memory, and adapter compatibility depends on the base checkpoint.\n\nInference engine role: Adapter artifact supported by some inference engines. When: Serving an adapted model with merged weights or a runtime-loaded adapter. Why: The adapter changes forward-pass behavior; training the adapter is separate from inference.",
     "example": "A 4,096 × 4,096 matrix has about 16.8 million values. Rank-8 LoRA uses two matrices with 65,536 trainable values for that layer, excluding other parameters. This reduces trainable state substantially, but does not mean the entire model is 256 times smaller or faster.",
     "watch": "Adapters reduce training requirements but do not remove the need to load and evaluate a base model.",
     "sources": [
@@ -1203,7 +1253,8 @@ const notes = [
       "Weights",
       "Quantization",
       "Fine-tuning types",
-      "Tensors"
+      "Tensors",
+      "Inference engine"
     ],
     "slug": "lora",
     "detail": "LoRA approximates a weight update with two smaller matrices while freezing the base weights. For a weight matrix W, the adapted computation uses W + ΔW, where ΔW is a scaled product BA. The rank r of that product is chosen much smaller than the matrix dimensions."
@@ -1343,7 +1394,7 @@ const notes = [
     "title": "Mixture of experts",
     "category": "models",
     "what": "A model design that routes computation through selected expert networks.",
-    "how": "A router scores experts and selects a subset; their outputs are combined. Training often encourages balanced utilization so a few experts do not receive all the work. Serving may distribute experts across devices, introducing communication and scheduling costs.",
+    "how": "A router scores experts and selects a subset; their outputs are combined. Training often encourages balanced utilization so a few experts do not receive all the work. Serving may distribute experts across devices, introducing communication and scheduling costs.\n\nInference engine role: Conditional model execution supported by compatible engines. When: Running a model whose layers route tokens to experts. Why: The engine must select and execute the required experts and manage their memory or device placement.",
     "example": "A layer has eight experts and routes each token through two. Different tokens can select different pairs. This does not imply eight explicit human-defined specialties or eight independent chat agents. Total parameter memory can remain high even when the active parameter count is relatively small.",
     "watch": "Fewer active parameters does not mean all expert weights disappear from memory.",
     "sources": [
@@ -1353,7 +1404,8 @@ const notes = [
       "Models",
       "Weights",
       "Inference",
-      "Mixture of agents"
+      "Mixture of agents",
+      "Inference engine"
     ],
     "slug": "mixture-of-experts",
     "detail": "A mixture-of-experts model contains multiple expert subnetworks and a routing mechanism. In sparse MoE models, only selected experts process each token. This allows a larger total parameter count without activating all parameters for every token, although other layers may remain shared."
@@ -1381,7 +1433,7 @@ const notes = [
     "title": "MLX vs. PyTorch",
     "category": "platforms",
     "what": "A comparison between an Apple-silicon-focused array framework and a broad ML framework.",
-    "how": "MLX uses lazy evaluation and takes advantage of Apple unified memory. PyTorch can use CPU and supported accelerator backends, including CUDA and Apple MPS. Unified memory reduces some copying needs but remains finite and shared with the operating system and other applications.",
+    "how": "MLX uses lazy evaluation and takes advantage of Apple unified memory. PyTorch can use CPU and supported accelerator backends, including CUDA and Apple MPS. Unified memory reduces some copying needs but remains finite and shared with the operating system and other applications.\n\nInference engine role: Framework choices beneath an inference implementation. When: Building or running model computations on supported devices. Why: These frameworks provide tensor operations and backends; they can support an engine without being a complete serving engine.",
     "example": "Compare the same model, precision, context length, and batch size on the same Mac. Warm up both runtimes and synchronize computation before timing; otherwise asynchronous or lazy execution can distort results. Include output quality and peak memory alongside throughput.",
     "watch": "Benchmark the specific model and workload; one framework is not universally faster.",
     "sources": [
@@ -1391,7 +1443,8 @@ const notes = [
     "related": [
       "CUDA",
       "LM Studio",
-      "Inference"
+      "Inference",
+      "Inference engine"
     ],
     "slug": "mlx-vs-pytorch",
     "detail": "MLX is an array framework designed for machine learning on Apple silicon. PyTorch is a general-purpose tensor and automatic-differentiation framework with a broad ecosystem. Both can support learning and inference, but their APIs, supported operations, and device backends differ."
@@ -1422,7 +1475,7 @@ const notes = [
     "title": "Model effort",
     "category": "agents",
     "what": "A setting or policy that allocates more or less inference-time reasoning work.",
-    "how": "Check which models support the control, which values they accept, and how reasoning usage affects billing and output limits. Evaluate effort settings on a representative task set. Additional computation may help difficult tasks while increasing latency and producing little benefit on simple ones.",
+    "how": "Check which models support the control, which values they accept, and how reasoning usage affects billing and output limits. Evaluate effort settings on a representative task set. Additional computation may help difficult tasks while increasing latency and producing little benefit on simple ones.\n\nInference engine role: Runtime-specific request control that may influence inference work. When: A supported model or provider accepts a reasoning-effort setting. Why: The runtime may allocate more generation or reasoning compute; it is not a universal engine component or a weight update.",
     "example": "Use a small budget for extracting an invoice date and compare larger budgets on debugging tasks with multiple interacting causes. Measure successful outcomes per unit cost. A high effort setting is not a guarantee that the model used correct assumptions or verified its answer.",
     "watch": "Effort, model size, and temperature are separate choices; more effort does not guarantee a better answer.",
     "sources": [
@@ -1435,7 +1488,8 @@ const notes = [
       "Models",
       "Chain of thought",
       "OpenRouter",
-      "Tree of Thoughts"
+      "Tree of Thoughts",
+      "Inference engine"
     ],
     "slug": "model-effort",
     "detail": "Reasoning effort is a provider- or runtime-specific control over inference-time work. It may request more internal reasoning tokens or a larger compute budget. It does not change the model weights or necessarily select a larger model, and the setting is not standardized across providers."
@@ -1444,7 +1498,7 @@ const notes = [
     "title": "Models",
     "category": "models",
     "what": "Parameterized computational systems that turn inputs into predictions or generated outputs.",
-    "how": "Select a model by task, supported inputs, quality, latency, memory, and license. Match the tokenizer or processor and configuration to the checkpoint. Parameter count is only one signal: training data, objective, numerical precision, and serving setup also affect results.",
+    "how": "Select a model by task, supported inputs, quality, latency, memory, and license. Match the tokenizer or processor and configuration to the checkpoint. Parameter count is only one signal: training data, objective, numerical precision, and serving setup also affect results.\n\nInference engine role: Model artifact consumed by the engine. When: Loading and executing a selected model. Why: The architecture and learned parameters define the computation the engine must run.",
     "example": "An embedding model turns text into a vector for search; a classifier returns label scores; a generative language model predicts a continuation. These components can cooperate in one application, but swapping them is not just a matter of changing a model name.",
     "watch": "An architecture name alone does not specify a checkpoint's capabilities, license, or resource requirements.",
     "sources": [
@@ -1463,7 +1517,8 @@ const notes = [
       "Model effort",
       "Multimodal models",
       "Ollama",
-      "OpenRouter"
+      "OpenRouter",
+      "Inference engine"
     ],
     "slug": "models",
     "detail": "A model is a learned computational mapping from inputs to outputs. Its architecture describes the operations; its parameters hold learned values. A checkpoint stores parameter values at a particular stage. A complete deployed system also needs preprocessing, runtime code, and an output interpretation."
@@ -1557,7 +1612,7 @@ const notes = [
     "title": "Ollama",
     "category": "platforms",
     "what": "A tool for managing and serving supported language models.",
-    "how": "Choose a model that fits the available memory, configure generation settings, and call the server through its API. Model loading, context allocation, and simultaneous requests affect resource use. Verify endpoint binding and routing when connecting another application.",
+    "how": "Choose a model that fits the available memory, configure generation settings, and call the server through its API. Model loading, context allocation, and simultaneous requests affect resource use. Verify endpoint binding and routing when connecting another application.\n\nInference engine role: Model-management and serving layer around inference execution. When: Pulling, configuring, and serving a selected model. Why: It makes an underlying runtime accessible through model management and APIs; its exact execution backend depends on the model and deployment.",
     "example": "A prototype sends a chat request to a locally running Ollama server and streams the response. Compare a smaller model with a larger one on the same task examples. Confirm where requests execute before assuming offline operation or local-only data processing.",
     "watch": "Verify where a chosen model runs; do not assume every configured request stays on-device.",
     "sources": [
@@ -1755,7 +1810,7 @@ const notes = [
     "title": "Prefill and decode",
     "category": "models",
     "what": "Two stages in autoregressive model inference.",
-    "how": "Prompt positions can be processed in parallel within a causal forward pass, though attention still respects the causal mask. Conventional decoding has a sequential dependency between output tokens. Prefix caching, speculative decoding, and scheduling can change the cost profile, so measure the serving implementation.",
+    "how": "Prompt positions can be processed in parallel within a causal forward pass, though attention still respects the causal mask. Conventional decoding has a sequential dependency between output tokens. Prefix caching, speculative decoding, and scheduling can change the cost profile, so measure the serving implementation.\n\nInference engine role: Core execution stages of autoregressive language-model engines. When: First processing the prompt, then generating output tokens. Why: Separating these stages explains their different compute, memory, and scheduling needs.",
     "example": "A request with a 20,000-token document and a short answer may spend most of its model time on prefill. A short prompt requesting a long story may spend more on decode. Queueing and network delay also contribute to what the user observes.",
     "watch": "Prefill time is only one contributor to end-to-end time to first token.",
     "sources": [
@@ -1766,7 +1821,8 @@ const notes = [
       "Time to First Token (TTFT)",
       "Inter-token Latency (ITL)",
       "Inference",
-      "Streaming responses (SSE)"
+      "Streaming responses (SSE)",
+      "Inference engine"
     ],
     "slug": "prefill-and-decode",
     "detail": "An autoregressive language model first processes the input sequence and then extends it. Prefill computes representations for prompt tokens and often initializes a KV cache. Decode generates additional tokens using the prompt and tokens generated so far."
@@ -1845,7 +1901,7 @@ const notes = [
     "title": "PyTorch",
     "category": "platforms",
     "what": "A tensor and automatic-differentiation framework for machine learning.",
-    "how": "A training step typically clears accumulated gradients, computes outputs and a loss, calls backward, and steps the optimizer. During inference, evaluation mode controls layers such as dropout, while no_grad or inference_mode disables gradient recording. These are distinct controls and often used together.",
+    "how": "A training step typically clears accumulated gradients, computes outputs and a loss, calls backward, and steps the optimizer. During inference, evaluation mode controls layers such as dropout, while no_grad or inference_mode disables gradient recording. These are distinct controls and often used together.\n\nInference engine role: Tensor framework that can underpin an inference engine. When: Executing a model in evaluation mode with gradient recording disabled as appropriate. Why: It supplies model modules, device operations, and execution tools; serving and scheduling need additional logic.",
     "example": "Train a classifier with labeled examples, then call model.eval() and run predictions under torch.inference_mode(). Forgetting evaluation mode can leave dropout active; forgetting to disable gradients can waste memory. Match tensor shapes and devices before interpreting numerical results.",
     "watch": "Device placement, precision, and gradient tracking affect correctness and resource use.",
     "sources": [
@@ -1859,7 +1915,8 @@ const notes = [
       "CUDA",
       "Tensors",
       "Backpropagation",
-      "Hugging Face"
+      "Hugging Face",
+      "Inference engine"
     ],
     "slug": "pytorch",
     "detail": "PyTorch represents data as tensors: multidimensional arrays with a data type and device. Modules organize model layers, autograd differentiates computations, and optimizers update parameters. The same framework can support experiments, training, and inference."
@@ -1868,7 +1925,7 @@ const notes = [
     "title": "Quantization",
     "category": "models",
     "what": "Representing model values with fewer bits to reduce resource use.",
-    "how": "Quantization maps values to a limited set of levels using scales and sometimes zero points. Post-training methods adapt an existing model; quantization-aware training accounts for the approximation during training. Actual speed depends on kernel and hardware support, not only the number of bits.",
+    "how": "Quantization maps values to a limited set of levels using scales and sometimes zero points. Post-training methods adapt an existing model; quantization-aware training accounts for the approximation during training. Actual speed depends on kernel and hardware support, not only the number of bits.\n\nInference engine role: Model representation and compute optimization supported by the engine. When: Loading and executing lower-precision weights or other supported tensors. Why: Compatible formats and kernels reduce memory use and may improve speed.",
     "example": "Ignoring overhead, 7 billion weights at 16 bits require about 14 GB; at 4 bits they require about 3.5 GB in decimal units. Scales, metadata, activations, and KV cache add memory. Measure task quality after conversion because lower precision can change outputs.",
     "watch": "Memory savings can trade off against quality or speed, depending on hardware and kernels.",
     "sources": [
@@ -1882,7 +1939,8 @@ const notes = [
       "Model distillation",
       "Model pruning",
       "GPTQ",
-      "AWQ"
+      "AWQ",
+      "Inference engine"
     ],
     "slug": "quantization",
     "detail": "Quantization stores or computes selected numerical values with a reduced representation, often using integers or compact floating-point formats. It can reduce model memory and memory-transfer cost. Weight quantization, activation quantization, and KV-cache quantization are separate choices."
@@ -1891,7 +1949,7 @@ const notes = [
     "title": "GPTQ",
     "category": "models",
     "what": "A post-training method that quantizes weights layer by layer while compensating for the rounding error.",
-    "how": "GPTQ quantizes a layer's weights one at a time. After rounding each weight, it adjusts the weights not yet quantized to cancel the error, using a small calibration set to estimate which adjustments matter. It typically targets 3-4 bit weights stored in groups that share a scale.",
+    "how": "GPTQ quantizes a layer's weights one at a time. After rounding each weight, it adjusts the weights not yet quantized to cancel the error, using a small calibration set to estimate which adjustments matter. It typically targets 3-4 bit weights stored in groups that share a scale.\n\nInference engine role: Offline quantization method whose output a compatible engine consumes. When: Preparing a quantized model before serving and loading that artifact. Why: The engine needs kernels and format support for the resulting weights; GPTQ calibration is a preparation step.",
     "example": "Take a 7B model in 16-bit, run GPTQ with a few hundred calibration samples to produce 4-bit weights, and load the result in a GPU inference engine. It takes minutes to hours but needs no retraining.",
     "watch": "Quality depends on the calibration data; data unlike your real use can hurt accuracy. Check the results on your own task.",
     "sources": [
@@ -1911,7 +1969,7 @@ const notes = [
     "title": "AWQ",
     "category": "models",
     "what": "A post-training method that protects the most important weights by scaling them before quantizing.",
-    "how": "AWQ runs a small calibration set through the model and finds the weight channels that see large activations. Those salient channels are scaled up before rounding, so they lose less relative precision, and the scale is folded back in afterward. Only a small fraction of channels needs this protection.",
+    "how": "AWQ runs a small calibration set through the model and finds the weight channels that see large activations. Those salient channels are scaled up before rounding, so they lose less relative precision, and the scale is folded back in afterward. Only a small fraction of channels needs this protection.\n\nInference engine role: Offline quantization method whose output a compatible engine consumes. When: Preparing weights and later running the quantized artifact. Why: Activation-aware preparation aims to preserve quality while compatible runtime kernels execute the compressed weights.",
     "example": "Quantize a 7B model to 4-bit with AWQ, then serve it with an engine that has AWQ kernels. It usually needs less calibration data than GPTQ and does not rewrite weights by reconstruction.",
     "watch": "Speed and support depend on the engine and its kernels, so confirm your runtime supports the format.",
     "sources": [
@@ -1931,7 +1989,7 @@ const notes = [
     "title": "Model pruning",
     "category": "models",
     "what": "Removing weights or whole structures from a model that contribute little, to make it smaller or cheaper to run.",
-    "how": "Pruning scores parts of a trained model by importance, for example by weight magnitude, and removes the lowest-scoring ones. Unstructured pruning zeroes individual weights, which gives sparse matrices. Structured pruning removes whole neurons, attention heads, or layers, which gives a smaller dense model. The pruned model is usually fine-tuned briefly to recover quality.",
+    "how": "Pruning scores parts of a trained model by importance, for example by weight magnitude, and removes the lowest-scoring ones. Unstructured pruning zeroes individual weights, which gives sparse matrices. Structured pruning removes whole neurons, attention heads, or layers, which gives a smaller dense model. The pruned model is usually fine-tuned briefly to recover quality.\n\nInference engine role: Model preparation technique with runtime requirements. When: Deploying a pruned model for inference. Why: The engine must support the resulting architecture or sparsity to realize speed or memory benefits.",
     "example": "Zero out the 50% smallest-magnitude weights in each layer of a model, then fine-tune for a short time and compare task quality with the original. Or drop a few attention heads that evaluation shows the model barely uses.",
     "watch": "Unstructured sparsity only speeds things up if the hardware and kernels exploit it; a half-zero matrix can run just as slowly as a full one. Measure latency and memory, not just the fraction of weights removed.",
     "sources": [
@@ -1942,7 +2000,8 @@ const notes = [
       "Model distillation",
       "Weights",
       "Fine-tuning",
-      "Small language models (SLMs)"
+      "Small language models (SLMs)",
+      "Inference engine"
     ],
     "slug": "model-pruning",
     "detail": "Pruning changes the model's structure, while quantization changes the precision of its numbers and distillation trains a new student. They can be combined. Pruned weights are removed or zeroed permanently, so capabilities that depended on them can degrade, and evaluation should cover more than average accuracy."
@@ -2008,7 +2067,7 @@ const notes = [
     "title": "RAG vs. CAG",
     "category": "rag",
     "what": "A comparison between query-time retrieval and caching a model's prepared knowledge context.",
-    "how": "Cached context can avoid repeated retrieval and prompt processing when the same stable material fits the context window. Updating that material requires appropriate cache invalidation. A provider’s prompt caching may reduce prefill work, but does not necessarily expose a reusable KV cache with the paper’s exact semantics.",
+    "how": "Cached context can avoid repeated retrieval and prompt processing when the same stable material fits the context window. Updating that material requires appropriate cache invalidation. A provider’s prompt caching may reduce prefill work, but does not necessarily expose a reusable KV cache with the paper’s exact semantics.\n\nInference engine role: Application pattern that can reuse engine-managed context state. When: A bounded knowledge collection is preloaded and reused. Why: CAG can exploit prepared inference state, while RAG retrieval itself remains outside the engine.",
     "example": "For a small, stable product handbook, compare a preloaded context with retrieval on accuracy, first-token latency, and cost. For millions of frequently updated documents, selective retrieval is usually necessary. Neither method removes the need to verify whether an answer is supported.",
     "watch": "CAG is not ordinary response caching; context limits, updates, and cache costs still matter.",
     "sources": [
@@ -2018,7 +2077,8 @@ const notes = [
       "RAG",
       "KV cache",
       "Context",
-      "Caching"
+      "Caching",
+      "Inference engine"
     ],
     "slug": "rag-vs-cag",
     "detail": "Cache-Augmented Generation, as used in the linked paper, preloads a bounded knowledge collection into a model’s context and reuses prepared inference state. RAG selects evidence for each query. CAG is a particular pattern, not a universal replacement for retrieval or a synonym for every caching technique."
@@ -2152,7 +2212,7 @@ const notes = [
     "title": "Routing and batching",
     "category": "systems",
     "what": "Assigning inference requests to workers and grouping work for efficient execution.",
-    "how": "Static batches wait for a group of requests. Dynamic batching collects arrivals over a short interval. Continuous batching adjusts active sequences between generation iterations as requests finish or arrive. Limit queueing and memory use so a throughput improvement does not break latency targets.",
+    "how": "Static batches wait for a group of requests. Dynamic batching collects arrivals over a short interval. Continuous batching adjusts active sequences between generation iterations as requests finish or arrive. Limit queueing and memory use so a throughput improvement does not break latency targets.\n\nInference engine role: Serving scheduler function, sometimes split between router and engine. When: Multiple inference requests compete for workers and compute. Why: Placing and grouping work improves utilization while controlling queues and memory.",
     "example": "A server decodes several chats together. When one finishes, another waiting request takes its place. Long prompts may need separate scheduling to avoid delaying active streams. Compare throughput, median latency, and tail latency under realistic concurrent load.",
     "watch": "Maximizing throughput can worsen individual-request latency; tune against the actual service goal.",
     "sources": [
@@ -2169,7 +2229,8 @@ const notes = [
       "LLM gateway and AI governance",
       "Async, queueing and backpressure",
       "Router pattern",
-      "Continuous batching"
+      "Continuous batching",
+      "Inference engine"
     ],
     "slug": "routing-and-batching",
     "detail": "Routing chooses where a request should execute; batching groups work so an accelerator can process it efficiently. A router may consider model availability, load, or cache locality. A scheduler decides when and how requests share computation and memory."
@@ -2178,7 +2239,7 @@ const notes = [
     "title": "Continuous batching",
     "category": "systems",
     "what": "Scheduling that lets a finished request leave the GPU batch and a waiting one take its slot immediately, instead of waiting for the whole batch to finish.",
-    "how": "The engine schedules at every generation step rather than per request. After each decode iteration it removes sequences that hit their end token and admits queued requests into the free slots, subject to memory limits such as KV cache space. Short requests no longer wait for the longest one in their batch.",
+    "how": "The engine schedules at every generation step rather than per request. After each decode iteration it removes sequences that hit their end token and admits queued requests into the free slots, subject to memory limits such as KV cache space. Short requests no longer wait for the longest one in their batch.\n\nInference engine role: Optional scheduling mechanism inside a serving engine. When: Active generation sequences finish or new requests can be admitted. Why: Changing the batch between iterations keeps compute capacity useful without waiting for the longest response.",
     "example": "Four chats share a GPU. The second one finishes after 20 tokens, and a queued fifth request starts in its slot on the very next step while the others keep generating. Compare throughput and tail latency against static batching under mixed-length traffic.",
     "watch": "Admitting too many sequences can exhaust KV cache memory and force evictions or preemption, and long prompts can stall active streams unless prefill is scheduled carefully.",
     "sources": [
@@ -2201,7 +2262,7 @@ const notes = [
     "title": "Tensor parallelism",
     "category": "systems",
     "what": "Splitting each layer's weight matrices across several GPUs so they compute one layer together.",
-    "how": "Each large matrix is sliced, for example by columns or rows, and every GPU multiplies the input by its own slice. The partial results are combined with a collective operation such as all-reduce before the next step. This lets a model that does not fit on one GPU run, and it cuts per-layer latency.",
+    "how": "Each large matrix is sliced, for example by columns or rows, and every GPU multiplies the input by its own slice. The partial results are combined with a collective operation such as all-reduce before the next step. This lets a model that does not fit on one GPU run, and it cuts per-layer latency.\n\nInference engine role: Optional distributed execution strategy inside a compatible engine. When: One layer’s tensors are split across GPUs. Why: Sharing each layer’s computation lets larger models fit and can improve performance when communication is fast enough.",
     "example": "Split a layer's weight matrix in half across two GPUs. Each computes half of the output columns on the same input, then they exchange results. Measure tokens per second with 1, 2 and 4 GPUs to see how communication limits the gain.",
     "watch": "Every layer needs GPU-to-GPU communication, so it works best over fast links such as NVLink. Across slow interconnects the communication can erase the speedup.",
     "sources": [
@@ -2222,7 +2283,7 @@ const notes = [
     "title": "Pipeline parallelism",
     "category": "systems",
     "what": "Placing different consecutive groups of layers on different GPUs and passing activations from one stage to the next.",
-    "how": "The model's layers are divided into stages, for example layers 1-20 on GPU 1 and layers 21-40 on GPU 2. A batch is split into micro-batches so that while one GPU works on micro-batch 2, the next stage works on micro-batch 1. Only activations at stage boundaries move between GPUs.",
+    "how": "The model's layers are divided into stages, for example layers 1-20 on GPU 1 and layers 21-40 on GPU 2. A batch is split into micro-batches so that while one GPU works on micro-batch 2, the next stage works on micro-batch 1. Only activations at stage boundaries move between GPUs.\n\nInference engine role: Optional distributed execution strategy inside a compatible engine. When: Consecutive layer groups are placed on different devices. Why: Partitioning layers distributes model memory and can improve throughput with enough work in flight.",
     "example": "Split an 80-layer model over four GPUs, 20 layers each, and feed four micro-batches through. Once the pipeline is full all four GPUs are busy; compare utilization with a single micro-batch.",
     "watch": "Pipeline bubbles: at the start and end some stages sit idle, and a single request still passes through every stage in turn, so latency does not drop. Stage sizes should be balanced.",
     "sources": [
@@ -2392,7 +2453,7 @@ const notes = [
     "category": "agents",
     "what": "Model responses constrained or validated against a machine-readable output schema.",
     "detail": "A schema defines an output contract: fields, types, required values, and supported constraints. Structured outputs make responses easier for application code to consume. Asking for JSON, producing syntactically valid JSON, and enforcing a schema provide different levels of assurance. Structured outputs shape what a model returns. Structured extraction is a security pattern that uses such outputs to pull fields out of untrusted text.",
-    "how": "Define a schema and use a model interface that supports it, often through constrained generation. Check the provider’s supported schema subset. Parse and validate results in application code, including business rules the schema cannot express. Handle refusal, truncation, and transport errors separately from successful responses.\n\nWhen it matters: Use them for extraction, classification, and model outputs that feed databases or workflows rather than being read only by a person.",
+    "how": "Define a schema and use a model interface that supports it, often through constrained generation. Check the provider’s supported schema subset. Parse and validate results in application code, including business rules the schema cannot express. Handle refusal, truncation, and transport errors separately from successful responses.\n\nWhen it matters: Use them for extraction, classification, and model outputs that feed databases or workflows rather than being read only by a person.\n\nInference engine role: Optional constrained-decoding capability of the engine or serving layer. When: A supported request asks for schema-conforming output. Why: Restricting eligible next tokens can enforce structure; parsing and business-rule validation still belong to the application.",
     "example": "A ticket extractor returns `{\"category\":\"billing\",\"order_id\":null}` with a category enum and a nullable order ID. Explicit null means evidence was missing. A schema-valid but invented order ID would still fail the application’s factual checks.\n\nHow to measure it: Track parse success, schema compliance among completed responses, and valid usable outputs per total request. Report refusals and truncations separately. Measure field accuracy against reviewed labels, and count downstream validation failures and repair attempts.",
     "watch": "A valid structure does not establish truth, authorization, or completeness. A stricter schema can force misleading guesses unless missing information has an explicit representation.",
     "related": [
@@ -2409,7 +2470,8 @@ const notes = [
       "Prompt chaining",
       "Structured extraction",
       "Narrow tools and argument validation",
-      "Reliable JSON output"
+      "Reliable JSON output",
+      "Inference engine"
     ],
     "sources": [
       "structuredDocs",
@@ -2470,7 +2532,7 @@ const notes = [
     "title": "Temperature",
     "category": "models",
     "what": "A sampling control that changes how concentrated token probabilities are.",
-    "how": "Lower positive T concentrates probability on higher-scoring tokens; higher T spreads probability more evenly. APIs commonly implement temperature zero as greedy selection rather than division by zero. Top-k or top-p filtering can further affect sampling, and some models restrict supported parameters.",
+    "how": "Lower positive T concentrates probability on higher-scoring tokens; higher T spreads probability more evenly. APIs commonly implement temperature zero as greedy selection rather than division by zero. Top-k or top-p filtering can further affect sampling, and some models restrict supported parameters.\n\nInference engine role: Sampling control applied in the generation pipeline. When: Converting next-token logits into a sampling distribution. Why: It adjusts output randomness without changing learned weights; sampling can live in the engine or its caller.",
     "example": "With two logits 2 and 1, the higher-scoring token has probability about 73% at T=1 and 88% at T=0.5. The lower temperature makes that choice more likely, but if it is the wrong answer, confidence has increased without correctness improving.",
     "watch": "Temperature is not a reasoning budget, and lower values do not guarantee truth or determinism.",
     "sources": [
@@ -2480,7 +2542,8 @@ const notes = [
       "Model effort",
       "Inference",
       "LLMs",
-      "Top-p and token budgets"
+      "Top-p and token budgets",
+      "Inference engine"
     ],
     "slug": "temperature",
     "detail": "Temperature changes the distribution used when sampling model output. For positive temperature T, token probabilities are proportional to exp(logit/T), where logits are unnormalized model scores. It controls randomness in selection, not the truthfulness of the underlying predictions."
@@ -2489,7 +2552,7 @@ const notes = [
     "title": "TensorFlow",
     "category": "platforms",
     "what": "A platform for building, training, and deploying machine-learning models.",
-    "how": "Define input shapes, layers, a loss, and an optimizer; train on batches and validate on held-out examples. Export a format supported by the intended runtime and check operation compatibility. Preprocessing must remain consistent between training and serving.",
+    "how": "Define input shapes, layers, a loss, and an optimizer; train on batches and validate on held-out examples. Export a format supported by the intended runtime and check operation compatibility. Preprocessing must remain consistent between training and serving.\n\nInference engine role: Tensor framework and deployment ecosystem that can underpin inference. When: Running a trained or exported model. Why: It supplies numerical execution and deployment tools; it also supports training outside the inference engine.",
     "example": "Train an image classifier on normalized images, then export it for an application. If serving supplies raw pixel values with different scaling, accuracy can collapse even though the weights are unchanged. Test the exported model with the exact application preprocessing.",
     "watch": "Training support and deployment compatibility vary across runtimes and model operations.",
     "sources": [
@@ -2499,7 +2562,8 @@ const notes = [
     "related": [
       "PyTorch",
       "Machine learning",
-      "Training"
+      "Training",
+      "Inference engine"
     ],
     "slug": "tensorflow",
     "detail": "TensorFlow is a framework for tensor computation, automatic differentiation, and model training and deployment. Keras provides high-level model-building APIs commonly used with TensorFlow. A training model and an exported inference artifact serve different stages of the workflow."
@@ -2510,14 +2574,15 @@ const notes = [
     "category": "ml",
     "what": "Multidimensional arrays used to represent model inputs, parameters, and intermediate computations.",
     "detail": "In ML frameworks, a tensor is an array with a shape, data type, and device. A scalar has zero axes, a vector one, and a matrix two. Higher-dimensional tensors can represent batches, images, or sequences. Shape describes axis sizes; it does not explain what each axis means.",
-    "how": "Operations transform or combine tensors under shape rules. Matrix multiplication contracts compatible dimensions; elementwise multiplication and broadcasting follow different rules. Reshaping changes the arrangement of dimensions, while permuting changes axis order. Some operations share underlying storage rather than copying data.\n\nWhen it matters: Understand tensors when preparing batches, connecting model layers, estimating memory, or diagnosing shape and device errors.",
+    "how": "Operations transform or combine tensors under shape rules. Matrix multiplication contracts compatible dimensions; elementwise multiplication and broadcasting follow different rules. Reshaping changes the arrangement of dimensions, while permuting changes axis order. Some operations share underlying storage rather than copying data.\n\nWhen it matters: Understand tensors when preparing batches, connecting model layers, estimating memory, or diagnosing shape and device errors.\n\nInference engine role: Internal data representation used by the engine. When: Storing weights, activations, logits, and attention caches. Why: Array shapes, data types, and devices determine how computation and memory are organized.",
     "example": "A batch of 32 RGB images with height and width 224 can use shape [32, 3, 224, 224] in a channels-first convention. It contains 4,816,896 values. At four bytes per float32 value, its raw data occupies 19,267,584 bytes, about 18.4 MiB; gradients and temporary tensors require additional space.\n\nHow to measure it: Inspect shape, dtype, device, value ranges, and non-finite values at boundaries. Estimate raw storage as element count × bytes per element, then profile actual peak memory. Views can share storage, so adding each tensor’s nominal size may double-count memory.",
     "watch": "A tensor with the right dimensions can still have swapped semantic axes. Tensor rank means number of axes here; it differs from matrix rank used in LoRA.",
     "related": [
       "PyTorch",
       "Weights",
       "Training",
-      "LoRA"
+      "LoRA",
+      "Inference engine"
     ],
     "sources": [
       "tensorTutorial",
@@ -2528,7 +2593,7 @@ const notes = [
     "title": "Time to First Token (TTFT)",
     "category": "models",
     "what": "Elapsed time from submitting a request to receiving its first output token.",
-    "how": "Time from request submission to the first content-bearing output. The delay may include routing, queueing, tokenization, prefill, initial decoding, and buffering. Ignore empty stream events when measuring first content. Report percentiles under realistic load, not only one warm request.",
+    "how": "Time from request submission to the first content-bearing output. The delay may include routing, queueing, tokenization, prefill, initial decoding, and buffering. Ignore empty stream events when measuring first content. Report percentiles under realistic load, not only one warm request.\n\nInference engine role: Observed performance metric for inference delivery. When: Timing a request until its first output token. Why: It reveals user-visible startup delay from queueing, prefill, and transport rather than identifying a single engine operation.",
     "example": "A request starts at time 0 and first visible text arrives at 0.8 seconds: TTFT is 800 milliseconds. If the full response finishes at 4 seconds, total latency is 4 seconds. A fast first token and slow later tokens are separate performance problems.",
     "watch": "TTFT is not a pure measurement of prefill; define the measurement boundary.",
     "sources": [
@@ -2540,7 +2605,8 @@ const notes = [
       "Routing and batching",
       "Observability",
       "Prompt caching",
-      "Streaming responses (SSE)"
+      "Streaming responses (SSE)",
+      "Inference engine"
     ],
     "slug": "time-to-first-token-ttft",
     "detail": "TTFT measures the delay before a user starts receiving generated content. It is a user-facing responsiveness metric when timed at the client. Server-side measurements can omit network or application overhead, so reports must define their start and end events."
@@ -2568,7 +2634,7 @@ const notes = [
     "title": "Tokenization",
     "category": "models",
     "what": "Converting input into the token IDs a model operates on.",
-    "how": "Common tokenizers build reusable pieces using methods such as byte-pair encoding or unigram modeling. Text becomes token IDs, then an embedding layer maps IDs to vectors. Chat templates may add role and boundary tokens, so count the actual formatted input when estimating context use.",
+    "how": "Common tokenizers build reusable pieces using methods such as byte-pair encoding or unigram modeling. Text becomes token IDs, then an embedding layer maps IDs to vectors. Chat templates may add role and boundary tokens, so count the actual formatted input when estimating context use.\n\nInference engine role: Input/output boundary of a language-model inference pipeline. When: Before prefill and when turning generated token IDs into text. Why: The model consumes token IDs rather than raw text; tokenization may live in the engine or its serving wrapper.",
     "example": "A long code identifier may split into several tokens while a common word uses one. The same sentence can have different counts under two tokenizers. Use the target model’s tokenizer instead of assuming a fixed number of characters per token, especially for multilingual text.",
     "watch": "Token counts depend on the tokenizer and language; tokens are not equivalent to words.",
     "sources": [
@@ -2580,7 +2646,8 @@ const notes = [
       "Chunking",
       "Natural language processing (NLP)",
       "Rate limits",
-      "Top-p and token budgets"
+      "Top-p and token budgets",
+      "Inference engine"
     ],
     "slug": "tokenization",
     "detail": "Tokenization converts text into the discrete IDs consumed by a language model. Tokens may correspond to words, subwords, punctuation, bytes, or special control symbols. The tokenizer’s vocabulary and rules are part of the model’s input contract."
@@ -2679,7 +2746,7 @@ const notes = [
     "title": "Transformers",
     "category": "models",
     "what": "Neural architectures built around attention and feed-forward computation.",
-    "how": "Self-attention forms queries Q, keys K, and values V; scaled dot-product attention computes softmax(QKᵀ/√dₖ)V. Here dₖ is the key-vector dimension. Multiple heads learn different projections, and residual connections and normalization support stacked layers. Causal masks block future positions in decoder models. Standard dense attention has quadratic pairwise work in sequence length.",
+    "how": "Self-attention forms queries Q, keys K, and values V; scaled dot-product attention computes softmax(QKᵀ/√dₖ)V. Here dₖ is the key-vector dimension. Multiple heads learn different projections, and residual connections and normalization support stacked layers. Causal masks block future positions in decoder models. Standard dense attention has quadratic pairwise work in sequence length.\n\nInference engine role: Model architecture implemented by compatible engines. When: Executing each Transformer forward pass. Why: The engine must run the architecture’s attention, normalization, and feed-forward operations.",
     "example": "In “The animal did not cross the road because it was tired”, contextual processing can connect the pronoun with earlier words. Attention weights are useful computational signals, but are not automatically faithful explanations of a model’s decision. Encoder, decoder, and encoder-decoder variants serve different tasks.",
     "watch": "The original transformer includes encoder and decoder components; GPT-style models use a decoder architecture.",
     "sources": [
@@ -2693,7 +2760,8 @@ const notes = [
       "GPT — Generative Pre-trained Transformer",
       "Deep learning",
       "Multi-head attention",
-      "Feed-forward network (MLP)"
+      "Feed-forward network (MLP)",
+      "Inference engine"
     ],
     "slug": "transformers",
     "detail": "Transformers build contextual representations using attention and feed-forward layers. Attention lets one position combine information from other positions according to learned relevance scores. Positional information is needed because attention alone does not encode sequence order."
@@ -2702,7 +2770,7 @@ const notes = [
     "title": "Multi-head attention",
     "category": "models",
     "what": "Running several attention operations in parallel so each can focus on a different kind of relationship.",
-    "how": "The model dimension is split across h heads. Each head has its own learned projections for queries, keys and values, so it computes its own attention weights over the same tokens. The head outputs are concatenated and mixed by one output projection back to the model dimension. Cost is similar to a single large head because each head works in a smaller dimension.",
+    "how": "The model dimension is split across h heads. Each head has its own learned projections for queries, keys and values, so it computes its own attention weights over the same tokens. The head outputs are concatenated and mixed by one output projection back to the model dimension. Cost is similar to a single large head because each head works in a smaller dimension.\n\nInference engine role: Model operation computed inside a Transformer engine. When: Prefill and each decode step. Why: It combines information across visible token positions and uses cached keys and values where supported.",
     "example": "In “The animal did not cross the road because it was tired”, one head may link “it” to “animal” while another tracks the nearby verb. In practice heads are not cleanly labeled like this; many are redundant or hard to interpret.",
     "watch": "Heads are not assigned roles by design; any specialization emerges in training. Variants such as multi-query and grouped-query attention share keys and values across heads to shrink the KV cache.",
     "sources": [
@@ -2713,7 +2781,8 @@ const notes = [
       "Transformers",
       "Feed-forward network (MLP)",
       "KV cache",
-      "Deep learning"
+      "Deep learning",
+      "Inference engine"
     ],
     "slug": "multi-head-attention",
     "detail": "One attention pass produces a single weighted mix of the other tokens, which forces it to blend every kind of relationship into one pattern. Multi-head attention gives the layer several independent passes. Each head looks at the same sequence through its own learned projections, so it can weigh tokens differently. The results are concatenated and projected back to the model width, then handed to the feed-forward network."
@@ -2722,7 +2791,7 @@ const notes = [
     "title": "Feed-forward network (MLP)",
     "category": "models",
     "what": "The per-token neural network inside each transformer layer; the feed-forward network (FFN) and the multilayer perceptron (MLP) are the same thing.",
-    "how": "Each token's vector is processed on its own, with no mixing across positions. A linear layer expands it to a wider hidden size, often about 4 times the model dimension. A nonlinearity such as GELU or SwiGLU is applied, then a second linear layer projects it back to the model dimension. The result is added to the input through a residual connection. Sparse mixture-of-experts models replace this block with several experts and a router.",
+    "how": "Each token's vector is processed on its own, with no mixing across positions. A linear layer expands it to a wider hidden size, often about 4 times the model dimension. A nonlinearity such as GELU or SwiGLU is applied, then a second linear layer projects it back to the model dimension. The result is added to the input through a residual connection. Sparse mixture-of-experts models replace this block with several experts and a router.\n\nInference engine role: Model operation computed inside a Transformer engine. When: Each Transformer block’s forward pass. Why: Its learned transformations are required to produce the model’s next representations.",
     "example": "After attention has gathered context into the vector for “it”, the FFN transforms that vector alone. Attention moves information between tokens; the FFN processes what each token has gathered. Much of a model's parameters sit in these blocks.",
     "watch": "Without the nonlinearity, two linear layers collapse into one and add no power. Claims that FFNs store facts are a research hypothesis with supporting evidence, not a settled mechanism.",
     "sources": [
@@ -2734,7 +2803,8 @@ const notes = [
       "Multi-head attention",
       "Mixture of experts",
       "Deep learning",
-      "Weights"
+      "Weights",
+      "Inference engine"
     ],
     "slug": "feed-forward-network-mlp",
     "detail": "A transformer layer alternates two jobs. Attention lets tokens exchange information. The feed-forward network, also called an MLP, then transforms each token's vector independently using the same weights at every position. It widens the vector, applies a nonlinearity, and narrows it again. This is where much of the layer's capacity and parameter count lives."
@@ -2787,7 +2857,7 @@ const notes = [
     "title": "vLLM",
     "category": "platforms",
     "what": "An inference engine built for high-throughput serving of language models on GPUs.",
-    "how": "vLLM manages the KV cache in pages (PagedAttention) and batches requests continuously, so many users share a GPU efficiently. It serves an OpenAI-compatible API and targets production workloads.",
+    "how": "vLLM manages the KV cache in pages (PagedAttention) and batches requests continuously, so many users share a GPU efficiently. It serves an OpenAI-compatible API and targets production workloads.\n\nInference engine role: Concrete inference and serving engine. When: Serving supported models, especially concurrent GPU workloads. Why: It combines model execution with cache management and request scheduling for throughput.",
     "example": "A team serving a chat product to many users runs vLLM on GPU servers and routes requests to it. Throughput and latency under load are the main reasons to choose it over a single-user local tool.",
     "watch": "It is aimed at GPU servers; for a single user on a laptop, Ollama or llama.cpp is usually simpler.",
     "sources": [
@@ -2808,7 +2878,7 @@ const notes = [
     "title": "Weights",
     "category": "models",
     "what": "The learned numerical parameters of a model.",
-    "how": "In a simple layer, y = Wx + b combines input vector x with weight matrix W and bias b. Training adjusts these parameters according to a loss. Saving weights alone may not preserve tokenizer settings, architecture configuration, or optimizer state needed to reproduce or resume a run.",
+    "how": "In a simple layer, y = Wx + b combines input vector x with weight matrix W and bias b. Training adjusts these parameters according to a loss. Saving weights alone may not preserve tokenizer settings, architecture configuration, or optimizer state needed to reproduce or resume a run.\n\nInference engine role: Learned parameters loaded and read by the engine. When: Model initialization and every forward pass. Why: They supply the numerical values needed to compute predictions.",
     "example": "A linear model y = 2x + 1 uses weight 2 and bias 1. A large neural model contains many interconnected parameters instead of a small readable formula. Changing one value is not a dependable way to edit one factual belief because learned information is distributed.",
     "watch": "Weights do not act like an editable database of exact facts.",
     "sources": [
@@ -2823,7 +2893,8 @@ const notes = [
       "Backpropagation",
       "Deep learning",
       "Mixture of experts",
-      "Quantization"
+      "Quantization",
+      "Inference engine"
     ],
     "slug": "weights",
     "detail": "Weights are learned numerical parameters used in a model’s computations. The term often informally includes biases and other trainable values. An architecture defines how these values are used, while a checkpoint stores their particular values after some amount of training."
@@ -3011,7 +3082,7 @@ const notes = [
     "title": "Top-p and token budgets",
     "category": "models",
     "what": "Sampling and length controls that shape how a model generates output.",
-    "how": "Change one control at a time and compare outputs on a fixed test set. Set an output limit that fits the expected answer and handle truncated responses. Track input and output tokens per request. How to measure it: record cost, latency, and truncation rate per setting.",
+    "how": "Change one control at a time and compare outputs on a fixed test set. Set an output limit that fits the expected answer and handle truncated responses. Track input and output tokens per request. How to measure it: record cost, latency, and truncation rate per setting.\n\nInference engine role: Sampling and stopping controls in the generation pipeline. When: Choosing each next token and deciding when generation ends. Why: Top-p limits candidate tokens while output budgets bound work, latency, and cache growth.",
     "example": "A summarizer uses a low top-p for stable wording and a 300-token output cap. Logs show 4% of responses end at the cap, so the cap is raised to 400.",
     "watch": "Lower randomness does not guarantee identical or correct outputs. Too small a budget cuts answers off mid-sentence.",
     "sources": [
@@ -3021,7 +3092,8 @@ const notes = [
       "Temperature",
       "Tokenization",
       "Context",
-      "Rate limits"
+      "Rate limits",
+      "Inference engine"
     ],
     "slug": "top-p-and-token-budgets",
     "detail": "Top-p (nucleus) sampling limits choices to the smallest set of tokens whose probabilities add up to p. Lower values make output more focused. Token budgets cap input and output length, which bounds cost and latency and can truncate answers. Vendors often advise adjusting temperature or top-p, not both."
@@ -3030,7 +3102,7 @@ const notes = [
     "title": "Context engineering",
     "category": "agents",
     "what": "Deliberately choosing and arranging what information goes into a model's context.",
-    "how": "Set a budget per section, assemble context dynamically from user, task, and retrieval signals, compact old turns, load details only when needed, and keep application state outside the prompt. Put stable content first to benefit from caching. How to measure it: test quality, latency, and cost as you vary what is included.",
+    "how": "Set a budget per section, assemble context dynamically from user, task, and retrieval signals, compact old turns, load details only when needed, and keep application state outside the prompt. Put stable content first to benefit from caching. How to measure it: test quality, latency, and cost as you vary what is included.\n\nInference engine role: Application-side preparation for the engine. When: Selecting instructions and evidence before a request. Why: It determines the input sent to inference; the selection policy usually lives outside the engine.",
     "example": "A support agent keeps the last few turns verbatim, a summary of earlier ones, the customer's plan data, and the top 3 relevant articles. Removing the full chat history cut cost with no drop on the test set.",
     "watch": "More context is not always better: irrelevant or conflicting material can reduce answer quality.",
     "sources": [
@@ -3042,7 +3114,8 @@ const notes = [
       "Progressive disclosure",
       "Prompt caching",
       "Memory",
-      "Context minimization"
+      "Context minimization",
+      "Inference engine"
     ],
     "slug": "context-engineering",
     "detail": "The context window is a limited resource. Context engineering decides what to include (instructions, history, retrieved documents, tool results), what to summarize or drop, and in what order. It extends prompt writing to the whole information flow of an application. Context minimization is the narrower security case: deciding what not to include so sensitive data cannot leak."
@@ -3051,7 +3124,7 @@ const notes = [
     "title": "Prompt caching",
     "category": "systems",
     "what": "Reusing the processed form of a repeated prompt prefix to cut cost and latency.",
-    "how": "Place stable content first and variable content last, keep that prefix byte-identical, mark cache points where the provider requires it, and watch cache expiry times. How to measure it: track cache hit rate, cached versus uncached tokens, and cost and time-to-first-token before and after.",
+    "how": "Place stable content first and variable content last, keep that prefix byte-identical, mark cache points where the provider requires it, and watch cache expiry times. How to measure it: track cache hit rate, cached versus uncached tokens, and cost and time-to-first-token before and after.\n\nInference engine role: Prefix-reuse optimization in a compatible engine or serving layer. When: Requests share a reusable prompt prefix. Why: Reusing prepared attention state reduces repeated prefill work; availability and reuse rules depend on the runtime.",
     "example": "A coding assistant sends a 20k-token project brief with each request. Moving the changing user question to the end lets later requests hit the cache, and per-request cost falls.",
     "watch": "A timestamp or reordered tool list at the start of the prompt breaks the prefix and silently removes the savings.",
     "sources": [
@@ -3061,7 +3134,8 @@ const notes = [
       "Caching",
       "KV cache",
       "Context engineering",
-      "Time to First Token (TTFT)"
+      "Time to First Token (TTFT)",
+      "Inference engine"
     ],
     "slug": "prompt-caching",
     "detail": "When many requests start with the same long prefix (system prompt, tools, documents), the provider can store its processed state and reuse it. Cached tokens usually cost less and respond faster. Cache hits require an identical prefix, so ordering matters. It works one level above the KV cache: the provider keeps the KV cache for a repeated prefix so later requests can skip recomputing it."
@@ -3270,7 +3344,7 @@ const notes = [
     "title": "LLM gateway and AI governance",
     "category": "systems",
     "what": "A central layer that controls how an organization's applications reach models.",
-    "how": "Issue each team or app its own gateway credential, set budgets and rate limits, log requests with metadata, and enforce which models and data classes are allowed. A common interface also eases switching providers. How to measure it: track spend per team, policy violations blocked, and latency added by the gateway.",
+    "how": "Issue each team or app its own gateway credential, set budgets and rate limits, log requests with metadata, and enforce which models and data classes are allowed. A common interface also eases switching providers. How to measure it: track spend per team, policy violations blocked, and latency added by the gateway.\n\nInference engine role: Infrastructure in front of inference engines or provider APIs. When: Routing and governing application model requests. Why: Central policies and provider selection are serving concerns rather than the engine’s numerical forward pass.",
     "example": "Three teams call the gateway with separate keys. When one team exceeds its monthly budget, requests are throttled and finance sees the usage by team.",
     "watch": "A gateway becomes a single point of failure and a latency cost. Logs may hold sensitive prompts, so control access to them.",
     "sources": [
@@ -3285,7 +3359,8 @@ const notes = [
       "Async, queueing and backpressure",
       "Docker and containers",
       "Secrets and least-privilege IAM",
-      "Mixture of agents"
+      "Mixture of agents",
+      "Inference engine"
     ],
     "slug": "llm-gateway",
     "detail": "A gateway sits between applications and providers. It can handle authentication and key management, quotas and budgets, logging, routing, policy enforcement, and approved-provider lists. Governance is the set of rules and audit trails around which models and data may be used."
@@ -3315,7 +3390,7 @@ const notes = [
     "title": "Streaming responses (SSE)",
     "category": "systems",
     "what": "Sending model output to the client piece by piece as it is generated.",
-    "how": "Enable streaming in the model call, relay events through a streaming endpoint, handle disconnects and errors mid-stream, and decide how to validate content that arrives incrementally. How to measure it: track time to first token and inter-token latency, plus mid-stream failure rate.",
+    "how": "Enable streaming in the model call, relay events through a streaming endpoint, handle disconnects and errors mid-stream, and decide how to validate content that arrives incrementally. How to measure it: track time to first token and inter-token latency, plus mid-stream failure rate.\n\nInference engine role: Transport around the engine’s generated output. When: Sending incremental tokens or chunks to a client. Why: It exposes progress before completion; SSE is a serving protocol rather than a model computation.",
     "example": "A chat page shows words as they arrive. The server forwards model deltas over SSE; if the user closes the tab, the server cancels the model call to stop spending tokens.",
     "watch": "Structured outputs and safety checks are harder to apply to partial output. Proxies that buffer responses can break streaming.",
     "sources": [
@@ -3328,7 +3403,8 @@ const notes = [
       "FastAPI and Pydantic",
       "Structured outputs",
       "Prefill and decode",
-      "Multimodal applications"
+      "Multimodal applications",
+      "Inference engine"
     ],
     "slug": "streaming-responses",
     "detail": "Instead of waiting for the full answer, streaming delivers tokens as they are produced, which improves perceived speed. Server-sent events (SSE) is a simple one-way HTTP mechanism commonly used for this. Provider APIs stream events that your service can forward."
@@ -3337,7 +3413,7 @@ const notes = [
     "title": "Async, queueing and backpressure",
     "category": "systems",
     "what": "Techniques for handling many slow model calls without overloading the system.",
-    "how": "Cap concurrency, use bounded queues, return clear 'busy' responses or defer work to background jobs, and combine with retries and rate-limit handling. Separate request handling from long-running workers. How to measure it: monitor queue depth, wait time, throughput, and rejected requests.",
+    "how": "Cap concurrency, use bounded queues, return clear 'busy' responses or defer work to background jobs, and combine with retries and rate-limit handling. Separate request handling from long-running workers. How to measure it: monitor queue depth, wait time, throughput, and rejected requests.\n\nInference engine role: Load-control infrastructure around or within serving. When: Requests arrive faster than available inference capacity. Why: Bounded queues and backpressure protect memory and latency while the engine processes admitted work.",
     "example": "A batch summarizer receives 10,000 documents. A worker pool processes 20 at a time from a bounded queue; when the queue fills, the intake endpoint tells clients to retry later.",
     "watch": "Unbounded queues hide overload until memory or latency explodes. Retries without limits amplify an outage.",
     "sources": [
@@ -3349,7 +3425,8 @@ const notes = [
       "Routing and batching",
       "FastAPI and Pydantic",
       "LLM gateway and AI governance",
-      "Parallelization (sectioning and voting)"
+      "Parallelization (sectioning and voting)",
+      "Inference engine"
     ],
     "slug": "async-queueing-backpressure",
     "detail": "Model calls are slow and rate-limited, so services run them concurrently with async code, place work in queues, and use backpressure to slow or reject new work when capacity is full. This protects both your service and the provider."
@@ -3401,7 +3478,7 @@ const notes = [
     "title": "Provider adapters",
     "category": "systems",
     "what": "A thin interface that isolates provider-specific model code behind a common contract.",
-    "how": "Define the internal types first, implement one adapter per provider, map errors and token usage consistently, and keep provider-only features behind explicit options. Contract-test every adapter against the same cases. How to measure it: run the same evaluation set through each adapter and compare quality, latency, and cost.",
+    "how": "Define the internal types first, implement one adapter per provider, map errors and token usage consistently, and keep provider-only features behind explicit options. Contract-test every adapter against the same cases. How to measure it: run the same evaluation set through each adapter and compare quality, latency, and cost.\n\nInference engine role: Application integration boundary to inference services. When: Translating an application request to a runtime or provider API. Why: They normalize request and response formats without implementing the model’s compute.",
     "example": "An app calls model.generate through its own interface. Adding a second provider means writing one new adapter and running the shared test suite, not changing application code.",
     "watch": "Over-abstracting can hide useful provider features. Behavior still differs between models, so an interface does not guarantee identical results.",
     "sources": [
@@ -3412,7 +3489,8 @@ const notes = [
       "OpenRouter",
       "Tool calling",
       "Structured outputs",
-      "Evals"
+      "Evals",
+      "Inference engine"
     ],
     "slug": "provider-adapters",
     "detail": "Each model provider has its own request format, features, and errors. An adapter exposes one internal interface, such as generate(messages, tools), and translates to each provider's SDK or HTTP API. This makes switching or comparing providers cheaper."
@@ -3421,7 +3499,7 @@ const notes = [
     "title": "AI system architecture",
     "category": "agents",
     "what": "Designing how models, data, tools, and controls fit together to meet business requirements.",
-    "how": "Write requirements and acceptance criteria, sketch components and data flows, choose the simplest approach that meets them, define interfaces and failure behavior, and plan evaluation before implementation. Record decisions and trade-offs. How to measure it: verify the built system against the acceptance criteria and budgets.",
+    "how": "Write requirements and acceptance criteria, sketch components and data flows, choose the simplest approach that meets them, define interfaces and failure behavior, and plan evaluation before implementation. Record decisions and trade-offs. How to measure it: verify the built system against the acceptance criteria and budgets.\n\nInference engine role: System-level placement of the inference engine. When: Designing the path from application input to model output. Why: It separates model execution from retrieval, orchestration, storage, and policy responsibilities.",
     "example": "A claims assistant needs answers from policy PDFs and live claim data. The design uses RAG for documents, a validated database tool for claim status, an approval gate for payouts, tracing for all steps, and a latency budget of 5 seconds.",
     "watch": "Starting with tools or frameworks before requirements produces systems that are hard to evaluate and change.",
     "sources": [
@@ -3433,7 +3511,8 @@ const notes = [
       "Workflow vs. agent",
       "RAG",
       "Observability",
-      "Guardrails"
+      "Guardrails",
+      "Inference engine"
     ],
     "slug": "ai-system-architecture",
     "detail": "Architecture translates requirements into components, boundaries, interfaces, and data flows. For AI systems it includes choices such as workflow or agent, RAG or structured data, how state and memory are kept, and how reliability, security, observability, evaluation, latency, and cost are handled."
@@ -4522,7 +4601,7 @@ const notes = [
     "title": "Speculative decoding",
     "category": "agents",
     "what": "A small draft model proposes several tokens ahead and the large model verifies them in one pass.",
-    "how": "Pair a target model with a much smaller draft model that predicts similar text, often from the same family. Choose how many tokens to draft per step; more drafts help only when the acceptance rate is high. Use a serving stack that supports it. How to measure it: acceptance rate, tokens per second, and end-to-end latency against normal decoding at your real batch size.",
+    "how": "Pair a target model with a much smaller draft model that predicts similar text, often from the same family. Choose how many tokens to draft per step; more drafts help only when the acceptance rate is high. Use a serving stack that supports it. How to measure it: acceptance rate, tokens per second, and end-to-end latency against normal decoding at your real batch size.\n\nInference engine role: Optional decoding optimization inside a compatible inference runtime. When: A draft proposes tokens for a target model to verify. Why: Verifying several proposals together can reduce expensive sequential target-model steps.",
     "example": "A draft model proposes five tokens. The target model checks them in one pass and accepts the first three, then replaces the fourth with its own token. One target-model pass produced four tokens instead of one.",
     "watch": "Speedups depend on how often the draft agrees with the target, and on batch size and hardware. A poor draft model can make generation no faster, or slower.",
     "sources": [
@@ -4536,7 +4615,8 @@ const notes = [
       "Inter-token Latency (ITL)",
       "Small language models (SLMs)",
       "Model distillation",
-      "Quantization"
+      "Quantization",
+      "Inference engine"
     ],
     "slug": "speculative-decoding",
     "detail": "Generating each token with a large model needs a full forward pass. A small draft model guesses the next few tokens cheaply. The large target model then scores all of them in a single parallel pass, accepts the longest prefix it agrees with, and supplies its own token at the first disagreement. With the standard acceptance rule the output distribution matches the target model, so quality is preserved while latency drops. This is a serving technique inside inference, unlike the other patterns here, which coordinate separate calls."
@@ -4545,7 +4625,7 @@ const notes = [
     "title": "Best-of-N with a verifier",
     "category": "agents",
     "what": "Generate several candidate answers in parallel and keep the one a verifier scores highest.",
-    "how": "Choose N from your quality and cost targets, since cost grows with it. Sample at a temperature high enough to give diverse candidates. Run the verifier on every candidate and return the highest scorer, or a fallback if none passes. How to measure it: pass rate as N increases, and the cost per solved task.",
+    "how": "Choose N from your quality and cost targets, since cost grows with it. Sample at a temperature high enough to give diverse candidates. Run the verifier on every candidate and return the highest scorer, or a fallback if none passes. How to measure it: pass rate as N increases, and the cost per solved task.\n\nInference engine role: Application-level strategy that calls inference repeatedly. When: Generating candidates and selecting one with a verifier. Why: It spends additional inference compute, while candidate orchestration and verification usually live outside the engine.",
     "example": "For a coding task the agent generates five patches in parallel. Each runs against the test suite. Two pass; the system returns the smaller diff of the two.",
     "watch": "A weak or gameable verifier lets a bad answer win. Candidates that share one blind spot make extra samples add cost without adding accuracy.",
     "sources": [
@@ -4559,7 +4639,8 @@ const notes = [
       "Mixture of agents",
       "Temperature",
       "Evals",
-      "Reinforcement learning"
+      "Reinforcement learning",
+      "Inference engine"
     ],
     "slug": "best-of-n",
     "detail": "Sampling the same prompt several times at a non-zero temperature gives different candidates, and some are better than others. A verifier picks among them. The best verifier is deterministic, such as unit tests, a compiler, or a math checker. Where no exact check exists, a reward model or judge can score candidates. This spends more compute at inference time instead of training a bigger model."
@@ -4677,7 +4758,7 @@ const notes = [
     "category": "agents",
     "what": "Layered techniques that make an LLM's reply parse as JSON and match the shape your code expects.",
     "detail": "Asking a model to \"reply in JSON\" is a request, not a guarantee. Reliability comes from stacking layers: a clear prompt, a forced tool call or provider-enforced schema, validation with a library such as Pydantic, and a bounded retry. Each layer catches failures the previous one misses.",
-    "how": "1) Prompt for the format and show one example. 2) Prefer a forced tool call whose input schema is your output shape, or a provider's native structured-output mode, so the reply is data rather than text to scrape. 3) Always validate in application code: define a Pydantic model, call `Model.model_validate_json(raw)`, and add validators for rules a schema cannot express. 4) On a validation error, send the error text back once or twice, then fail explicitly instead of passing bad data downstream.\n\nWhen it matters: Use all layers when the output feeds a database, API call, or workflow. A human-read summary needs far less.",
+    "how": "1) Prompt for the format and show one example. 2) Prefer a forced tool call whose input schema is your output shape, or a provider's native structured-output mode, so the reply is data rather than text to scrape. 3) Always validate in application code: define a Pydantic model, call `Model.model_validate_json(raw)`, and add validators for rules a schema cannot express. 4) On a validation error, send the error text back once or twice, then fail explicitly instead of passing bad data downstream.\n\nWhen it matters: Use all layers when the output feeds a database, API call, or workflow. A human-read summary needs far less.\n\nInference engine role: Application workflow that may use engine-level constrained decoding. When: Requesting and validating machine-readable output. Why: Engine constraints help produce valid structure, while external validation handles meaning and recovery.",
     "example": "An invoice extractor defines `class Invoice(BaseModel)` with `total: Decimal` and `lines: list[Line]`, and a validator that checks the total equals the sum of line amounts. The model is forced to call an `extract_invoice` tool built from `Invoice.model_json_schema()`. If validation fails, the error message goes back to the model for one retry; a second failure raises an error.\n\nHow to measure it: Track first-attempt parse rate, post-retry success rate, and average retries per request. Report refusals and truncated outputs separately.",
     "watch": "Valid JSON is not true JSON: a schema-valid answer can still contain invented values. Truncation at the token limit can cut JSON mid-object, so check the stop reason before parsing. Retries add latency and cost, so cap them.",
     "related": [
@@ -4685,7 +4766,8 @@ const notes = [
       "Tool calling",
       "FastAPI and Pydantic",
       "Guardrails",
-      "Evals"
+      "Evals",
+      "Inference engine"
     ],
     "sources": [
       "structuredDocs",
