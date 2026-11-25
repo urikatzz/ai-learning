@@ -1348,6 +1348,49 @@
     return figure;
   };
 
+  builders['inference-engine'] = ({ svgNode, makeFigure, box, arrow }) => {
+    const { figure, svg } = makeFigure({
+      title: 'The engine runs the model; backends run its computations',
+      alt: 'An application or serving wrapper sends tokenized input to an inference engine. The engine loads model weights, prefills the prompt, then repeats decode and next-token selection while reusing a KV cache. Generated tokens return to the application. The engine executes through a compatible backend: CUDA on NVIDIA GPUs, Metal on Apple GPUs, or CPU kernels on a CPU. These are alternative execution paths, not sequential steps.',
+      caption: 'Simplified autoregressive LLM inference. Tokenization and sampling can live in surrounding libraries. Backend support varies by engine; CUDA is a compute platform, not an inference engine. Inference is the process this software performs.',
+      height: 530
+    });
+    box(svg, { x: 70, y: 8, w: 340, h: 36, label: 'Your app / serving wrapper (e.g. Ollama)', tone: 'blue', index: 0 });
+    arrow(svg, { x1: 180, y1: 46, x2: 180, y2: 104, tone: 'blue', index: 1 });
+    svgNode(svg, 'text', { x: 170, y: 79, 'text-anchor': 'end', class: 'dg-small' }, 'tokenized input');
+    arrow(svg, { x1: 306, y1: 104, x2: 306, y2: 46, tone: 'teal', index: 7 });
+    svgNode(svg, 'text', { x: 316, y: 79, class: 'dg-small' }, 'output tokens');
+
+    svgNode(svg, 'rect', { x: 12, y: 108, width: 456, height: 252, rx: 14, class: 'dg-stroke dg-orange' });
+    svgNode(svg, 'text', { x: 240, y: 133, 'text-anchor': 'middle' }, 'Inference engine (e.g. llama.cpp / vLLM)');
+    box(svg, { x: 32, y: 150, w: 176, h: 36, label: 'Load model weights', tone: 'purple', index: 1 });
+    arrow(svg, { x1: 120, y1: 188, x2: 120, y2: 210, tone: 'purple', index: 2 });
+    box(svg, { x: 32, y: 214, w: 176, h: 40, label: 'Prefill: read prompt', tone: 'orange', index: 2 });
+    arrow(svg, { x1: 210, y1: 234, x2: 270, y2: 234, tone: 'orange', index: 3 });
+    box(svg, { x: 274, y: 214, w: 174, h: 40, label: 'Decode: next logits', tone: 'orange', index: 3 });
+    arrow(svg, { x1: 361, y1: 256, x2: 361, y2: 282, tone: 'orange', index: 4 });
+    box(svg, { x: 274, y: 286, w: 174, h: 36, label: 'Select next token', tone: 'teal', index: 4 });
+    // The loop is distinct from the alternative hardware paths below.
+    svgNode(svg, 'path', { d: 'M361 324V344H250V198H361V212', class: 'dg-dash dg-flow dg-orange dg-pop', style: '--i:5' });
+    svgNode(svg, 'text', { x: 345, y: 339, 'text-anchor': 'middle', class: 'dg-small' }, 'repeat until stop');
+    box(svg, { x: 32, y: 286, w: 176, h: 36, label: 'KV cache: reuse state', tone: 'purple', index: 3 });
+    svgNode(svg, 'text', { x: 120, y: 342, 'text-anchor': 'middle', class: 'dg-small' }, 'prefill writes; decode reuses');
+
+    svgNode(svg, 'text', { x: 240, y: 387, 'text-anchor': 'middle', class: 'dg-small' }, 'Executes through supported backends (alternatives)');
+    const backends = [
+      { x: 12, label: 'CUDA', hardware: 'NVIDIA GPU' },
+      { x: 172, label: 'Metal', hardware: 'Apple GPU' },
+      { x: 332, label: 'CPU kernels', hardware: 'CPU' }
+    ];
+    backends.forEach(({ x, label, hardware }, i) => {
+      arrow(svg, { x1: x + 68, y1: 394, x2: x + 68, y2: 416, tone: 'blue', index: 6 });
+      box(svg, { x, y: 420, w: 136, h: 36, label, tone: 'blue', index: 6 + i });
+      arrow(svg, { x1: x + 68, y1: 458, x2: x + 68, y2: 480, tone: 'teal', index: 7 + i });
+      box(svg, { x, y: 484, w: 136, h: 36, label: hardware, tone: 'teal', index: 7 + i });
+    });
+    return figure;
+  };
+
   builders.ollama = ({ svgNode, makeFigure, box, arrow }) => {
     const { figure, svg } = makeFigure({
       title: 'The local inference stack behind Ollama',
