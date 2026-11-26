@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0b1d">
+  <meta name="description" content="Train a tiny Transformer on your own pixel drawings. Watch it generate images one pixel at a time and inspect real causal attention, entirely in your browser.">
+  <title>Image Generation Lab — Learn AI</title>
+  <link rel="stylesheet" href="lab.css?v=3">
+  <script defer src="pixels.js"></script>
+  <script defer src="painter.js"></script>
+  <script defer src="lab.js?v=3"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../"><span aria-hidden="true">✺</span> Learn AI</a>
+    <nav aria-label="Main navigation"><a href="../llm-lab/">Text Transformer Lab</a><a class="active" href="./" aria-current="page">Image Generation Lab</a><a href="../#notebook">Glossary ↗</a></nav>
+    <button id="theme" class="icon-button" aria-label="Switch to light theme">☼</button>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <div><div class="eyebrow"><span class="status-dot"></span> INTERACTIVE IMAGE LAB <span class="tag">NO API KEY</span></div>
+        <h1 id="title">Small pixels.<br><span>Big ideas.</span></h1>
+        <p>Teach a tiny Transformer to draw. Watch it learn patterns and create an image, <strong>one pixel at a time.</strong></p>
+        <a class="text-link" href="#first-experiment">Try your first experiment <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-visual" aria-hidden="true"><div class="hero-grid" id="hero-grid"></div><span class="connector">→</span><div class="model-block"><span>CAUSAL ATTENTION</span><strong>Transformer</strong><small>predict the next pixel</small></div><span class="connector">→</span><div class="hero-grid output-art" id="hero-output"></div><div class="visual-caption">16 pixels. A sequence. A learned pattern.</div></div>
+    </section>
+
+    <section id="first-experiment" class="experiment panel" aria-labelledby="experiment-title">
+      <div class="experiment-intro"><span class="eyebrow">START HERE</span><h2 id="experiment-title">See what training changes</h2><p class="muted">One click: the model draws, practises on your example images for 100 steps, then draws again so you can compare.</p></div>
+      <ol class="experiment-steps"><li id="guide-before" aria-current="step">1. Draw untrained</li><li id="guide-train">2. Practise 100 steps</li><li id="guide-after">3. Draw and compare</li></ol>
+      <div class="experiment-action"><button id="experiment-next" class="primary" data-lock>▶ Run the demo</button><p id="experiment-status" role="status" aria-live="polite">The demo starts the model from scratch, so earlier training is erased.</p></div>
+      <div id="comparison" class="comparison" hidden><figure><div id="before-image" class="comparison-image"></div><figcaption id="before-caption">Before training</figcaption></figure><figure><div id="after-image" class="comparison-image empty-preview">?</div><figcaption id="after-caption">After training · waiting</figcaption></figure><p id="comparison-note">Can the untrained model reproduce the patterns in your collection?</p></div>
+    </section>
+
+    <div id="workspace" class="workspace">
+      <section class="panel dataset-panel" aria-labelledby="dataset-title">
+        <div class="section-heading"><span class="section-number">01</span><h2 id="dataset-title">Choose examples</h2><span class="tiny-tag">4 × 4</span></div>
+        <p class="muted">These are the pictures the model learns from. Pick one, then click or drag across the squares to paint.</p>
+        <label class="field-label" for="preset">Training collection</label>
+        <select id="preset" data-lock><option value="lines">Lines & stripes</option><option value="shapes">Shapes & symbols</option></select>
+        <div id="examples" class="examples" aria-label="Training examples"></div>
+        <div class="editor-header"><strong id="editor-label">Editing example 1</strong><button id="clear" class="text-button" data-lock>Clear drawing</button></div>
+        <div class="drawing-frame"><div id="editor" class="pixel-grid editor-grid" aria-label="Editable training image"></div><span class="grid-dimension">4 × 4 PIXELS</span></div>
+        <div class="button-row"><button id="apply" class="primary" data-lock>Save drawing</button><button id="add" data-lock>+ New</button><button id="remove" aria-label="Remove selected example" data-lock>Remove</button></div>
+        <p class="footnote" id="dataset-note" role="status">4 training images · select a thumbnail to edit.</p>
+        <p class="hint">Saving a drawing or changing the collection restarts training from zero. Drawings are kept for this page session.</p>
+        <details><summary>Try this experiment</summary><p>Train on lines, generate a few images, then switch to shapes and retrain. Does the model follow the new dataset? Try a collection with just one image to see memorization.</p></details>
+      </section>
+
+      <section class="panel training-panel" aria-labelledby="training-title">
+        <div class="section-heading"><span class="section-number">02</span><h2 id="training-title">Train the model</h2><span class="tiny-tag live">REAL TRAINING</span></div>
+        <p class="muted">The model practises predicting your pictures. Each step learns from one of them.</p>
+        <div class="training-actions"><button id="train" class="primary" disabled>▶ Train</button><button id="step" data-lock>+1 step</button><button id="reset" data-lock>↺ Reset</button></div>
+        <div class="metrics"><div><span>Training steps</span><strong id="steps">0</strong></div><div><span>Error (loss)</span><strong id="loss">—</strong></div></div>
+        <div class="chart-heading"><strong>Learning curve</strong><span>lower loss is better ↘</span></div>
+        <svg id="loss-chart" class="loss-chart" viewBox="0 0 360 150" role="img" aria-label="Dataset loss over training steps" preserveAspectRatio="none"><defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b38aff" stop-opacity=".28"/><stop offset="1" stop-color="#b38aff" stop-opacity="0"/></linearGradient></defs><path class="chart-grid" d="M10 15H350M10 55H350M10 95H350M10 135H350"/><path id="loss-area" fill="url(#chart-fill)"/><polyline id="loss-line" fill="none" stroke="#b38aff" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+        <div class="chart-axis"><span id="chart-start">step 0</span><span id="chart-end">step 0</span></div>
+        <p class="footnote">Loss measures how surprised the model is by the training pixels. A falling curve means its predictions are improving.</p>
+        <p class="training-help">Try 100 steps, then pause and generate. If the loss levels off, compare a few images before training longer. Lower loss does not guarantee every sample will look right.</p>
+        <details class="advanced"><summary>Advanced training &amp; model details</summary>
+        <label class="slider-label" for="learning-rate">Learning rate <output id="rate-value">0.020</output></label>
+        <input id="learning-rate" type="range" min="0.001" max="0.05" step="0.001" value="0.02" data-lock>
+        <p class="hint">Parameters: <strong id="parameters">—</strong>. Loss is mean next-token cross-entropy over the training collection; START is never a target.</p>
+        <div class="model-spec"><span>THE MODEL</span><strong>Decoder-only Transformer</strong><p>1 layer · 1 attention head · width 8<br>Learned token + position embeddings<br>LayerNorm · GELU feed-forward · Adam</p></div>
+        </details>
+        <p id="status" class="run-status" role="status" aria-live="polite">Starting the model…</p>
+      </section>
+
+      <section class="panel generation-panel" aria-labelledby="generation-title">
+        <div class="section-heading"><span class="section-number">03</span><h2 id="generation-title">Watch it draw</h2><span id="pixel-count" class="tiny-tag">0 / 16</span></div>
+        <p class="muted">The model picks one pixel at a time, based on the pixels before it. Click a drawn pixel to see its odds.</p>
+        <div class="generation-stage"><div id="generated" class="pixel-grid generated-grid" aria-label="Generated image"></div><span class="pixel-key">Solid = drawn pixel · striped = not drawn yet</span><span id="scan-label" class="scan-label">READY TO GENERATE</span></div>
+        <div class="generation-actions"><button id="generate" class="primary" data-lock>✦ Generate image</button><button id="next" data-lock>Next pixel →</button><button id="stop" disabled>Stop</button></div>
+        <details class="advanced"><summary>Advanced sampling &amp; drawing completion</summary>
+        <div class="generation-settings"><div><label class="slider-label" for="temperature">Temperature <output id="temperature-value">0.8</output></label><input id="temperature" type="range" min="0.1" max="2" step="0.1" value="0.8" data-lock></div><div><label class="field-label" for="seed">Random seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="42" data-lock></div></div>
+        <p class="hint">Temperature sets how adventurous the choice is: lower picks the likely pixel more often. The seed fixes the randomness, so the same settings and training give the same image.</p>
+        <div class="prefix-control"><label class="slider-label" for="prefix">Complete my drawing <output id="prefix-value">0 pixels</output></label><input id="prefix" type="range" min="0" max="15" step="1" value="0" data-lock><p class="hint">Start a new generation with the first N pixels from the drawing in panel 01.</p><button id="restart" class="text-button" data-lock>Restart canvas with this prefix ↗</button></div>
+        </details>
+        <div class="probability-heading"><strong id="prediction-title">Next: pixel 1</strong><span>based on earlier pixels</span></div>
+        <div class="probability-row"><span><i class="swatch black"></i> Black</span><div class="probability-track"><div id="black-bar"></div></div><output id="black-probability">—</output></div>
+        <div class="probability-row"><span><i class="swatch white"></i> White</span><div class="probability-track"><div id="white-bar"></div></div><output id="white-probability">—</output></div>
+        <div class="gallery-heading"><strong>Recent generations</strong><span>this session</span></div><div id="gallery" class="gallery"><p class="hint">Your completed images will appear here.</p></div>
+      </section>
+    </div>
+
+    <details class="panel attention-details"><summary>Look inside: which earlier pixels does the model pay attention to?</summary>
+    <section class="attention-panel" aria-labelledby="attention-title">
+      <div class="attention-intro"><div class="section-heading"><span class="section-number">04</span><h2 id="attention-title">What can this pixel see?</h2></div><p class="muted">Real attention weights from the model’s single head. Each row attends only to itself and earlier input tokens. Hatched cells are masked.</p><p class="hint">START predicts pixel 1. The input for each later prediction is START followed by the pixels already drawn. The last row is the prediction selected above.</p><div class="attention-legend"><span><i class="legend-gradient"></i> less → more attention</span><span><i class="legend-mask"></i> future = masked</span></div><p id="attention-readout" class="attention-readout">Select a cell to inspect its weight.</p></div>
+      <div class="attention-view"><div class="sequence-label">INPUT SEQUENCE <span>row-major order →</span></div><div id="sequence" class="sequence"></div><div id="attention" class="attention-grid" aria-label="Causal attention matrix"></div></div>
+    </section>
+    </details>
+    <div class="concept"><span class="concept-icon" aria-hidden="true">↳</span><p><strong>Same Transformer idea. A different kind of token.</strong> Text models predict the next word token. Here, black and white pixels become tokens, read left to right, top to bottom.</p><a href="../llm-lab/">Compare with text ↗</a></div>
+    <section class="learning-notes"><article><span>01 / REPRESENT</span><h3>An image is a sequence</h3><p>Flatten the 4×4 grid into 16 binary pixels. Add START. Each pixel token gets a learned embedding and a position embedding.</p></article><article><span>02 / LEARN</span><h3>Guess, compare, update</h3><p>Training uses the true earlier pixels to predict the next one. Cross-entropy measures the error; backpropagation and Adam adjust the weights.</p></article><article><span>03 / CREATE</span><h3>One pixel becomes context</h3><p>At generation time, the model sees its own sampled pixels. This is autoregressive generation: the same principle as next-token text generation.</p></article></section>
+    <footer><p>A teaching-scale model: simple patterns, not photos. Training runs locally in a Web Worker; no images leave your browser.</p><a href="../llm-lab/">← Text Transformer Lab</a><a href="https://openai.com/index/image-gpt/" target="_blank" rel="noreferrer">Read about Image GPT ↗</a></footer>
+    <noscript>This interactive lab requires JavaScript.</noscript>
+  </main>
+</body>
+</html>

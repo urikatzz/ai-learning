@@ -29,6 +29,7 @@ jobs:
           cp index.html .nojekyll dist/
           cp -R assets dist/
           cp -R llm-lab dist/
+          cp -R image-lab dist/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
